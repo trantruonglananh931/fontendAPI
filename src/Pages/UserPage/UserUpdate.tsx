@@ -5,51 +5,54 @@ import { useParams, useNavigate } from "react-router-dom";
 type User = {
   username: string;
   emailAddress: string;
-  password: string; // Bao gồm password để hiển thị
+  password: string;
 };
 
 const UserUpdate: React.FC = () => {
-  const { name } = useParams<{ name: string }>();
-  const [user, setUser] = useState<User | null>(null);
-  const [newUsername, setNewUsername] = useState<string>("");
-  const [newEmailAddress, setNewEmailAddress] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
+  const { name } = useParams<{ name: string }>(); 
+  const [user, setUser] = useState<User | null>(null); 
+  const [newUsername, setNewUsername] = useState<string>(""); 
+  const [newEmailAddress, setNewEmailAddress] = useState<string>(""); 
+  const [message, setMessage] = useState<string>(""); 
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     const fetchUser = async () => {
       try {
-        const response = await axios.get<User>(`/v3/api/user/${name}`);
-        setUser(response.data);
-        setNewUsername(response.data.username);
-        setNewEmailAddress(response.data.emailAddress);
+        const response = await axios.get(`/v3/api/user/${name}`);
+        setUser(response.data.data); 
+        setNewUsername(response.data.data.username); 
+        setNewEmailAddress(response.data.data.emailAddress);
       } catch (error) {
         console.error("Error fetching user:", error);
         setMessage("Failed to fetch user data.");
       }
     };
 
-    fetchUser();
+    fetchUser(); 
   }, [name]);
+
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
+      
       await axios.put(`/v3/api/user/${name}`, {
         username: newUsername,
         emailAddress: newEmailAddress,
-        password: user?.password // Gửi mật khẩu hiện tại để đáp ứng API
+        password: user?.password 
       });
       setMessage("User updated successfully!");
-      navigate("/user");
+      navigate("/user"); 
     } catch (error) {
       console.error("Error updating user:", error);
       setMessage("Failed to update user.");
     }
   };
 
-  if (!user) return <div>Loading...</div>;
+  if (!user) return <div>Loading...</div>; 
 
   return (
     <div className="container mx-auto p-4">
@@ -79,7 +82,7 @@ const UserUpdate: React.FC = () => {
           <label className="block mb-1">Password</label>
           <input
             type="password"
-            value="***************" 
+            value="***************" // Không thay đổi mật khẩu
             readOnly
             className="w-full py-2 px-4 border border-gray-300 rounded-lg bg-gray-200"
           />
@@ -91,7 +94,7 @@ const UserUpdate: React.FC = () => {
           Update User
         </button>
       </form>
-      {message && <p className="mt-4 text-red-500">{message}</p>}
+      {message && <p className="mt-4 text-red-500">{message}</p>} 
     </div>
   );
 };

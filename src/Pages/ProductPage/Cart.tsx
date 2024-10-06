@@ -89,7 +89,7 @@ const Cart: React.FC = () => {
           {cartItems.map((item) => (
             <tr key={item.productId} className="border-b">
               <td className="flex items-center space-x-4">
-                <img src={item.image} alt={item.productName} className="w-24 h-24 rounded-lg" />
+                <img src={item.image} alt={item.productName} className="w-28 h-32 rounded-lg" />
                 <div>
                   <h2 className="text-lg font-semibold">{item.productName}</h2>
                 </div>

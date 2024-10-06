@@ -25,6 +25,7 @@ import UserUpdate from "../Pages/UserPage/UserUpdate";
 import Cart from "../Pages/ProductPage/Cart";
 import Checkout from "../Pages/ProductPage/Checkout";
 import HistoryOrders from "../Pages/OrderPage/HistoryOrders";
+import UserProfile from "../Pages/UserPage/UserProfile";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
       { path: "history-orders", element: <HistoryOrders/> },
       { path: "user/update/:name", element: <UserUpdate/>},
       { path:"change-password", element: <ChangePassword/>},
+      { path:"profile/:username", element: <UserProfile/>},
     {
         path: "search",
         element: (

@@ -27,7 +27,8 @@ const ChangePassword: React.FC = () => {
         newPassword,
         confirmNewPassword,
       });
-      setMessage(response.data);
+
+      setMessage(response.data.message);
 
       setOldPassword("");
       setNewPassword("");
@@ -59,7 +60,6 @@ const ChangePassword: React.FC = () => {
             >
               <FontAwesomeIcon icon={showOldPassword ? faEyeSlash : faEye} />
             </button>
-
           </div>
           <div className="relative">
             <label className="block mb-1">New Password</label>
