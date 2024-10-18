@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 type OrderItem = {
-  id: number;
+  id: string;
   date: string;
   totalPrice: number;
   address: string;
   stateOrder: string;
   stateTransport: string;
+  methodOfPayment: string;
 };
 
 type OrderDetailItem = {
@@ -16,17 +17,18 @@ type OrderDetailItem = {
   productName: string;
 };
 
-const HistoryOrders: React.FC = () => {
+const AllHistoryOrders: React.FC = () => {
   const [orders, setOrders] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [orderDetails, setOrderDetails] = useState<OrderDetailItem[]>([]);
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
+  
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("/v5/Api/Order");
+        const response = await axios.get("/v5/Api/Order/Admin");
         if (response.data.status) {
           setOrders(response.data.data);
         } else {
@@ -42,9 +44,10 @@ const HistoryOrders: React.FC = () => {
     fetchOrders();
   }, []);
 
-  const fetchOrderDetails = async (Id: number) => {
+
+  const fetchOrderDetails = async (id: string) => {
     try {
-      const response = await axios.get(`/v5/Api/Order/${Id}`);
+      const response = await axios.get(`/v5/Api/Order/${id}`);
       if (response.data.status) {
         setOrderDetails(response.data.data);
         setShowDetails(true);
@@ -65,9 +68,11 @@ const HistoryOrders: React.FC = () => {
   if (error) return <div className="text-red-500 text-center text-lg">{error}</div>;
 
   return (
-    <div className="max-w-screen-xl mx-auto p-6 bg-white ">
+    <div className="max-w-screen-xl mx-auto p-6 bg-white mb-5 mt-5">
+      
+
       {orders.length === 0 ? (
-        <div className="text-center text-lg text-gray-600">You have no orders yet.</div>
+        <div className="text-center text-lg text-gray-600">No orders found.</div>
       ) : (
         <table className="w-full text-left border border-gray-200  overflow-hidden">
           <thead className="bg-gray-100">
@@ -78,6 +83,7 @@ const HistoryOrders: React.FC = () => {
               <th className="py-3 px-4">Address</th>
               <th className="py-3 px-4">Order Status</th>
               <th className="py-3 px-4">Shipping Status</th>
+              <th className="py-3 px-4">Payment Method</th>
               <th className="py-3 px-4">Actions</th>
             </tr>
           </thead>
@@ -90,12 +96,13 @@ const HistoryOrders: React.FC = () => {
                 <td className="py-4 px-4 text-gray-800">{order.address}</td>
                 <td className="py-4 px-4 text-gray-800">{order.stateOrder}</td>
                 <td className="py-4 px-4 text-gray-800">{order.stateTransport}</td>
+                <td className="py-4 px-4 text-gray-800">{order.methodOfPayment}</td>
                 <td className="py-4 px-4">
                   <button
-                    className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition duration-200"
+                    className="bg-blue-600 text-white  text-base px-3 py-2 rounded hover:bg-blue-700 transition duration-200"
                     onClick={() => fetchOrderDetails(order.id)}
                   >
-                    Detail
+                    View
                   </button>
                 </td>
               </tr>
@@ -147,4 +154,4 @@ const HistoryOrders: React.FC = () => {
   );
 };
 
-export default HistoryOrders;
+export default AllHistoryOrders;

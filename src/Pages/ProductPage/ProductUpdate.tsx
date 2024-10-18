@@ -29,7 +29,7 @@ const ProductUpdate: React.FC = () => {
 
   useEffect(() => {
     const fetchProductDetails = async () => {
-      const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; // Token của bạn
+      const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; 
 
       try {
         const response = await axios.get(`/v2/api/Product/${id}`, {
@@ -38,9 +38,9 @@ const ProductUpdate: React.FC = () => {
           },
         });
 
-        // Dữ liệu sản phẩm nằm trong `response.data.data`
+     
         if (response.data && response.data.data) {
-          setProduct(response.data.data); // Set product vào state
+          setProduct(response.data.data);
         } else {
           console.error("Product data is not available");
         }
@@ -53,16 +53,16 @@ const ProductUpdate: React.FC = () => {
       try {
         const response = await axios.get("/v4/api/Category");
         if (response.data && Array.isArray(response.data.data)) {
-          setCategories(response.data.data); // Gán danh mục vào state
+          setCategories(response.data.data); 
         } else {
           console.error("Categories data is not an array");
-          setCategories([]); // Đảm bảo categories luôn là mảng
+          setCategories([]); 
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
-        setCategories([]); // Đảm bảo categories luôn là mảng nếu có lỗi xảy ra
+        setCategories([]); 
       } finally {
-        setLoading(false); // Kết thúc tải dữ liệu
+        setLoading(false); 
       }
     };
 
@@ -78,13 +78,13 @@ const ProductUpdate: React.FC = () => {
     const { name, value } = e.target;
     setProduct({
       ...product,
-      [name]: name === "quantityStock" || name === "price" ? +value : value, // Đảm bảo chuyển đổi giá trị số
+      [name]: name === "quantityStock" || name === "price" ? +value : value, 
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; // Token của bạn
+    const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; 
 
     try {
       await axios.put(

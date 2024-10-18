@@ -1,8 +1,8 @@
-import React from "react";
-import * as Yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useAuth } from "../../Context/useAuth";
-import { useForm } from "react-hook-form";
+import React, { useState } from 'react';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useAuth } from '../../Context/useAuth';
+import { useForm } from 'react-hook-form';
 
 type Props = {};
 
@@ -12,12 +12,13 @@ type LoginFormsInputs = {
 };
 
 const validation = Yup.object().shape({
-  userName: Yup.string().required("Username is required"),
-  password: Yup.string().required("Password is required"),
+  userName: Yup.string().required('Username is required'),
+  password: Yup.string().required('Password is required'),
 });
 
 const LoginPage = (props: Props) => {
-  const { loginUser } = useAuth();
+  const { loginUser, loginWithGoogle } = useAuth();
+  
   const {
     register,
     handleSubmit,
@@ -27,6 +28,7 @@ const LoginPage = (props: Props) => {
   const handleLogin = (form: LoginFormsInputs) => {
     loginUser(form.userName, form.password);
   };
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -40,72 +42,47 @@ const LoginPage = (props: Props) => {
               onSubmit={handleSubmit(handleLogin)}
             >
               <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Username
                 </label>
                 <input
                   type="text"
                   id="username"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Username"
-                  {...register("userName")}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  {...register('userName')}
                 />
-                {errors.userName ? (
-                  <p className="text-white">{errors.userName.message}</p>
-                ) : (
-                  ""
-                )}
+                {errors.userName && <p className="text-red-500">{errors.userName.message}</p>}
               </div>
               <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Password
                 </label>
                 <input
                   type="password"
                   id="password"
                   placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  {...register("password")}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700"
+                  {...register('password')}
                 />
-                {errors.password ? (
-                  <p className="text-white">{errors.password.message}</p>
-                ) : (
-                  ""
-                )}
+                {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               </div>
-              <div className="flex items-center justify-between">
-                <a
-                  href="#"
-                  className="text-sm text-white font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
-              <div className="flex justify-center">
-                  <button
-                  type="submit"
-                  className="w-2/5  font-bold h-10 border-2 rounded-full bg-lightGreen hover:text-white hover:border-black hover:border-1 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300"
-                >
-                  Sign in
-                </button>
-                </div>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">Don’t have an account yet?{" "}
-                <a href="#"className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
-                
-              </p>
-              <div className="w-full border text-center">
+              <button
+                type="submit"
+                className="w-2/5 font-bold h-10 border-2 rounded-full bg-yellow-500 hover:text-white"
+              >
+                Sign in
+              </button>
+              <div className="w-full border text-center my-4">
                 <p>Or</p>
               </div>
-              <div className="flex justify-around">
-                <button className="border-2 border-solid rounded-full border-gray-800 w-2/5"><p className="mx-3">Facebook</p></button>
-                <button className="border-2 border-solid rounded-full border-gray-800 w-2/5"><p className="mx-3">Google</p></button>
-              </div>
+              <button
+                onClick={loginWithGoogle}
+                className="w-2/5 border-2 border-solid rounded-full border-gray-800"
+              >
+                Google
+              </button>
+
             </form>
           </div>
         </div>

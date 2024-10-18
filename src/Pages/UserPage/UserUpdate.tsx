@@ -1,100 +1,149 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
 
-type User = {
-  username: string;
-  emailAddress: string;
-  password: string;
+type UserInformation = {
+  image: string; 
+  year: string;
+  month: string;
+  day: string;
 };
 
 const UserUpdate: React.FC = () => {
-  const { name } = useParams<{ name: string }>(); 
-  const [user, setUser] = useState<User | null>(null); 
-  const [newUsername, setNewUsername] = useState<string>(""); 
-  const [newEmailAddress, setNewEmailAddress] = useState<string>(""); 
-  const [message, setMessage] = useState<string>(""); 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
+  const [userInfo, setUserInfo] = useState<UserInformation>({
+    image: "",
+    year: "",
+    month: "",
+    day: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`/v3/api/user/${name}`);
-        setUser(response.data.data); 
-        setNewUsername(response.data.data.username); 
-        setNewEmailAddress(response.data.data.emailAddress);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setMessage("Failed to fetch user data.");
-      }
-    };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInfo((prev) => ({ ...prev, image: e.target.value }));
+  };
 
-    fetchUser(); 
-  }, [name]);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserInfo((prev) => ({ ...prev, [name]: value }));
+  };
 
+  const handleUpdate = async () => {
+    setLoading(true);
+    setMessage(null);
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (!userInfo.image || !userInfo.year || !userInfo.month || !userInfo.day) {
+      setMessage("Please fill in all fields.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      
-      await axios.put(`/v3/api/user/${name}`, {
-        username: newUsername,
-        emailAddress: newEmailAddress,
-        password: user?.password 
-      });
-      setMessage("User updated successfully!");
-      navigate("/user"); 
-    } catch (error) {
-      console.error("Error updating user:", error);
-      setMessage("Failed to update user.");
+      const token = localStorage.getItem("token"); 
+
+      if (!token) {
+        setMessage("Token is missing. Please login again.");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.put(
+        "/v3/api/user",
+        {
+          image: userInfo.image, 
+          year: userInfo.year,
+          month: userInfo.month,
+          day: userInfo.day,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status) {
+        setMessage("Update Success");
+        setTimeout(() => {
+          navigate("/user"); 
+        }, 1000); 
+      } else {
+        setMessage(response.data.message || "Update failed");
+      }
+    } catch (error: any) {
+      console.error("Error during update:", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+        setMessage(error.response.data.message || "Server error occurred.");
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        setMessage("No response from the server. Please try again later.");
+      } else {
+        console.error("Error setting up request:", error.message);
+        setMessage("Failed to send request. Please check your network.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!user) return <div>Loading...</div>; 
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Update User</h1>
-      <form onSubmit={handleUpdate} className="space-y-4">
-        <div>
-          <label className="block mb-1">Username</label>
+    <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg mt-5 mb-5">
+      <h2 className="text-2xl font-bold mb-4">Update User</h2>
+
+      <div className="mb-4">
+        <label className="block text-lg mb-1">Profile Image URL:</label>
+        <input
+          type="text"
+          name="image"
+          value={userInfo.image}
+          onChange={handleImageChange}
+          className="w-full p-2 border border-gray-300 rounded-lg"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-lg mb-1">Date of Birth:</label>
+        <div className="flex space-x-2">
           <input
             type="text"
-            value={newUsername}
-            onChange={(e) => setNewUsername(e.target.value)}
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg"
-            required
+            name="day"
+            placeholder="Day"
+            value={userInfo.day}
+            onChange={handleDateChange}
+            className="w-full p-2 border border-gray-300 rounded-lg"
           />
-        </div>
-        <div>
-          <label className="block mb-1">Email Address</label>
           <input
-            type="email"
-            value={newEmailAddress}
-            onChange={(e) => setNewEmailAddress(e.target.value)}
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg"
-            required
+            type="text"
+            name="month"
+            placeholder="Month"
+            value={userInfo.month}
+            onChange={handleDateChange}
+            className="w-full p-2 border border-gray-300 rounded-lg"
           />
-        </div>
-        <div>
-          <label className="block mb-1">Password</label>
           <input
-            type="password"
-            value="***************" // Không thay đổi mật khẩu
-            readOnly
-            className="w-full py-2 px-4 border border-gray-300 rounded-lg bg-gray-200"
+            type="text"
+            name="year"
+            placeholder="Year"
+            value={userInfo.year}
+            onChange={handleDateChange}
+            className="w-full p-2 border border-gray-300 rounded-lg"
           />
         </div>
-        <button
-          type="submit"
-          className="w-full py-2 px-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
-        >
-          Update User
-        </button>
-      </form>
-      {message && <p className="mt-4 text-red-500">{message}</p>} 
+      </div>
+
+      {/* Nút cập nhật */}
+      <button
+        onClick={handleUpdate}
+        className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors"
+        disabled={loading}
+      >
+        {loading ? "Updating..." : "Update"}
+      </button>
+
+      {message && <p className="text-center mt-4 text-red-500">{message}</p>}
     </div>
   );
 };

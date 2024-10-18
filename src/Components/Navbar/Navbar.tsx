@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "./logo.png";
 import { useAuth } from "../../Context/useAuth";
 import { FaUserCircle, FaShoppingCart } from 'react-icons/fa'; 
@@ -10,49 +10,57 @@ const Navbar: React.FC<Props> = () => {
   const { isLoggedIn, user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  const [cartCount, setCartCount] = useState<number>(0); // Giả sử giỏ hàng có số lượng
+  const [cartCount, setCartCount] = useState<number>(0);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
+    if (!searchQuery.trim()) {
+      navigate("/product");
+    } else {
       navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
+  useEffect(() => {
+    if (isLoggedIn()) {
+      setMenuOpen(false);
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (!location.pathname.startsWith("/search")) {
+      setSearchQuery(""); 
+    }
+  }, [location.pathname]);
 
   return (
-    <nav className="relative container mx-auto p-6">
-      <div className="flex items-center text-xl justify-between">
+    <nav className="relative w-full p-3 bg-white shadow-md sticky top-0 z-50 px-32">
+      <div className="flex items-center text-lg justify-between">
         <div className="flex items-center space-x-6">
           <Link to="/product">
             <img src={logo} alt="Logo" className="h-8" />
           </Link>
 
           <div className="flex space-x-6">
-            <Link to="/product" className="hover:text-blue-600">
-              Product
-            </Link>
-            <Link to="/category" className="hover:text-blue-600">
-              Category
-            </Link>
-            <Link to="/user" className="hover:text-blue-600">
-              User
-            </Link>
+            <Link to="/product" className="hover:text-blue-600">Product</Link>
+            <Link to="/category" className="hover:text-blue-600">Category</Link>
+            <Link to="/user" className="hover:text-blue-600">User</Link>
+            <Link to="/allorders" className="hover:text-blue-600">AllOrders</Link>
           </div>
-          <form onSubmit={handleSearch} className="flex flex-grow items-center">
+          <form onSubmit={handleSearch} className="flex flex-grow items-center ">
             <input
               type="text"
               placeholder="Search for products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full py-2 px-4 border border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500"
+              className="w-full py-2 px-4 border  border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500"
             />
           </form>
         </div>
 
         <div className="flex items-center space-x-6">
-          {/* Thêm biểu tượng giỏ hàng */}
           <div className="relative">
             <Link to="/cart" className="hover:text-blue-600">
               <FaShoppingCart className="text-2xl" />
@@ -73,8 +81,11 @@ const Navbar: React.FC<Props> = () => {
                 </button>
                 {menuOpen && (
                   <div className="absolute right-0 mt-2 w-52 bg-white border rounded-lg shadow-lg z-10 text-lg">
-                    <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">
+                    <Link to={`/user/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
                       Profile
+                    </Link>
+                    <Link to={`/user/update/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
+                      UpdateProfile
                     </Link>
                     <Link to="/change-password" className="block px-4 py-2 hover:bg-gray-100">
                       Change Password
@@ -91,13 +102,8 @@ const Navbar: React.FC<Props> = () => {
             </div>
           ) : (
             <div className="hidden lg:flex items-center space-x-6 text-gray-700">
-              <Link to="/login" className="hover:text-blue-600">
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="px-8 py-3 font-bold rounded text-white bg-green-500 hover:bg-green-600"
-              >
+              <Link to="/login" className="hover:text-yellow-600">Login</Link>
+              <Link to="/register" className="px-5 py-2 font-bold rounded text-white bg-yellow-500 hover:bg-yelow-600">
                 Signup
               </Link>
             </div>
@@ -109,3 +115,4 @@ const Navbar: React.FC<Props> = () => {
 };
 
 export default Navbar;
+

@@ -74,7 +74,7 @@ const Cart: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div className="max-w-screen-xl mx-auto p-6 bg-white">
       <table className="w-full text-left border-separate border-spacing-4 table-auto">
         <thead>
           <tr className="text-black-500">

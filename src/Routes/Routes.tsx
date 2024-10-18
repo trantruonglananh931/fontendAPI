@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import HomePage from "../Pages/HomePage/HomePage";
 import ProductPage from "../Pages/ProductPage/ProductList";
-import CompanyPage from "../Pages/CompanyPage/CompanyPage";
 import SearchPage from "../Pages/SearchPage/SearchPage";
 import CompanyProfile from "../Components/CompanyProfile/CompanyProfile";
 import IncomeStatement from "../Components/IncomeStatement/IncomeStatement";
@@ -26,15 +25,20 @@ import Cart from "../Pages/ProductPage/Cart";
 import Checkout from "../Pages/ProductPage/Checkout";
 import HistoryOrders from "../Pages/OrderPage/HistoryOrders";
 import UserProfile from "../Pages/UserPage/UserProfile";
+import AllHistoryOrders from "../Pages/OrderPage/AllHistoryOrders";
+import Finance from "../Pages/FinancePage/Finance";
+import Admin from "../Pages/AdminPage/Admin";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-    { path: "", element: <HomePage /> },
+    
+      { path: "admin", element: <Admin /> },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
+      { path: "", element: <ProductList /> },
       { path: "product", element: <ProductList /> },
       { path: "product/:id", element: <ProductDetail /> },
       { path: "product/update/:id", element: <ProductUpdate/>},
@@ -42,11 +46,13 @@ export const router = createBrowserRouter([
       { path: "cart" , element: <Cart/>},
       { path: "category", element: <CategoryList/> },
       { path: "user", element: <UserList/> },
+      { path : "allorders", element: <AllHistoryOrders/>},
       { path: "checkout", element: <Checkout/> },
       { path: "history-orders", element: <HistoryOrders/> },
       { path: "user/update/:name", element: <UserUpdate/>},
       { path:"change-password", element: <ChangePassword/>},
-      { path:"profile/:username", element: <UserProfile/>},
+      { path:"user/:username", element: <UserProfile/>},
+      { path:"finance", element: <Finance/>},
     {
         path: "search",
         element: (
@@ -54,21 +60,7 @@ export const router = createBrowserRouter([
         ),
       }, 
       //{ path: "design-guide", element: <DesignGuide /> },
-      {
-        path: "company/:ticker",
-        element: (
-          <ProtectedRoute>
-            <CompanyPage />
-          </ProtectedRoute>
-        ),
-        children: [
-          { path: "company-profile", element: <CompanyProfile /> },
-          { path: "income-statement", element: <IncomeStatement /> },
-          { path: "balance-sheet", element: <BalanceSheet /> },
-          { path: "cashflow-statement", element: <CashflowStatement /> },
-          { path: "historical-dividend", element: <HistoricalDividend /> },
-        ],
-      }, 
+      
     ],
   },
 ]);

@@ -5,12 +5,14 @@ import { loginAPI, registerAPI } from "../Services/AuthService";
 import { toast } from "react-toastify";
 import React from "react";
 import axios from "axios";
+import { useGoogleLogin, googleLogout } from '@react-oauth/google';
 
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
-  registerUser: ( username: string,email: string, password: string) => void;
+  registerUser: ( username: string, email: string, password: string) => void;
   loginUser: (username: string, password: string) => void;
+  loginWithGoogle: () => void;
   logout: () => void;
   isLoggedIn: () => boolean;
 };
@@ -36,25 +38,79 @@ export const UserProvider = ({ children }: Props) => {
     setIsReady(true);
   }, []);
 
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await axios.get(
+          `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+              Accept: 'application/json',
+            },
+          }
+        );
+  
+        const userProfile = res.data;
+        setUser(userProfile);
+  
+        // Tạm thời giả lập phản hồi từ backend
+        const backendResponse = {
+          success: true,
+          token: "fake_token", 
+          user: {
+            userName: userProfile.name,
+            email: userProfile.email,
+          },
+        };
+  
+        if (backendResponse.success) {
+          
+          localStorage.setItem("token", backendResponse.token);
+          localStorage.setItem("user", JSON.stringify(backendResponse.user));
+  
+          
+          setToken(backendResponse.token);
+          setUser(backendResponse.user);
+  
+          // Chuyển hướng đến trang /product
+          navigate('/product');
+        } else {
+          toast.error("Login failed. Please try again.");
+        }
+        
+      } catch (err) {
+        console.error('Failed to fetch user info:', err);
+        toast.error("Login failed. Please try again.");
+      }
+    },
+    onError: (error) => {
+      console.error('Google Login Failed:', error);
+      toast.error("Google Login Failed");
+    },
+  });
+  
+
   const registerUser = async (
-    
     username: string,
     email: string,
     password: string
   ) => {
-    await registerAPI( username, email, password)
+    await registerAPI(username, email, password)
       .then((res) => {
         if (res) {
           localStorage.setItem("token", res?.data.token);
+          
           const userObj = {
             userName: res?.data.userName,
             email: res?.data.email,
           };
           localStorage.setItem("user", JSON.stringify(userObj));
+          console.log("User Object:", userObj);
           setToken(res?.data.token!);
           setUser(userObj!);
           toast.success("Login Success!");
-          navigate("/home");
+          navigate("");
         }
       })
       .catch((e) => toast.warning("Server error occured"));
@@ -84,6 +140,7 @@ export const UserProvider = ({ children }: Props) => {
   };
 
   const logout = () => {
+    googleLogout();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
@@ -93,7 +150,7 @@ export const UserProvider = ({ children }: Props) => {
 
   return (
     <UserContext.Provider
-      value={{ loginUser, user, token, logout, isLoggedIn, registerUser }}
+      value={{ loginUser, loginWithGoogle, user, token, logout, isLoggedIn, registerUser }}
     >
       {isReady ? children : null}
     </UserContext.Provider>

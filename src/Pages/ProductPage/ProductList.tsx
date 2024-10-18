@@ -59,7 +59,7 @@ const Carousel: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-[600px] mb-8">
+    <div className="relative w-full h-[700px] mb-8">
       <img
         src={slides[currentSlide].imageUrl}
         alt="carousel slide"
@@ -84,7 +84,7 @@ const Carousel: React.FC = () => {
         {slides.map((_, index) => (
           <div
             key={index}
-            className={`w-3 h-3 mx-2 rounded-full ${
+            className={`w-2 h-2 mx-2 rounded-full ${
               currentSlide === index ? "bg-white" : "bg-gray-400"
             }`}
           ></div>
@@ -180,7 +180,7 @@ const ProductList: React.FC = () => {
         </select>
       </div>
 
-      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {Array.isArray(products) && products.length > 0 ? (
           products.map((product) => (
             <li
@@ -195,7 +195,7 @@ const ProductList: React.FC = () => {
               />
               <div className="mt-4">
                 <h2 className="text-l">{product.productName}</h2>
-                <p className="text-gray-800 font-semibold">${product.price}</p>
+                <p className="text-red-500 text-lg font-semibold">${product.price}</p>
                 <p className="text-gray-600">{product.categoryId}</p>
               </div>
               <div className="flex justify-center space-x-4 mt-4">

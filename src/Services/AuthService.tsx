@@ -17,7 +17,6 @@ export const loginAPI = async (username: string, password: string) => {
 };
 
 export const registerAPI = async (
-  
   username: string,
   email: string,
   password: string
