@@ -11,6 +11,13 @@ type CartItem = {
   quantity: number;
 };
 
+type CartItem_ = {
+  ProductId: string;
+  productName: string;
+  price: number;
+  Quantity: number;
+};
+
 type NewOrder = {
   address: string;
   methodOfPaymentId: number;
@@ -28,16 +35,43 @@ const Checkout: React.FC = () => {
 
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get("/v2/api/Product/GetAllSessions");
-      const data = response.data.data;
-      if (Array.isArray(data)) {
-        setCartItems(data);
-      } else {
-        console.error("Data is not an array:", data);
-        setCartItems([]);
+      const storedCart = localStorage.getItem("cart");
+      if (storedCart) 
+      {
+        const parsedCart = JSON.parse(storedCart);
+        if (Array.isArray(parsedCart) && parsedCart.length > 0) 
+        {
+          setCartItems(parsedCart);
+
+          const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; 
+          for (const product of parsedCart) 
+          {
+            const cartItem: CartItem_ = 
+            {
+              ProductId: String(product.productId),
+              productName: product.productName,
+              price: product.price,
+              Quantity: product.quantity,
+            };
+            try 
+            {
+              await axios.post("/v2/api/Product/sessions", cartItem, 
+                {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              });
+            } catch (error) 
+            {
+              console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);
+              alert(`Không thể thêm sản phẩm ${product.productName} vào giỏ hàng.`);
+            }
+          }
+        }
       }
     } catch (error) {
-      console.error("Error fetching cart items:", error);
+      console.error("Lỗi khi lấy sản phẩm trong giỏ hàng:", error);
     }
   };
 
@@ -63,15 +97,16 @@ const Checkout: React.FC = () => {
         },
       });
 
-      if (response.data.status || response.data.Status) { 
-        alert("Order created successfully!");
+      if (response.data.status || response.data.Status) {
+        localStorage.removeItem("cart"); 
+        alert("Đơn hàng đã được tạo thành công!");
         navigate("/history-orders"); 
       } else {
-        setError(response.data.message || "Failed to create order.");
+        setError(response.data.message || "Không thể tạo đơn hàng.");
       }
     } catch (error) {
-      console.error("Error during checkout:", error);
-      setError("An error occurred during checkout. Please try again.");
+      console.error("Lỗi trong quá trình thanh toán:", error);
+      setError("Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -84,7 +119,7 @@ const Checkout: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-lg">
       {/* Hiển thị giỏ hàng */}
-      <h3 className="text-xl font-semibold mb-2">Shopping Cart</h3>
+      <h3 className="text-xl font-semibold mb-2">Giỏ hàng</h3>
       <div className="mb-4">
         {cartItems.map((item) => (
           <div key={item.productId} className="flex justify-between items-center mb-2">
@@ -92,18 +127,18 @@ const Checkout: React.FC = () => {
               <img src={item.image} alt={item.productName} className="w-20 h-24 mr-4" />
               <span>{item.productName} (x{item.quantity})</span>
             </div>
-            <span>${item.price * item.quantity}</span>
+            <span>{item.price * item.quantity}đ</span>
           </div>
         ))}
       </div>
 
       <div className="flex justify-between font-bold mb-4">
-        <span>Total:</span>
-        <span>${calculateTotal()}</span>
+        <span>Tổng cộng:</span>
+        <span>{calculateTotal()}đ</span>
       </div>
 
       <div className="mb-4">
-        <label className="block text-lg mb-2">Shipping Address:</label>
+        <label className="block text-lg mb-2">Địa chỉ giao hàng:</label>
         <textarea
           rows={3}
           className="w-full p-2 border border-gray-300 rounded-lg"
@@ -114,13 +149,13 @@ const Checkout: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-lg mb-2">Payment Method:</label>
+        <label className="block text-lg mb-2">Phương thức thanh toán:</label>
         <select
           className="w-full p-2 border border-gray-300 rounded-lg"
           value={paymentMethodId}
           onChange={(e) => setPaymentMethodId(Number(e.target.value))}
         >
-          <option value={1}>Credit Card</option>
+          <option value={1}>Thanh toán khi nhận hàng</option>
           <option value={2}>PayPal</option>
         </select>
       </div>
@@ -132,7 +167,7 @@ const Checkout: React.FC = () => {
         onClick={handleCheckout}
         disabled={loading}
       >
-        {loading ? "Processing..." : "Place Order"}
+        {loading ? "Đang xử lý..." : "Đặt hàng"}
       </button>
     </div>
   );

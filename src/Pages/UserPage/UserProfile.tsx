@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import UserUpdate from "./UserUpdate"; // Import UserUpdate component
+import UserUpdate from "./UserUpdate"; 
 
 type UserProfileData = {
   username: string;
@@ -11,7 +11,7 @@ type UserProfileData = {
 
 const UserProfile: React.FC = () => {
   const [userData, setUserData] = useState<UserProfileData | null>(null);
-  const [isUpdating, setIsUpdating] = useState(false); // State to toggle update mode
+  const [isUpdating, setIsUpdating] = useState(false); 
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -27,10 +27,10 @@ const UserProfile: React.FC = () => {
         if (response.data.status) {
           setUserData(response.data.data); 
         } else {
-          console.error("Error fetching user data:", response.data.message);
+          console.error("Lỗi khi lấy dữ liệu người dùng:", response.data.message);
         }
       } catch (error) {
-        console.error("Failed to fetch user profile:", error);
+        console.error("Lấy thông tin người dùng thất bại:", error);
       }
     };
 
@@ -38,20 +38,20 @@ const UserProfile: React.FC = () => {
   }, []);
 
   const handleUpdateClick = () => {
-    setIsUpdating(true); // Set updating mode to true
+    setIsUpdating(true); 
   };
 
   if (isUpdating) {
-    return <UserUpdate />; // Render UserUpdate component when in updating mode
+    return <UserUpdate />; 
   }
 
-  if (!userData) return <p>Loading...</p>;
+  if (!userData) return <p>Đang tải...</p>;
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white">
       <img
         src={userData.image || "https://via.placeholder.com/150"}
-        alt="User Avatar"
+        alt="Hình đại diện người dùng"
         className="w-32 h-32 rounded-full mx-auto"
       />
       <h2 className="text-center text-2xl mt-4">{userData.username}</h2>
@@ -63,7 +63,7 @@ const UserProfile: React.FC = () => {
         onClick={handleUpdateClick}
         className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors mt-4"
       >
-        Update
+        Cập nhật
       </button>
     </div>
   );

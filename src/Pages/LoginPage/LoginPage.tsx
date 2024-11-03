@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '../../Context/useAuth';
@@ -12,8 +12,8 @@ type LoginFormsInputs = {
 };
 
 const validation = Yup.object().shape({
-  userName: Yup.string().required('Username is required'),
-  password: Yup.string().required('Password is required'),
+  userName: Yup.string().required('Tên đăng nhập là bắt buộc'),
+  password: Yup.string().required('Mật khẩu là bắt buộc'),
 });
 
 const LoginPage = (props: Props) => {
@@ -35,20 +35,20 @@ const LoginPage = (props: Props) => {
         <div className="w-full bg-white rounded-lg shadow dark:border md:mb-20 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
-              Sign in to your account
+              Đăng nhập vào tài khoản của bạn
             </h1>
             <form
               className="space-y-4 md:space-y-6"
               onSubmit={handleSubmit(handleLogin)}
             >
               <div>
-                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Username
+                <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Tên đăng nhập
                 </label>
                 <input
                   type="text"
                   id="username"
-                  placeholder="Username"
+                  placeholder="Tên đăng nhập"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   {...register('userName')}
                 />
@@ -56,7 +56,7 @@ const LoginPage = (props: Props) => {
               </div>
               <div>
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password
+                  Mật khẩu
                 </label>
                 <input
                   type="password"
@@ -71,16 +71,16 @@ const LoginPage = (props: Props) => {
                 type="submit"
                 className="w-2/5 font-bold h-10 border-2 rounded-full bg-yellow-500 hover:text-white"
               >
-                Sign in
+                Đăng nhập
               </button>
               <div className="w-full border text-center my-4">
-                <p>Or</p>
+                <p>Hoặc</p>
               </div>
               <button
                 onClick={loginWithGoogle}
                 className="w-2/5 border-2 border-solid rounded-full border-gray-800"
               >
-                Google
+                Đăng nhập với Google
               </button>
 
             </form>

@@ -27,13 +27,14 @@ const HistoryOrders: React.FC = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get("/v5/Api/Order");
+        console.log("Dữ liệu phản hồi:", response.data);
         if (response.data.status) {
           setOrders(response.data.data);
         } else {
           setError(response.data.message);
         }
       } catch (err) {
-        setError("An error occurred while loading the order list.");
+        setError("Có lỗi xảy ra khi tải danh sách đơn hàng.");
       } finally {
         setLoading(false);
       }
@@ -52,7 +53,7 @@ const HistoryOrders: React.FC = () => {
         setError(response.data.message);
       }
     } catch (err) {
-      setError("An error occurred while loading order details.");
+      setError("Có lỗi xảy ra khi tải chi tiết đơn hàng.");
     }
   };
 
@@ -61,24 +62,24 @@ const HistoryOrders: React.FC = () => {
     setOrderDetails([]);
   };
 
-  if (loading) return <div className="text-center text-xl">Loading...</div>;
+  if (loading) return <div className="text-center text-xl">Đang tải...</div>;
   if (error) return <div className="text-red-500 text-center text-lg">{error}</div>;
 
   return (
     <div className="max-w-screen-xl mx-auto p-6 bg-white ">
       {orders.length === 0 ? (
-        <div className="text-center text-lg text-gray-600">You have no orders yet.</div>
+        <div className="text-center text-lg text-gray-600">Bạn chưa có đơn hàng nào.</div>
       ) : (
         <table className="w-full text-left border border-gray-200  overflow-hidden">
           <thead className="bg-gray-100">
             <tr className="text-gray-700">
-              <th className="py-3 px-4">Order ID</th>
-              <th className="py-3 px-4">Order Date</th>
-              <th className="py-3 px-4">Total Price</th>
-              <th className="py-3 px-4">Address</th>
-              <th className="py-3 px-4">Order Status</th>
-              <th className="py-3 px-4">Shipping Status</th>
-              <th className="py-3 px-4">Actions</th>
+              <th className="py-3 px-4">ID Đơn Hàng</th>
+              <th className="py-3 px-4">Ngày Đặt Hàng</th>
+              <th className="py-3 px-4">Tổng Giá</th>
+              <th className="py-3 px-4">Địa Chỉ</th>
+              <th className="py-3 px-4">Trạng Thái Đơn</th>
+              <th className="py-3 px-4">Trạng Thái Vận Chuyển</th>
+              <th className="py-3 px-4">Hành Động</th>
             </tr>
           </thead>
           <tbody>
@@ -86,7 +87,7 @@ const HistoryOrders: React.FC = () => {
               <tr key={order.id} className="border-b hover:bg-gray-50">
                 <td className="py-4 px-4 text-gray-800">{order.id}</td>
                 <td className="py-4 px-4 text-gray-800">{new Date(order.date).toLocaleString()}</td>
-                <td className="py-4 px-4 text-gray-800">${order.totalPrice.toFixed(2)}</td>
+                <td className="py-4 px-4 text-gray-800">{order.totalPrice}đ</td>
                 <td className="py-4 px-4 text-gray-800">{order.address}</td>
                 <td className="py-4 px-4 text-gray-800">{order.stateOrder}</td>
                 <td className="py-4 px-4 text-gray-800">{order.stateTransport}</td>
@@ -95,7 +96,7 @@ const HistoryOrders: React.FC = () => {
                     className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition duration-200"
                     onClick={() => fetchOrderDetails(order.id)}
                   >
-                    Detail
+                    Chi Tiết
                   </button>
                 </td>
               </tr>
@@ -121,13 +122,13 @@ const HistoryOrders: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <h3 className="text-2xl font-semibold mb-4">Order Details</h3>
+            <h3 className="text-2xl font-semibold mb-4">Chi Tiết Đơn Hàng</h3>
             <table className="w-full text-left border border-gray-200 rounded-lg overflow-hidden">
               <thead className="bg-gray-100">
                 <tr className="text-gray-700">
-                  <th className="py-3 px-4">Product Name</th>
-                  <th className="py-3 px-4">Quantity</th>
-                  <th className="py-3 px-4">Price</th>
+                  <th className="py-3 px-4">Tên Sản Phẩm</th>
+                  <th className="py-3 px-4">Số Lượng</th>
+                  <th className="py-3 px-4">Giá</th>
                 </tr>
               </thead>
               <tbody>
@@ -135,7 +136,7 @@ const HistoryOrders: React.FC = () => {
                   <tr key={index} className="border-b hover:bg-gray-50">
                     <td className="py-4 px-4 text-gray-800">{detail.productName}</td>
                     <td className="py-4 px-4 text-gray-800">{detail.quantity}</td>
-                    <td className="py-4 px-4 text-gray-800">${detail.price.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-gray-800">{detail.price}đ</td>
                   </tr>
                 ))}
               </tbody>

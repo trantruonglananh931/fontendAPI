@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'; 
 
 type Product = {
   id: string;
@@ -21,19 +22,19 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    imageUrl: "/images/m1acnkuz77djwysa293cta1800x833.webp",
-    link: "/collection/summer2024",
+    imageUrl: "/images/caurousel/m1acnkuz77djwysa293cta1800x833.webp",
+    link: "/collection/summer2024.html",
   },
   {
-    imageUrl: "/images/m1h7ajcd0sottxawyzu9a_Heroweb.webp",
+    imageUrl: "/images/caurousel/m1h7ajcd0sottxawyzu9a_Heroweb.webp",
     link: "/collection/winter2024",
   },
   {
-    imageUrl: "/images/m1ra3e0i7won6u05a1qJ1800x833.webp",
+    imageUrl: "/images/caurousel/m1ra3e0i7won6u05a1qJ1800x833.webp",
     link: "/collection/winter2024",
   },
   {
-    imageUrl: "/images/m1h5t6esl6r65pev2xp1800x833b.webp",
+    imageUrl: "/images/caurousel/m1h5t6esl6r65pev2xp1800x833b.webp",
     link: "/collection/winter2024",
   },
 ];
@@ -62,7 +63,7 @@ const Carousel: React.FC = () => {
     <div className="relative w-full h-[700px] mb-8">
       <img
         src={slides[currentSlide].imageUrl}
-        alt="carousel slide"
+        alt="hình ảnh carousel"
         className="w-full h-full object-cover cursor-pointer"
         onClick={handleClickSlide}
       />
@@ -97,6 +98,9 @@ const Carousel: React.FC = () => {
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<boolean | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const productsPerPage = 8; 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -110,11 +114,12 @@ const ProductList: React.FC = () => {
 
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
+          setTotalProducts(response.data.data.length); // Cập nhật tổng số sản phẩm
         } else {
           setProducts([]);
         }
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Lỗi khi lấy sản phẩm:", error);
       }
     };
 
@@ -122,16 +127,16 @@ const ProductList: React.FC = () => {
   }, [sortOrder]);
 
   const handleDelete = async (id: string) => {
-    const isConfirmed = window.confirm("Are you sure delete?");
+    const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa?");
     if (!isConfirmed) return;
 
     try {
       await axios.delete(`/v2/api/Product/${id}`);
       setProducts(products.filter((product) => product.id !== id));
-      alert("Product deleted successfully!");
+      alert("Xóa sản phẩm thành công!");
     } catch (error) {
-      console.error("Error deleting product:", error);
-      alert("Failed to delete the product.");
+      console.error("Lỗi khi xóa sản phẩm:", error);
+      alert("Xóa sản phẩm thất bại.");
     }
   };
 
@@ -158,6 +163,14 @@ const ProductList: React.FC = () => {
     }
   };
 
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
+
   return (
     <div className="container mx-auto p-4">
       <Carousel />
@@ -167,22 +180,22 @@ const ProductList: React.FC = () => {
           onClick={handleAddNewProduct}
           className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600"
         >
-          Add New Product
+          Thêm sản phẩm mới
         </button>
         <select
           onChange={handleSortChange}
           value={sortOrder === null ? "none" : sortOrder ? "asc" : "desc"}
           className="py-2 px-4 border border-gray-300 rounded-lg"
         >
-          <option value="none">Sort by Price</option>
-          <option value="asc">High to Low</option>
-          <option value="desc">Low to High</option>
+          <option value="none">Sắp xếp theo giá</option>
+          <option value="asc">Cao đến Thấp</option>
+          <option value="desc">Thấp đến Cao</option>
         </select>
       </div>
 
       <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {Array.isArray(products) && products.length > 0 ? (
-          products.map((product) => (
+        {Array.isArray(currentProducts) && currentProducts.length > 0 ? (
+          currentProducts.map((product) => (
             <li
               key={product.id}
               className="cursor-pointer"
@@ -195,7 +208,7 @@ const ProductList: React.FC = () => {
               />
               <div className="mt-4">
                 <h2 className="text-l">{product.productName}</h2>
-                <p className="text-red-500 text-lg font-semibold">${product.price}</p>
+                <p className="text-red-500 text-lg font-semibold">{product.price}đ</p>
                 <p className="text-gray-600">{product.categoryId}</p>
               </div>
               <div className="flex justify-center space-x-4 mt-4">
@@ -206,7 +219,7 @@ const ProductList: React.FC = () => {
                   }}
                   className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
                 >
-                  Update
+                  Cập nhật
                 </button>
                 <button
                   onClick={(e) => {
@@ -215,15 +228,38 @@ const ProductList: React.FC = () => {
                   }}
                   className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
                 >
-                  Delete
+                  Xóa
                 </button>
               </div>
             </li>
           ))
         ) : (
-          <p>No products found.</p>
+          <p>Không tìm thấy sản phẩm nào.</p>
         )}
       </ul>
+
+
+      <div className="flex justify-between items-center mt-6">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="bg-gray-300 mx-72 text-black font-semibold py-2 px-4 rounded-lg hover:bg-gray-400 flex items-center"
+        >
+          <FaChevronLeft />
+        </button>
+        <span className="mx-4">
+          Trang {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="bg-gray-300 mx-72 text-black font-semibold py-2 px-4 rounded-lg hover:bg-gray-400 flex items-center"
+        >
+          <FaChevronRight /> 
+        </button>
+      </div>
+
+
     </div>
   );
 };

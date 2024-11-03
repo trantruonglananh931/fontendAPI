@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaTrashAlt } from "react-icons/fa"; // Trash icon for delete action
-import { useNavigate } from "react-router-dom"; // Using useNavigate instead of useHistory
+import { FaTrashAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 type CartItem = {
   productId: number;
   productName: string;
   price: number;
-  quantity: number; 
+  quantity: number;
   image: string;
 };
 
@@ -15,62 +15,71 @@ const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const navigate = useNavigate();
 
+  const saveCartToLocalStorage = (items: CartItem[]) => {
+    localStorage.setItem("cart", JSON.stringify(items));
+  };
+
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await axios.get("/v2/api/Product/GetAllSessions");
-        console.log("API Response:", response.data); 
-        const data = response.data.data; 
-        if (Array.isArray(data)) {
-          setCartItems(data);
-        } else {
-          console.error("Data is not an array:", data);
-          setCartItems([]); 
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    if (storedCart.length > 0) {
+      setCartItems(storedCart);
+    } else {
+      const fetchCartItems = async () => {
+        try {
+          const response = await axios.get("/v2/api/Product/GetAllSessions");
+          const data = response.data.data;
+          if (Array.isArray(data)) {
+            setCartItems(data);
+            saveCartToLocalStorage(data);
+          } else {
+            console.error("Dữ liệu không phải là một mảng:", data);
+            setCartItems([]);
+          }
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu giỏ hàng:", error);
         }
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      }
-    };
-    fetchCartItems();
+      };
+      fetchCartItems();
+    }
   }, []);
 
   const handleQuantityChange = (productId: number, change: number) => {
     const updatedItems = cartItems.map((item) =>
       item.productId === productId
-        ? {
-            ...item,
-            Quantity: Math.max(item.quantity + change, 1), 
-          }
+        ? { ...item, quantity: Math.max(item.quantity + change, 1) }
         : item
     );
     setCartItems(updatedItems);
+    saveCartToLocalStorage(updatedItems);
   };
 
   const handleRemoveFromCart = async (productId: number) => {
     try {
       await axios.delete(`/v2/api/Product/Remove/${productId}`);
-      setCartItems(cartItems.filter((item) => item.productId !== productId));
-      alert("Product removed from cart!");
+      
+      const updatedItems = cartItems.filter((item) => item.productId !== productId);
+      setCartItems(updatedItems);
+      
+      saveCartToLocalStorage(updatedItems); 
+      
+      alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
     } catch (error) {
-      console.error("Error removing product from cart:", error);
+      console.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng:", error);
     }
   };
+
   const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
     if (cartItems.length > 0) {
-      navigate("/checkout");
+      navigate("/checkout", { state: { totalAmount } });
     } else {
-      alert("No items in cart");
+      alert("Không có sản phẩm trong giỏ hàng");
     }
   };
 
   if (cartItems.length === 0) {
-    return <div className="text-center text-2xl text-gray-700">Your cart is empty</div>;
-  }
-
-  if (cartItems.length === 0) {
-    return <div className="text-center text-2xl text-gray-700">Your cart is empty</div>;
+    return <div className="text-center text-2xl text-gray-700">Giỏ hàng của bạn đang trống</div>;
   }
 
   return (
@@ -78,11 +87,11 @@ const Cart: React.FC = () => {
       <table className="w-full text-left border-separate border-spacing-4 table-auto">
         <thead>
           <tr className="text-black-500">
-            <th className="w-1/2 text-left">Product</th>
-            <th className="w-1/6 text-center">Unit Price</th>
-            <th className="w-1/6 text-center">Quantity</th>
-            <th className="w-1/6 text-center">Total Price</th>
-            <th className="w-1/6 text-center">Actions</th>
+            <th className="w-1/2 text-left">Sản phẩm</th>
+            <th className="w-1/6 text-center">Giá bán</th>
+            <th className="w-1/6 text-center">Số lượng</th>
+            <th className="w-1/6 text-center">Tổng giá</th>
+            <th className="w-1/6 text-center"></th>
           </tr>
         </thead>
         <tbody>
@@ -94,7 +103,7 @@ const Cart: React.FC = () => {
                   <h2 className="text-lg font-semibold">{item.productName}</h2>
                 </div>
               </td>
-              <td className="text-center text-lg text-gray-800">${item.price.toFixed(2)}</td>
+              <td className="text-center text-lg text-gray-800">{item.price}đ</td>
               <td className="text-center">
                 <div className="flex items-center justify-center space-x-2">
                   <button
@@ -113,7 +122,7 @@ const Cart: React.FC = () => {
                   </button>
                 </div>
               </td>
-              <td className="text-center text-lg text-gray-800">${(item.price * item.quantity).toFixed(2)}</td>
+              <td className="text-center text-lg text-gray-800">{(item.price * item.quantity)}đ</td>
               <td className="text-center">
                 <button
                   onClick={() => handleRemoveFromCart(item.productId)}
@@ -129,23 +138,22 @@ const Cart: React.FC = () => {
 
       <div className="mt-6 flex justify-between items-center">
         <div className="text-lg font-medium">
-          <a href="#" className="text-blue-600 hover:underline">View all shop vouchers</a>
+          <a href="#" className="text-blue-600 hover:underline">Xem tất cả voucher</a>
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-2xl font-semibold">
-            Total Amount: <span className="text-blue-600">${totalAmount.toFixed(2)}</span>
+            Tổng giá trị: <span className="text-blue-600">{totalAmount}đ</span>
           </div>
           <div className="mt-1">
             <button
               className="px-6 py-3 bg-green-500 text-white text-xl rounded-lg shadow-md hover:bg-green-600 transition-colors"
               onClick={handleCheckout}
             >
-              Checkout
+              Thanh toán
             </button>
           </div>
         </div>
       </div>
-
     </div>
   );
 };

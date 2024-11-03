@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 type Props = {};
 
 type RegisterFormsInputs = {
@@ -13,9 +14,9 @@ type RegisterFormsInputs = {
 };
 
 const validation = Yup.object().shape({
-  userName: Yup.string().required("Username is required"),
-  email: Yup.string().email("Invalid email address").required("Email is required"),
-  password: Yup.string().required("Password is required"),
+  userName: Yup.string().required("Tên người dùng là bắt buộc"),
+  email: Yup.string().email("Địa chỉ email không hợp lệ").required("Email là bắt buộc"),
+  password: Yup.string().required("Mật khẩu là bắt buộc"),
 });
 
 const RegisterPage = (props: Props) => {
@@ -40,12 +41,12 @@ const RegisterPage = (props: Props) => {
       });
 
       if (response.data) {
-        alert("Registration successful!");
+        alert("Đăng ký thành công!");
         navigate("/login");
       }
     } catch (error) {
-      setErrorMessage("Registration failed. Please try again.");
-      console.error("Error during registration:", error);
+      setErrorMessage("Đăng ký không thành công. Vui lòng thử lại.");
+      console.error("Lỗi trong quá trình đăng ký:", error);
     } finally {
       setLoading(false);
     }
@@ -57,7 +58,7 @@ const RegisterPage = (props: Props) => {
         <div className="w-full bg-white rounded-lg shadow dark:border md:mb-20 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
-              Sign up to your account
+              Đăng ký tài khoản của bạn
             </h1>
             <form
               className="space-y-4 md:space-y-6"
@@ -68,13 +69,13 @@ const RegisterPage = (props: Props) => {
                   htmlFor="username"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Username
+                  Tên người dùng
                 </label>
                 <input
                   type="text"
                   id="username"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Username"
+                  placeholder="Tên người dùng"
                   {...register("userName")}
                 />
                 {errors.userName && (
@@ -106,7 +107,7 @@ const RegisterPage = (props: Props) => {
                   htmlFor="password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Password
+                  Mật khẩu
                 </label>
                 <input
                   type="password"
@@ -130,21 +131,21 @@ const RegisterPage = (props: Props) => {
                   className="w-2/5 font-bold h-10 border-2 rounded-full bg-yellow-500 hover:text-white hover:border-1 active:bg-blue-700 focus:outline-none focus:ring focus:ring-violet-300"
                   disabled={loading}
                 >
-                  {loading ? "Signing up..." : "Sign up"}
+                  {loading ? "Đang đăng ký..." : "Đăng ký"}
                 </button>
               </div>
 
               <p className="text-sm italic text-gray-500 dark:text-gray-400">
-                Have an account yet?{" "}
+                Bạn đã có tài khoản?{" "}
                 <a
                   href="/login"
-                  className=" not-italic text-primary-600 hover:underline dark:text-primary-500"
+                  className="not-italic text-primary-600 hover:underline dark:text-primary-500"
                 >
-                  Sign in
+                  Đăng nhập
                 </a>
               </p>
               <div className="w-full border text-center">
-                <p>Or</p>
+                <p>Hoặc</p>
               </div>
               <div className="flex justify-around">
                 <button className="border-2 border-solid rounded-full border-gray-800 w-2/5">

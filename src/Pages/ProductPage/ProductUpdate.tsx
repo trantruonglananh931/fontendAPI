@@ -6,14 +6,14 @@ type UpdateProduct = {
   id: string;
   productName: string;
   description: string;
-  image: string;
+  image: string; 
   quantityStock: number;
   price: number;
   categoryId: string;
 };
 
 const ProductUpdate: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); 
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<UpdateProduct>({
     id: "",
@@ -24,12 +24,12 @@ const ProductUpdate: React.FC = () => {
     price: 0,
     categoryId: "",
   });
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]); 
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
-      const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; 
+      const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
 
       try {
         const response = await axios.get(`/v2/api/Product/${id}`, {
@@ -38,14 +38,13 @@ const ProductUpdate: React.FC = () => {
           },
         });
 
-     
         if (response.data && response.data.data) {
           setProduct(response.data.data);
         } else {
-          console.error("Product data is not available");
+          console.error("Dữ liệu sản phẩm không khả dụng");
         }
       } catch (error) {
-        console.error("Error fetching product details:", error);
+        console.error("Lỗi khi lấy thông tin sản phẩm:", error);
       }
     };
 
@@ -53,16 +52,16 @@ const ProductUpdate: React.FC = () => {
       try {
         const response = await axios.get("/v4/api/Category");
         if (response.data && Array.isArray(response.data.data)) {
-          setCategories(response.data.data); 
+          setCategories(response.data.data);
         } else {
-          console.error("Categories data is not an array");
-          setCategories([]); 
+          console.error("Dữ liệu danh mục không phải là một mảng");
+          setCategories([]);
         }
       } catch (error) {
-        console.error("Error fetching categories:", error);
-        setCategories([]); 
+        console.error("Lỗi khi lấy danh mục:", error);
+        setCategories([]);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -78,17 +77,31 @@ const ProductUpdate: React.FC = () => {
     const { name, value } = e.target;
     setProduct({
       ...product,
-      [name]: name === "quantityStock" || name === "price" ? +value : value, 
+      [name]: name === "quantityStock" || name === "price" ? +value : value,
     });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProduct((prev) => ({
+          ...prev,
+          image: reader.result as string, // Lưu kết quả dưới dạng base64
+        }));
+      };
+      reader.readAsDataURL(file); // Đọc file hình ảnh
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; 
+    const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
 
     try {
       await axios.put(
-        `/v2/api/Product`, 
+        `/v2/api/Product`,
         product,
         {
           headers: {
@@ -97,24 +110,24 @@ const ProductUpdate: React.FC = () => {
           }
         }
       );
-      alert("Product updated successfully!");
-      navigate("/product"); 
+      alert("Cập nhật sản phẩm thành công!");
+      navigate("/product");
     } catch (error) {
-      console.error("Error updating product:", error);
-      alert("Failed to update the product.");
+      console.error("Lỗi khi cập nhật sản phẩm:", error);
+      alert("Cập nhật sản phẩm thất bại.");
     }
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>Đang tải...</p>;
   }
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-6">Update Product</h1>
+      <h1 className="text-2xl font-bold mb-6">Cập nhật sản phẩm</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Product Name</label>
+          <label className="block text-gray-700 font-semibold mb-2">Tên sản phẩm</label>
           <input
             type="text"
             name="productName"
@@ -125,7 +138,7 @@ const ProductUpdate: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Description</label>
+          <label className="block text-gray-700 font-semibold mb-2">Mô tả</label>
           <textarea
             name="description"
             value={product.description}
@@ -135,18 +148,23 @@ const ProductUpdate: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Image URL</label>
+          <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh</label>
           <input
-            type="text"
-            name="image"
-            value={product.image}
-            onChange={handleChange}
+            type="file"
+            accept="image/*" // Chỉ cho phép chọn hình ảnh
+            onChange={handleImageChange}
             className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            required
           />
+          {product.image && (
+            <img
+              src={product.image}
+              alt="Product Preview"
+              className="mt-2 w-28 h-40 object-cover rounded-lg"
+            />
+          )}
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Quantity in Stock</label>
+          <label className="block text-gray-700 font-semibold mb-2">Số lượng trong kho</label>
           <input
             type="number"
             name="quantityStock"
@@ -157,7 +175,7 @@ const ProductUpdate: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Price</label>
+          <label className="block text-gray-700 font-semibold mb-2">Giá</label>
           <input
             type="number"
             name="price"
@@ -168,7 +186,7 @@ const ProductUpdate: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-black font-semibold mb-2">Category</label>
+          <label className="block text-black font-semibold mb-2">Danh mục</label>
           <select
             name="categoryId"
             value={product.categoryId}
@@ -176,7 +194,7 @@ const ProductUpdate: React.FC = () => {
             className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-black"
             required
           >
-            <option value="">Select a category</option>
+            <option value="">Chọn một danh mục</option>
             {categories.map((category) => (
               <option className="text-black" key={category.id} value={category.id}>
                 {category.name}
@@ -189,7 +207,7 @@ const ProductUpdate: React.FC = () => {
             type="submit"
             className="bg-blue-500 text-black font-semibold py-2 px-4 rounded-lg hover:bg-blue-600"
           >
-            Update Product
+            Cập nhật sản phẩm
           </button>
         </div>
       </form>

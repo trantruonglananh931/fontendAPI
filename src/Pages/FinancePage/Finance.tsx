@@ -22,7 +22,7 @@ const Finance: React.FC = () => {
   const [financeData, setFinanceData] = useState<FinanceData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'chart' | 'table'>('chart'); // Trạng thái để quản lý chế độ hiển thị
+  const [viewMode, setViewMode] = useState<'chart' | 'table'>('chart'); 
 
   const [start, setStart] = useState<number | null>(null);
   const [end, setEnd] = useState<number | null>(null);
@@ -53,11 +53,11 @@ const Finance: React.FC = () => {
         setFinanceData(response.data.data);
       } else {
         setFinanceData([]);
-        setError('No data available.');
+        setError('Không có dữ liệu.');
       }
     } catch (err) {
-      console.error('Error fetching finance data:', err);
-      setError('Failed to fetch finance data.');
+      console.error('Lỗi khi lấy dữ liệu tài chính:', err);
+      setError('Không thể lấy dữ liệu tài chính.');
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,7 @@ const Finance: React.FC = () => {
 
   useEffect(() => {
     fetchFinanceData();
-  }, [isDescendingByPrice]); // Gọi API khi giá trị isDescendingByPrice thay đổi
+  }, [isDescendingByPrice]); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,10 +73,10 @@ const Finance: React.FC = () => {
   };
 
   const chartData = {
-    labels: financeData.map((data) => `Month ${data.month}`),
+    labels: financeData.map((data) => `Tháng ${data.month}`),
     datasets: [
       {
-        label: 'Revenue',
+        label: 'Doanh thu',
         data: financeData.map((data) => data.total),
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
@@ -89,38 +89,37 @@ const Finance: React.FC = () => {
     responsive: true,
     plugins: {
       legend: { position: 'top' as const },
-      title: { display: true, text: 'Monthly Revenue Overview' },
+      title: { display: true, text: 'Tổng quan doanh thu hàng tháng' },
     },
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Đang tải...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Monthly Finance Overview</h1>
+      <h1 className="text-2xl font-bold mb-6">Tổng quan tài chính hàng tháng</h1>
 
-      {/* Nút chuyển đổi giữa bảng và biểu đồ */}
       <div className="mb-4">
         <button
           onClick={() => setViewMode('chart')}
           className={`px-4 py-2 rounded ${viewMode === 'chart' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
         >
-          Chart View
+          Xem biểu đồ
         </button>
         <button
           onClick={() => setViewMode('table')}
           className={`ml-2 px-4 py-2 rounded ${viewMode === 'table' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
         >
-          Table View
+          Xem bảng
         </button>
       </div>
 
-      {/* Form nhập Start Month, End Month, Year và nút Fetch Data */}
+
       <form onSubmit={handleSubmit} className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div>
-            <label className="block mb-2">Start Month</label>
+            <label className="block mb-2">Tháng Bắt đầu</label>
             <input
               type="number"
               value={start || ''}
@@ -131,7 +130,7 @@ const Finance: React.FC = () => {
           </div>
 
           <div>
-            <label className="block mb-2">End Month</label>
+            <label className="block mb-2">Tháng Kết thúc</label>
             <input
               type="number"
               value={end || ''}
@@ -142,27 +141,27 @@ const Finance: React.FC = () => {
           </div>
 
           <div>
-            <label className="block mb-2">Year</label>
+            <label className="block mb-2">Năm</label>
             <input
               type="number"
               value={year || ''}
               onChange={(e) => setYear(parseInt(e.target.value) || null)}
               className="w-28 px-4 py-2 border rounded"
-              placeholder="Year"
+              placeholder="Năm"
             />
             <button type="submit" className="ml-4 bg-blue-500 text-white px-4 py-2 rounded">
-              Fetch Data
+              Lấy Dữ liệu
             </button>
           </div>
           <div>
-            <label className="block mb-2">Sort by</label>
+            <label className="block mb-2">Sắp xếp theo</label>
             <select
               value={isDescendingByPrice ? 'desc' : 'asc'}
               onChange={(e) => setIsDescendingByPrice(e.target.value === 'desc')}
               className="w-40 px-4 py-2 border rounded"
             >
-              <option value="asc">Ascending</option>
-              <option value="desc">Descending</option>
+              <option value="asc">Tăng dần</option>
+              <option value="desc">Giảm dần</option>
             </select>
           </div>
         </div>
@@ -174,11 +173,11 @@ const Finance: React.FC = () => {
           <Bar data={chartData} options={chartOptions} />
         </div>
       ) : (
-        <div className="overflow-x-auto w-full  mx-auto">
+        <div className="overflow-x-auto w-full mx-auto">
           <table className="w-full border border-gray-300">
             <thead>
               <tr className="bg-gray-200">
-                <th className="border border-gray-300 px-4 py-2">Month</th>
+                <th className="border border-gray-300 px-4 py-2">Tháng</th>
                 {financeData.map((data) => (
                   <th key={data.month} className="border border-gray-300 px-4 py-2">{data.month}</th>
                 ))}
@@ -186,7 +185,7 @@ const Finance: React.FC = () => {
             </thead>
             <tbody>
               <tr className="hover:bg-gray-100">
-                <td className="border border-gray-300 px-4 py-2">Total Revenue ($)</td>
+                <td className="border border-gray-300 px-4 py-2">Tổng doanh thu ($)</td>
                 {financeData.map((data) => (
                   <td key={data.month} className="border border-gray-300 px-4 py-2">{data.total}</td>
                 ))}

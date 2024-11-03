@@ -28,7 +28,7 @@ import UserProfile from "../Pages/UserPage/UserProfile";
 import AllHistoryOrders from "../Pages/OrderPage/AllHistoryOrders";
 import Finance from "../Pages/FinancePage/Finance";
 import Admin from "../Pages/AdminPage/Admin";
-
+import Winter2024 from "../Pages/collection/winter2024";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -53,6 +53,7 @@ export const router = createBrowserRouter([
       { path:"change-password", element: <ChangePassword/>},
       { path:"user/:username", element: <UserProfile/>},
       { path:"finance", element: <Finance/>},
+      {path:"collection/winter2024", element:<Winter2024/>},
     {
         path: "search",
         element: (

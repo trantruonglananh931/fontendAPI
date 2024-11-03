@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
-
 type Product = {
   id: string;
   productName: string;
@@ -41,7 +40,6 @@ const SearchPage: React.FC = () => {
       if (response.data && response.data.data) {
         let fetchedProducts = response.data.data;
 
-
         if (sortOrder !== null) {
           fetchedProducts = fetchedProducts.sort((a: Product, b: Product) =>
             sortOrder ? a.price - b.price : b.price - a.price
@@ -53,10 +51,9 @@ const SearchPage: React.FC = () => {
         setProducts([]);
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Lỗi khi lấy sản phẩm:', error);
     }
   };
-
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,21 +72,20 @@ const SearchPage: React.FC = () => {
   };
 
   const handleDetail = (productId: string) => {
-    alert(`View details of product with ID: ${productId}`);
+    alert(`Xem chi tiết sản phẩm với ID: ${productId}`);
   };
 
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        
         <select
           onChange={handleSortChange}
           value={sortOrder === null ? "none" : sortOrder ? "asc" : "desc"}
           className="py-2 px-4 border border-gray-300 rounded-lg"
         >
-          <option value="none">Sort by Price</option>
-          <option value="asc">Low to High</option>
-          <option value="desc">High to Low</option>
+          <option value="none">Sắp xếp theo giá</option>
+          <option value="asc">Từ thấp đến cao</option>
+          <option value="desc">Từ cao đến thấp</option>
         </select>
       </div>
 
@@ -114,7 +110,7 @@ const SearchPage: React.FC = () => {
             </li>
           ))
         ) : (
-          <p>No products found.</p>
+          <p>Không tìm thấy sản phẩm.</p>
         )}
       </ul>
     </div>

@@ -74,14 +74,14 @@ const CategoryList: React.FC = () => {
   const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
 
   const handleDelete = async (id: string) => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this category?");
+    const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa loại sản phẩm này?");
     if (!isConfirmed) {
       return;
     }
 
     try {
       await axios.delete(`/v4/api/Category/${id}`);
-      alert('Category deleted successfully!');
+      alert('Xóa thành công!');
       fetchCategories();
     } catch (error) {
       console.error("Error deleting category:", error);
@@ -91,7 +91,7 @@ const CategoryList: React.FC = () => {
 
   const handleUpdate = async () => {
     if (editCategoryId === null || !editCategoryName.trim()) {
-      alert('Category name is required for update!');
+      alert('Không thể cập nhật loại sản phẩm này!');
       return;
     }
 
@@ -115,7 +115,7 @@ const CategoryList: React.FC = () => {
       fetchCategories();
       setEditCategoryId(null);
       setEditCategoryName("");
-      alert('Category updated successfully!');
+      alert('Cập nhật thành công');
     } catch (error) {
       console.error("Error updating category:", error);
       alert('Failed to update category.');
@@ -130,14 +130,14 @@ const CategoryList: React.FC = () => {
             type="text"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
-            placeholder="New category name"
+            placeholder="Thêm tên loại sản phẩm"
             className="py-2 px-4 border border-gray-300 rounded-lg"
           />
           <button
             onClick={handleAdd}
             className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600"
           >
-            Add Category
+            Thêm danh mục
           </button>
         </div>
       </div>
@@ -178,13 +178,13 @@ const CategoryList: React.FC = () => {
                       onClick={() => handleEdit(category.id, category.categorName)}
                       className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
                     >
-                      Edit
+                      Sửa
                     </button>
                     <button
                       onClick={() => handleDelete(category.id)}
                       className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
                     >
-                      Delete
+                      Xóa
                     </button>
                   </>
                 )}

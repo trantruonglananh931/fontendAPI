@@ -17,7 +17,7 @@ const ChangePassword: React.FC = () => {
     e.preventDefault();
 
     if (newPassword !== confirmNewPassword) {
-      setMessage("New passwords do not match!");
+      setMessage("Mật khẩu mới không khớp!");
       return;
     }
 
@@ -34,18 +34,18 @@ const ChangePassword: React.FC = () => {
       setNewPassword("");
       setConfirmNewPassword("");
     } catch (error) {
-      console.error("Error changing password:", error);
-      setMessage("Failed to change password.");
+      console.error("Lỗi khi thay đổi mật khẩu:", error);
+      setMessage("Thay đổi mật khẩu không thành công.");
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Change Password</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Đổi Mật Khẩu</h1>
       <div className="max-w-md mx-auto">
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div className="relative">
-            <label className="block mb-1">Old Password</label>
+            <label className="block mb-1">Mật Khẩu Cũ</label>
             <input
               type={showOldPassword ? "text" : "password"}
               value={oldPassword}
@@ -62,7 +62,7 @@ const ChangePassword: React.FC = () => {
             </button>
           </div>
           <div className="relative">
-            <label className="block mb-1">New Password</label>
+            <label className="block mb-1">Mật Khẩu Mới</label>
             <input
               type={showNewPassword ? "text" : "password"}
               value={newPassword}
@@ -79,7 +79,7 @@ const ChangePassword: React.FC = () => {
             </button>
           </div>
           <div className="relative">
-            <label className="block mb-1">Confirm New Password</label>
+            <label className="block mb-1">Xác Nhận Mật Khẩu Mới</label>
             <input
               type={showConfirmNewPassword ? "text" : "password"}
               value={confirmNewPassword}
@@ -100,7 +100,7 @@ const ChangePassword: React.FC = () => {
               type="submit"
               className="w-full py-2 px-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
             >
-              Change Password
+              Đổi Mật Khẩu
             </button>
           </div>
         </form>

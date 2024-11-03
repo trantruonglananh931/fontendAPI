@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-// Cập nhật kiểu dữ liệu User để bao gồm cả trường image và birthDay
+// Cập nhật kiểu dữ liệu User để bao gồm cả trường hình ảnh và ngày sinh
 type User = {
   username: string;
   emailAddress: string;
@@ -34,11 +34,11 @@ const UserList: React.FC = () => {
       if (response.data && Array.isArray(response.data.data)) {
         setUsers(response.data.data);
       } else {
-        console.error("Data is not an array:", response.data);
+        console.error("Dữ liệu không phải là một mảng:", response.data);
         setUsers([]);
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Lỗi khi lấy người dùng:", error);
       setUsers([]);
     }
   };
@@ -65,7 +65,7 @@ const UserList: React.FC = () => {
 
   const handleUpdate = async () => {
     if (!editUsername.trim() || !editEmailAddress.trim()) {
-      alert("All fields are required for update!");
+      alert("Tất cả các trường đều cần thiết để cập nhật!");
       return;
     }
     try {
@@ -86,17 +86,16 @@ const UserList: React.FC = () => {
       setEditEmailAddress("");
       setEditImage(null);
       setEditBirthDay(null);
-      alert("User updated successfully!");
+      alert("Người dùng đã được cập nhật thành công!");
       fetchUsers();
     } catch (error) {
-      console.error("Error updating user:", error);
-      alert("Failed to update user.");
+      console.error("Lỗi khi cập nhật người dùng:", error);
+      alert("Cập nhật người dùng không thành công.");
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-     
       <ul className="space-y-4">
         {users.length > 0 ? (
           users.map(user => (
@@ -117,7 +116,7 @@ const UserList: React.FC = () => {
                   />
                   <input
                     type="text"
-                    placeholder="Image URL"
+                    placeholder="URL hình ảnh"
                     value={editImage || ""}
                     onChange={(e) => setEditImage(e.target.value)}
                     className="w-full py-2 px-4 border border-gray-300 rounded-lg"
@@ -134,7 +133,7 @@ const UserList: React.FC = () => {
                   <h2 className="text-lg font-bold">{user.username}</h2>
                   <p className="text-gray-600">{user.emailAddress}</p>
                   {user.image && <img src={user.image} alt={`${user.username}'s avatar`} className="w-16 h-16 rounded-full" />}
-                  <p className="text-gray-600">{user.birthDay ? `Birthday: ${user.birthDay}` : "Birthday: N/A"}</p>
+                  <p className="text-gray-600">{user.birthDay ? `Ngày sinh: ${user.birthDay}` : "Ngày sinh: N/A"}</p>
                 </div>
               )}
               <div className="space-x-2">
@@ -144,13 +143,13 @@ const UserList: React.FC = () => {
                       onClick={handleUpdate}
                       className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
                     >
-                      Save
+                      Lưu
                     </button>
                     <button
                       onClick={handleCancelEdit}
                       className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
                     >
-                      Cancel
+                      Hủy
                     </button>
                   </>
                 ) : (
@@ -159,7 +158,7 @@ const UserList: React.FC = () => {
                       onClick={() => handleEdit(user)}
                       className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
                     >
-                      Update
+                      Cập nhật
                     </button>
                   </>
                 )}
@@ -167,7 +166,7 @@ const UserList: React.FC = () => {
             </li>
           ))
         ) : (
-          <p>No users found.</p>
+          <p>Không tìm thấy người dùng nào.</p>
         )}
       </ul>
     </div>

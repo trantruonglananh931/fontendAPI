@@ -44,57 +44,58 @@ const Navbar: React.FC<Props> = () => {
           </Link>
 
           <div className="flex space-x-6">
-            <Link to="/product" className="hover:text-blue-600">Product</Link>
-            <Link to="/category" className="hover:text-blue-600">Category</Link>
-            <Link to="/user" className="hover:text-blue-600">User</Link>
-            <Link to="/allorders" className="hover:text-blue-600">AllOrders</Link>
+            <Link to="/product" className="hover:text-blue-600">Sản phẩm</Link>
+            <Link to="/category" className="hover:text-blue-600">Danh mục</Link>
+            <Link to="/user" className="hover:text-blue-600">Người dùng</Link>
+            <Link to="/allorders" className="hover:text-blue-600">Tất cả đơn hàng</Link>
           </div>
           <form onSubmit={handleSearch} className="flex flex-grow items-center ">
             <input
               type="text"
-              placeholder="Search for products..."
+              placeholder="Tìm kiếm sản phẩm..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full py-2 px-4 border  border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500"
+              className="w-full py-2 px-4 border border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500"
             />
           </form>
         </div>
 
         <div className="flex items-center space-x-6">
-          <div className="relative">
-            <Link to="/cart" className="hover:text-blue-600">
-              <FaShoppingCart className="text-2xl" />
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 text-xs bg-red-600 text-white rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          </div>
+          {isLoggedIn() && ( 
+            <div className="relative">
+              <Link to="/cart" className="hover:text-blue-600 flex items-center">
+                <FaShoppingCart className="text-2xl" />
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-0 text-xs bg-red-600 text-white rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </div>
+          )}
 
           {isLoggedIn() ? (
             <div className="hidden lg:flex items-center space-x-6 text-gray-700">
-              <div className="hover:text-blue-600">Welcome, {user?.userName}</div>
-              <div className="relative">
+              <div className="relative flex items-start">
                 <button onClick={() => setMenuOpen(!menuOpen)}>
                   <FaUserCircle className="text-2xl hover:text-blue-600" />
                 </button>
                 {menuOpen && (
                   <div className="absolute right-0 mt-2 w-52 bg-white border rounded-lg shadow-lg z-10 text-lg">
                     <Link to={`/user/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
-                      Profile
+                      Hồ sơ
                     </Link>
                     <Link to={`/user/update/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
-                      UpdateProfile
+                      Cập nhật hồ sơ
                     </Link>
                     <Link to="/change-password" className="block px-4 py-2 hover:bg-gray-100">
-                      Change Password
+                      Đổi mật khẩu
                     </Link>
                     <Link to="/history-orders" className="block px-4 py-2 hover:bg-gray-100">
-                      History Orders
+                      Lịch sử đơn hàng
                     </Link>
                     <button onClick={logout} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                      Logout
+                      Đăng xuất
                     </button>
                   </div>
                 )}
@@ -102,9 +103,9 @@ const Navbar: React.FC<Props> = () => {
             </div>
           ) : (
             <div className="hidden lg:flex items-center space-x-6 text-gray-700">
-              <Link to="/login" className="hover:text-yellow-600">Login</Link>
-              <Link to="/register" className="px-5 py-2 font-bold rounded text-white bg-yellow-500 hover:bg-yelow-600">
-                Signup
+              <Link to="/login" className="hover:text-yellow-600">Đăng nhập</Link>
+              <Link to="/register" className="px-5 py-2 font-bold rounded text-white bg-yellow-500 hover:bg-yellow-600">
+                Đăng ký
               </Link>
             </div>
           )}
@@ -115,4 +116,3 @@ const Navbar: React.FC<Props> = () => {
 };
 
 export default Navbar;
-
