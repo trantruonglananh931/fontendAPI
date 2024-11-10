@@ -36,20 +36,20 @@ const Navbar: React.FC<Props> = () => {
   }, [location.pathname]);
 
   return (
-    <nav className="relative w-full p-3 bg-white shadow-md sticky top-0 z-50 px-32">
+    <nav className="relative w-full p-3 bg-green-500 shadow-md sticky top-0 z-50 px-32 text-white">
       <div className="flex items-center text-lg justify-between">
         <div className="flex items-center space-x-6">
           <Link to="/product">
-            <img src={logo} alt="Logo" className="h-8" />
+            <img src={logo} alt="Logo" className="h-14" />
           </Link>
 
           <div className="flex space-x-6">
             <Link to="/product" className="hover:text-blue-600">Sản phẩm</Link>
-            <Link to="/category" className="hover:text-blue-600">Danh mục</Link>
-            <Link to="/user" className="hover:text-blue-600">Người dùng</Link>
-            <Link to="/allorders" className="hover:text-blue-600">Tất cả đơn hàng</Link>
+            <Link to="/category/8a1a7c13-a4f8-4024-929e-08dce5269250" className="hover:text-blue-600">Váy</Link>
+            <Link to="/category/d482d529-bf45-4013-929d-08dce5269250" className="hover:text-blue-600">Áo thun</Link>
+            <Link to="/category/88b4d4b2-2608-486a-a233-08dce5e0c1a7" className="hover:text-blue-600">Quần dài</Link>
           </div>
-          <form onSubmit={handleSearch} className="flex flex-grow items-center ">
+          <form onSubmit={handleSearch} className="flex flex-grow items-center text-black ">
             <input
               type="text"
               placeholder="Tìm kiếm sản phẩm..."
@@ -66,7 +66,7 @@ const Navbar: React.FC<Props> = () => {
               <Link to="/cart" className="hover:text-blue-600 flex items-center">
                 <FaShoppingCart className="text-2xl" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 text-xs bg-red-600 text-white rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute top-0 right-0 text-xs bg-red-600 rounded-full h-5 w-5 flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -75,13 +75,13 @@ const Navbar: React.FC<Props> = () => {
           )}
 
           {isLoggedIn() ? (
-            <div className="hidden lg:flex items-center space-x-6 text-gray-700">
+            <div className="hidden lg:flex items-center space-x-6">
               <div className="relative flex items-start">
                 <button onClick={() => setMenuOpen(!menuOpen)}>
                   <FaUserCircle className="text-2xl hover:text-blue-600" />
                 </button>
                 {menuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 bg-white border rounded-lg shadow-lg z-10 text-lg">
+                  <div className="absolute right-0 mt-2 w-52 bg-white text-green-700 border rounded-lg shadow-lg z-10 text-lg">
                     <Link to={`/user/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
                       Hồ sơ
                     </Link>
@@ -102,9 +102,9 @@ const Navbar: React.FC<Props> = () => {
               </div>
             </div>
           ) : (
-            <div className="hidden lg:flex items-center space-x-6 text-gray-700">
-              <Link to="/login" className="hover:text-yellow-600">Đăng nhập</Link>
-              <Link to="/register" className="px-5 py-2 font-bold rounded text-white bg-yellow-500 hover:bg-yellow-600">
+            <div className="hidden lg:flex items-center space-x-6 font-bold text-white">
+              <Link to="/login" className="hover:text-blue-600">Đăng nhập</Link>
+              <Link to="/register" className="px-5 py-2 font-bold rounded text-white bg-blue-500 hover:bg-blue-600">
                 Đăng ký
               </Link>
             </div>
