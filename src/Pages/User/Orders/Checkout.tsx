@@ -1,45 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useLocation, useNavigate } from "react-router-dom"; 
 import axios from "axios";
-import { CartItem , CartItem_} from "../../../Models/CartItem";
+import { CartItem, CartItem_ } from "../../../Models/CartItem";
 import { NewOrder } from "../../../Models/OrderItem";
 
 const Checkout: React.FC = () => {
   const [address, setAddress] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState<number>(1);
   const [loading, setLoading] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<CartItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate(); 
-
-  const fetchCartItems = async () => {
-    try {
-      const storedCart = localStorage.getItem("cart");
-      if (storedCart) {
-        const parsedCart = JSON.parse(storedCart);
-        if (Array.isArray(parsedCart) && parsedCart.length > 0) {
-          setCartItems(parsedCart);
-          // Chỉ gửi giỏ hàng khi người dùng thực hiện checkout, không gửi khi tải giỏ hàng
-        }
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy sản phẩm trong giỏ hàng:", error);
-    }
-  };
-  
+  const location = useLocation();
 
   useEffect(() => {
-    fetchCartItems();
-  }, []);
+    const selectedCartItems = location.state?.selectedCartItems || [];
+    setSelectedItems(selectedCartItems);
+  }, [location.state]);
 
   const handleCheckout = async () => {
     setLoading(true);
     setError(null);
   
     try {
-      // Trước khi gửi yêu cầu tạo đơn hàng, bạn có thể gửi giỏ hàng vào API này
       const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; 
-      for (const product of cartItems) {
+      for (const product of selectedItems) {
         const cartItem: CartItem_ = {
           ProductId: String(product.productId),
           productName: product.productName,
@@ -73,7 +58,13 @@ const Checkout: React.FC = () => {
       });
   
       if (response.data.status || response.data.Status) {
-        localStorage.removeItem("cart");
+        // Xóa các sản phẩm đã chọn khỏi giỏ hàng trong localStorage
+        const updatedCart = (JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[]).filter(
+          (item) => !selectedItems.some((selected) => selected.productId === item.productId)
+        );
+        
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        
         alert("Đơn hàng đã được tạo thành công!");
         navigate("/history-orders");
       } else {
@@ -86,18 +77,16 @@ const Checkout: React.FC = () => {
       setLoading(false);
     }
   };
-  
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      {/* Hiển thị giỏ hàng */}
-      <h3 className="text-xl font-semibold mb-2">Giỏ hàng</h3>
+      <h3 className="text-xl font-semibold mb-2">Sản phẩm đã chọn</h3>
       <div className="mb-4">
-        {cartItems.map((item) => (
+        {selectedItems.map((item) => (
           <div key={item.productId} className="flex justify-between items-center mb-2">
             <div>
               <img src={item.image} alt={item.productName} className="w-20 h-24 mr-4" />

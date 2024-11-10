@@ -6,13 +6,14 @@ import { CartItem } from "../../../Models/CartItem";
 
 const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
   const navigate = useNavigate();
 
   const saveCartToLocalStorage = (items: CartItem[]) => {
     localStorage.setItem("cart", JSON.stringify(items));
   };
 
-  // Lấy giỏ hàng từ localStorage hoặc API
   useEffect(() => {
     const fetchCartItems = async () => {
       const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -51,40 +52,62 @@ const Cart: React.FC = () => {
     saveCartToLocalStorage(updatedItems);
   };
 
-  const handleRemoveFromCart = async (productId: string) => {
-    try {
-      await axios.delete(`/v2/api/Product/Remove/${productId}`);
-
-      const updatedItems = cartItems.filter((item) => item.productId !== productId);
-      setCartItems(updatedItems);
-
-      saveCartToLocalStorage(updatedItems);
-
-      alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
-    } catch (error) {
-      console.error("Lỗi khi xóa sản phẩm khỏi giỏ hàng:", error);
-    }
+  const handleRemoveFromCart = (productId: string) => {
+    const updatedItems = cartItems.filter((item) => item.productId !== productId);
+    setCartItems(updatedItems);
+    saveCartToLocalStorage(updatedItems);
+    alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
   };
 
-  const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const handleSelectItem = (productId: string) => {
+    setSelectedItems((prevSelected) =>
+      prevSelected.includes(productId)
+        ? prevSelected.filter((id) => id !== productId)
+        : [...prevSelected, productId]
+    );
+  };
 
-  const handleCheckout = async () => {
-    if (cartItems.length > 0) {
-      navigate("/checkout", { state: { totalAmount } });
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedItems([]);
     } else {
-      alert("Không có sản phẩm trong giỏ hàng");
+      setSelectedItems(cartItems.map((item) => item.productId));
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const handleCheckout = () => {
+    const selectedCartItems = cartItems.filter((item) =>
+      selectedItems.includes(item.productId)
+    );
+
+    if (selectedCartItems.length > 0) {
+      navigate("/checkout", { state: { selectedCartItems } });
+    } else {
+      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
     }
   };
+
+  const totalAmount = cartItems
+    .filter((item) => selectedItems.includes(item.productId))
+    .reduce((total, item) => total + item.price * item.quantity, 0);
 
   if (cartItems.length === 0) {
     return <div className="text-center text-2xl text-gray-700 p-4">Giỏ hàng của bạn đang trống</div>;
   }
 
   return (
-    <div className="max-w-screen-xl mx-auto p-6 bg-white">
+    <div className="max-w-screen-xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
       <table className="w-full text-left border-separate border-spacing-4 table-auto">
-        <thead>
-          <tr className="text-black-500">
+        <thead className="">
+          <tr className="text-gray-700">
+            <th className="w-1/12 text-center">
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+              />
+            </th>
             <th className="w-1/2 text-left">Sản phẩm</th>
             <th className="w-1/6 text-center">Giá bán</th>
             <th className="w-1/6 text-center">Số lượng</th>
@@ -95,10 +118,17 @@ const Cart: React.FC = () => {
         <tbody>
           {cartItems.map((item) => (
             <tr key={item.productId} className="border-b">
-              <td className="flex items-center space-x-4">
-                <img src={item.image} alt={item.productName} className="w-28 h-32 rounded-lg" />
+              <td className="text-center">
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(item.productId)}
+                  onChange={() => handleSelectItem(item.productId)}
+                />
+              </td>
+              <td className="flex items-center space-x-4 py-4">
+                <img src={item.image} alt={item.productName} className="w-28 h-32" />
                 <div>
-                  <h2 className="text-lg font-semibold">{item.productName}</h2>
+                  <h2 className="text-lg font-semibold text-gray-800">{item.productName}</h2>
                 </div>
               </td>
               <td className="text-center text-lg text-gray-800">{item.price}đ</td>
@@ -106,15 +136,15 @@ const Cart: React.FC = () => {
                 <div className="flex items-center justify-center space-x-2">
                   <button
                     onClick={() => handleQuantityChange(item.productId, -1)}
-                    className="px-2 py-1 bg-gray-300 rounded-lg"
+                    className="px-3 py-1 bg-gray-300 rounded-lg transition hover:bg-gray-400"
                     disabled={item.quantity <= 1}
                   >
                     -
                   </button>
-                  <span className="px-4">{item.quantity}</span>
+                  <span className="px-4 text-lg font-semibold">{item.quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(item.productId, 1)}
-                    className="px-2 py-1 bg-gray-300 rounded-lg"
+                    className="px-3 py-1 bg-gray-300 rounded-lg transition hover:bg-gray-400"
                   >
                     +
                   </button>
@@ -124,7 +154,7 @@ const Cart: React.FC = () => {
               <td className="text-center">
                 <button
                   onClick={() => handleRemoveFromCart(item.productId)}
-                  className="text-red-500"
+                  className="text-red-500 hover:text-red-700 transition"
                 >
                   <FaTrashAlt />
                 </button>
@@ -134,15 +164,16 @@ const Cart: React.FC = () => {
         </tbody>
       </table>
 
-      <div className="flex justify-between items-center mt-6">
-        <div className="text-lg font-semibold">Tổng cộng: {totalAmount}đ</div>
+      <div className="flex justify-end items-center mt-6 border-t pt-4 space-x-4">
+        <div className="text-xl font-bold text-green-500">Tổng cộng: {totalAmount}đ</div>
         <button
           onClick={handleCheckout}
-          className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition-colors"
+          className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-all"
         >
           Thanh toán
         </button>
       </div>
+
     </div>
   );
 };
