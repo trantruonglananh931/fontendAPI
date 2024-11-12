@@ -18,8 +18,6 @@ export type User = {
 };
 
 export type UserInformation = {
-  image: string; 
-  year: string;
-  month: string;
-  day: string;
+  image: string | null; 
+  birthDay: string;
 };

@@ -1,25 +1,35 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import UserUpdate from "./UserUpdate"; 
-import { User } from "../../../Models/User"
+import UserUpdate from "./UserUpdate";
+import { User } from "../../../Models/User";
 
 const UserProfile: React.FC = () => {
   const [userData, setUserData] = useState<User | null>(null);
-  const [isUpdating, setIsUpdating] = useState(false); 
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          '/v3/api/user/GetCurrentUser', 
+          '/v3/api/user/GetCurrentUser',
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
 
         if (response.data.status) {
-          setUserData(response.data.data); 
+          // Chuyển đổi birthDay thành định dạng ngày tháng thân thiện
+          const userData = response.data.data;
+          if (userData.birthDay) {
+            const birthDate = new Date(userData.birthDay);
+            userData.birthDay = birthDate.toLocaleDateString("vi-VN", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            });
+          }
+          setUserData(userData);
         } else {
           console.error("Lỗi khi lấy dữ liệu người dùng:", response.data.message);
         }
@@ -28,15 +38,15 @@ const UserProfile: React.FC = () => {
       }
     };
 
-    fetchUserProfile(); 
+    fetchUserProfile();
   }, []);
 
   const handleUpdateClick = () => {
-    setIsUpdating(true); 
+    setIsUpdating(true);
   };
 
   if (isUpdating) {
-    return <UserUpdate />; 
+    return <UserUpdate />;
   }
 
   if (!userData) return <p>Đang tải...</p>;
@@ -50,9 +60,8 @@ const UserProfile: React.FC = () => {
       />
       <h2 className="text-center text-2xl mt-4">{userData.username}</h2>
       <p className="text-center">{userData.emailAddress}</p>
-      <p className="text-center">{userData.birthDay}</p>
-      
-      {/* Nút cập nhật */}
+      <p className="text-center">Ngày sinh: {userData.birthDay}</p>
+
       <button
         onClick={handleUpdateClick}
         className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors mt-4"

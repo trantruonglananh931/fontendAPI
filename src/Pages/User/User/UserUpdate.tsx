@@ -1,15 +1,13 @@
-import React, { useState } from "react"; 
+import React, { useState } from "react";  
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
-import { UserInformation } from "../../../Models/User"
+import { UserInformation } from "../../../Models/User";
 
 const UserUpdate: React.FC = () => {
   const navigate = useNavigate(); 
   const [userInfo, setUserInfo] = useState<UserInformation>({
     image: "",
-    year: "",
-    month: "",
-    day: "",
+    birthDay: "",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -23,15 +21,14 @@ const UserUpdate: React.FC = () => {
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserInfo((prev) => ({ ...prev, [name]: value }));
+    setUserInfo((prev) => ({ ...prev, birthDay: e.target.value }));
   };
 
   const handleUpdate = async () => {
     setLoading(true);
     setMessage(null);
 
-    if (!userInfo.image || !userInfo.year || !userInfo.month || !userInfo.day) {
+    if (!userInfo.image || !userInfo.birthDay) {
       setMessage("Vui lòng điền tất cả các trường.");
       setLoading(false);
       return;
@@ -50,9 +47,7 @@ const UserUpdate: React.FC = () => {
         "/v3/api/user",
         {
           image: userInfo.image, 
-          year: userInfo.year,
-          month: userInfo.month,
-          day: userInfo.day,
+          birthDay: userInfo.birthDay, 
         },
         {
           headers: {
@@ -65,7 +60,7 @@ const UserUpdate: React.FC = () => {
       if (response.data.status) {
         setMessage("Cập nhật thành công");
         setTimeout(() => {
-          navigate("/user"); 
+          navigate("/"); 
         }, 1000); 
       } else {
         setMessage(response.data.message || "Cập nhật thất bại");
@@ -103,35 +98,15 @@ const UserUpdate: React.FC = () => {
 
       <div className="mb-4">
         <label className="block text-lg mb-1">Ngày sinh:</label>
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            name="day"
-            placeholder="Ngày"
-            value={userInfo.day}
-            onChange={handleDateChange}
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-          <input
-            type="text"
-            name="month"
-            placeholder="Tháng"
-            value={userInfo.month}
-            onChange={handleDateChange}
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-          <input
-            type="text"
-            name="year"
-            placeholder="Năm"
-            value={userInfo.year}
-            onChange={handleDateChange}
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
+        <input
+          type="date"
+          name="birthDay"
+          value={userInfo.birthDay}
+          onChange={handleDateChange}
+          className="w-full p-2 border border-gray-300 rounded-lg"
+        />
       </div>
 
-     
       <button
         onClick={handleUpdate}
         className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors"
@@ -145,4 +120,4 @@ const UserUpdate: React.FC = () => {
   );
 };
 
-export default UserUpdate; 
+export default UserUpdate;
