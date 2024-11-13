@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
 import { UserInformation } from "../../../Models/User";
-
+import Navbar from "../../../Components/Navbar/Navbar";
 const UserUpdate: React.FC = () => {
   const navigate = useNavigate(); 
   const [userInfo, setUserInfo] = useState<UserInformation>({
@@ -83,6 +83,8 @@ const UserUpdate: React.FC = () => {
   };
 
   return (
+    <div className="w-full">
+        <Navbar/>
     <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg mt-5 mb-5">
       <h2 className="text-2xl font-bold mb-4">Cập nhật người dùng</h2>
 
@@ -116,6 +118,8 @@ const UserUpdate: React.FC = () => {
       </button>
 
       {message && <p className="text-center mt-4 text-red-500">{message}</p>}
+    </div>
+    
     </div>
   );
 };

@@ -1,10 +1,10 @@
-// src/pages/User/Order/HistoryOrders.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { OrderItem, OrderDetailItem } from "../../../Models/OrderItem";
 import Table from "../../../Components/Table/Table";
 import { FaEye } from "react-icons/fa"; 
 import OrderDetail from "../../../Components/Orders/OrderDetail";
+import Navbar from "../../../Components/Navbar/Navbar";
 
 const HistoryOrders: React.FC = () => {
   const [orders, setOrders] = useState<OrderItem[]>([]);
@@ -57,37 +57,42 @@ const HistoryOrders: React.FC = () => {
     setOrderDetails([]);
   };
 
-  return loading ? (
-    <div className="text-center text-xl">Đang tải...</div>
-  ) : error ? (
-    <div className="text-red-500 text-center text-lg">{error}</div>
-  ) : (
-    <>
-      <Table<OrderItem>
-        headers={headers}
-        data={orders}
-        renderRow={(order: OrderItem) => (
-          <>
-            <td className="py-4 px-4">{order.id}</td>
-            <td className="py-4 px-4">{new Date(order.date).toLocaleString()}</td>
-            <td className="py-4 px-4">{order.totalPrice}đ</td>
-            <td className="py-4 px-4">{order.address}</td>
-            <td className="py-4 px-4">{order.stateOrder}</td>
-            <td className="py-4 px-4">{order.stateTransport}</td>
-            <td className="py-4 px-4">
-              <button
-                className="text-blue-600 hover:text-blue-700 transition duration-200"
-                onClick={() => fetchOrderDetails(order.id)}
-              >
-                <FaEye size={20} /> {/* Icon mắt */}
-              </button>
-            </td>
-          </>
-        )}
-        emptyMessage="Bạn chưa có đơn hàng nào."
-      />
-      {showDetails && <OrderDetail orderDetails={orderDetails} closeDetails={closeDetails} />}
-    </>
+  return (
+    <div className="w-full">
+      <Navbar />
+      {loading ? (
+        <div className="text-center text-xl">Đang tải...</div>
+      ) : error ? (
+        <div className="text-red-500 text-center text-lg">{error}</div>
+      ) : (
+        <>
+          <Table<OrderItem>
+            headers={headers}
+            data={orders}
+            renderRow={(order: OrderItem) => (
+              <>
+                <td className="py-4 px-4">{order.id}</td>
+                <td className="py-4 px-4">{new Date(order.date).toLocaleString()}</td>
+                <td className="py-4 px-4">{order.totalPrice}đ</td>
+                <td className="py-4 px-4">{order.address}</td>
+                <td className="py-4 px-4">{order.stateOrder}</td>
+                <td className="py-4 px-4">{order.stateTransport}</td>
+                <td className="py-4 px-4">
+                  <button
+                    className="text-blue-600 hover:text-blue-700 transition duration-200"
+                    onClick={() => fetchOrderDetails(order.id)}
+                  >
+                    <FaEye size={20} /> {/* Icon mắt */}
+                  </button>
+                </td>
+              </>
+            )}
+            emptyMessage="Bạn chưa có đơn hàng nào."
+          />
+          {showDetails && <OrderDetail orderDetails={orderDetails} closeDetails={closeDetails} />}
+        </>
+      )}
+    </div>
   );
 };
 

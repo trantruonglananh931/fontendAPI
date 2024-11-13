@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserUpdate from "./UserUpdate";
 import { User } from "../../../Models/User";
-
+import Navbar from "../../../Components/Navbar/Navbar";
 const UserProfile: React.FC = () => {
   const [userData, setUserData] = useState<User | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -52,6 +52,10 @@ const UserProfile: React.FC = () => {
   if (!userData) return <p>Đang tải...</p>;
 
   return (
+
+    <div className="w-full">
+      <Navbar/>
+      
     <div className="max-w-md mx-auto p-6 bg-white">
       <img
         src={userData.image || "https://via.placeholder.com/150"}
@@ -68,6 +72,8 @@ const UserProfile: React.FC = () => {
       >
         Cập nhật
       </button>
+    </div>
+   
     </div>
   );
 };

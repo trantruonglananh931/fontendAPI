@@ -3,6 +3,8 @@ import axios from "axios";
 import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { CartItem } from "../../../Models/CartItem";
+import Navbar from "../../../Components/Navbar/Navbar";
+
 
 const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -97,7 +99,10 @@ const Cart: React.FC = () => {
   }
 
   return (
+    <div className="w-full">
+      <Navbar/>
     <div className="max-w-screen-xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+      
       <table className="w-full text-left border-separate border-spacing-4 table-auto">
         <thead className="">
           <tr className="text-gray-700">
@@ -175,7 +180,9 @@ const Cart: React.FC = () => {
       </div>
 
     </div>
+    </div>
   );
+  
 };
 
 export default Cart;

@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Navbar from "../../Components/Navbar/Navbar";
 type Props = {};
 
 type RegisterFormsInputs = {
@@ -53,6 +53,8 @@ const RegisterPage = (props: Props) => {
   };
 
   return (
+    <div className="w-full">
+      <Navbar/>
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="w-full bg-white rounded-lg shadow dark:border md:mb-20 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -166,6 +168,7 @@ const RegisterPage = (props: Props) => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 

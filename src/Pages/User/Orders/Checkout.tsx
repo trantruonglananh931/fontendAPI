@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CartItem, CartItem_ } from "../../../Models/CartItem";
 import { NewOrder } from "../../../Models/OrderItem";
-
+import Navbar from "../../../Components/Navbar/Navbar";
 const Checkout: React.FC = () => {
   const [address, setAddress] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState<number>(1);
@@ -83,6 +83,8 @@ const Checkout: React.FC = () => {
   };
 
   return (
+    <div className="w-full">
+      <Navbar/>
     <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-lg">
       <h3 className="text-xl font-semibold mb-2">Sản phẩm đã chọn</h3>
       <div className="mb-4">
@@ -135,7 +137,9 @@ const Checkout: React.FC = () => {
         {loading ? "Đang xử lý..." : "Đặt hàng"}
       </button>
     </div>
+    </div>
   );
+
 };
 
 export default Checkout;

@@ -15,8 +15,8 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
   return (
     <div className={`w-52 bg-green-500 text-white ${isOpen ? 'block' : 'hidden'} transition-all duration-300`}>
-      <h2 className="text-2xl text-black font-bold p-4">ADMIN</h2>
-      <ul className="space-y-2">
+      
+      <ul className="space-y-2 mt-14 text-xl pt-4">
         <li>
           <button onClick={() => handleNavigation('/admin/productlist')} className="w-full text-left p-2 hover:bg-green-600">
             Sản phẩm

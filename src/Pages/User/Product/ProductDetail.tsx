@@ -4,7 +4,7 @@ import axios from "axios";
 import { Product } from "../../../Models/Product";
 import { CartItem } from "../../../Models/CartItem";
 import PaymentMethods from "../../../Components/Payment/PaymentMethods"; // Import component PaymentMethods
-
+import Navbar from "../../../Components/Navbar/Navbar";
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
@@ -73,6 +73,8 @@ const ProductDetail: React.FC = () => {
   }
 
   return (
+    <div className="w-full">
+    <Navbar/>
     <div className="max-w-screen-xl mx-auto p-6 bg-white">
       <div className="flex flex-col lg:flex-row items-stretch">
         {/* Hình ảnh thu nhỏ bên trái */}
@@ -143,6 +145,7 @@ const ProductDetail: React.FC = () => {
           <PaymentMethods />
         </div>
       </div>
+    </div>
     </div>
   );
 };

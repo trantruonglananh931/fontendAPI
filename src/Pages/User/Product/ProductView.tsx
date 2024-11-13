@@ -5,6 +5,7 @@ import { Product } from "../../../Models/Product";
 import Carousel from "../../../Components/Carousel/Carousel";
 import Pagination from "../../../Components/Pagination/Pagination";
 import Footer from "../../../Components/Footer/Footer";
+import Navbar from "../../../Components/Navbar/Navbar";
 
 const ProductView: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -77,7 +78,11 @@ const ProductView: React.FC = () => {
   const totalPages = Math.ceil(totalProducts / productsPerPage);
 
   return (
+    <div className="w-full">
+    <Navbar/>
+    
     <div className="container mx-auto p-4">
+  
       <Carousel />
 
       <div className="flex justify-between items-center mb-6">
@@ -125,7 +130,7 @@ const ProductView: React.FC = () => {
       />
         <Footer/>
     </div>
-
+    </div>
     
   );
 };

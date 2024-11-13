@@ -36,7 +36,7 @@ const Navbar: React.FC<Props> = () => {
   }, [location.pathname]);
 
   return (
-    <nav className="relative w-full p-3 bg-green-500 shadow-md sticky top-0 z-50 px-32 text-white">
+    <nav className="relative w-full p-2 bg-green-500 shadow-md sticky top-0 z-50 px-32 text-white">
       <div className="flex items-center text-lg justify-between">
         <div className="flex items-center space-x-6">
           <Link to="/product">

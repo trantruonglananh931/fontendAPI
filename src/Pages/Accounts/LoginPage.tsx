@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '../../Context/useAuth';
 import { useForm } from 'react-hook-form';
-
+import Navbar from "../../Components/Navbar/Navbar";
 type Props = {};
 
 type LoginFormsInputs = {
@@ -30,6 +30,8 @@ const LoginPage = (props: Props) => {
   };
 
   return (
+    <div className="w-full">
+      <Navbar/>
     <section className="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-800">
         <div className="p-6 space-y-2 sm:p-8">
@@ -113,6 +115,7 @@ const LoginPage = (props: Props) => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 

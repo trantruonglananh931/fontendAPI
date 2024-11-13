@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Product } from "../../../Models/Product";
 import Footer from "../../../Components/Footer/Footer";
 import Pagination from "../../../Components/Pagination/Pagination";
-
+import Navbar from "../../../Components/Navbar/Navbar";
 const ProductCategoryView: React.FC = () => {
   const { categoryId } = useParams(); 
   const [products, setProducts] = useState<Product[]>([]);
@@ -48,6 +48,8 @@ const ProductCategoryView: React.FC = () => {
   const totalPages = Math.ceil(totalProducts / productsPerPage);
 
   return (
+    <div className="w-full">
+      <Navbar/>
     <div className="container mx-auto p-4">
       <ul className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {Array.isArray(currentProducts) && currentProducts.length > 0 ? (
@@ -80,6 +82,7 @@ const ProductCategoryView: React.FC = () => {
       />
       
       <Footer />
+    </div>
     </div>
   );
 };
