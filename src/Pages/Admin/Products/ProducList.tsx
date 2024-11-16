@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Product } from "../../../Models/Product";
@@ -25,20 +25,39 @@ const ProductList: React.FC = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, image: string, listStringImage?: string[]) => {
     const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa?");
     if (!isConfirmed) return;
-
+  
     try {
+      // Xóa sản phẩm
       await axios.delete(`/v2/api/Product/${id}`);
+  
+      // Xóa hình ảnh chính
+      const imageName = image.split('/').pop();
+      console.log('imageName:', imageName);
+      if (imageName) {
+        await axios.delete(`/v2/api/images?imageName=${encodeURIComponent(imageName)}&isMainImage=true`);
+      }
+  
+      // Xóa các hình ảnh phụ
+      if (listStringImage && listStringImage.length > 0) {
+        for (let img of listStringImage) {
+          const imageNameInList = img.split('/').pop();
+          const deleteImageResponse = await axios.delete(`/v2/api/images?imageName=${encodeURIComponent(imageNameInList!)}&isMainImage=false`);
+        }
+      }
+  
+      // Cập nhật lại danh sách sản phẩm
       setProducts(products.filter((product) => product.id !== id));
       alert("Xóa sản phẩm thành công!");
     } catch (error) {
-      console.error("Lỗi khi xóa sản phẩm:", error);
+      console.error("Lỗi khi xóa sản phẩm hoặc hình ảnh:", error);
       alert("Xóa sản phẩm thất bại.");
     }
   };
-
+  
+  
   const handleDetail = (id: string) => {
     navigate(`/product/${id}`);
   };
@@ -88,14 +107,14 @@ const ProductList: React.FC = () => {
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(product.id);
-                    }}
-                    className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(product.id, product.image, product.listStringImage || []);  // Truyền thêm imageUrls và listStringImage
+                      }}
+                      className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
                 </td>
               </tr>
             ))

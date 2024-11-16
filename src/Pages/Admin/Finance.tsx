@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
+
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import { FinanceData } from "../../Models/FinanceData";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const Finance: React.FC = () => {
   const [financeData, setFinanceData] = useState<FinanceData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'chart' | 'table'>('chart'); 
+  const [viewMode, setViewMode] = useState<'chart' | 'table' | 'pie'>('chart'); 
 
   const [start, setStart] = useState<number | null>(null);
   const [end, setEnd] = useState<number | null>(null);
@@ -89,6 +91,40 @@ const Finance: React.FC = () => {
     },
   };
 
+  const pieData = {
+    labels: financeData.map((data) => `Tháng ${data.month}`),
+    datasets: [
+      {
+        label: 'Tỷ lệ doanh thu',
+        data: financeData.map((data) => data.total),
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.6)',  // Teal
+          'rgba(54, 162, 235, 0.6)',  // Blue
+          'rgba(255, 206, 86, 0.6)',  // Yellow
+          'rgba(231, 233, 237, 0.6)', // Light Gray
+          'rgba(255, 99, 132, 0.6)',  // Red
+          'rgba(153, 102, 255, 0.6)', // Purple
+          'rgba(255, 159, 64, 0.6)',  // Orange
+          'rgba(75, 0, 130, 0.6)',    // Indigo
+          'rgba(34, 193, 195, 0.6)', // Turquoise
+          'rgba(253, 121, 168, 0.6)',// Pink
+          'rgba(75, 255, 85, 0.6)',  // Green
+          'rgba(230, 81, 0, 0.6)',   // Amber
+        ],
+        borderColor: 'rgba(255, 255, 255, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const pieOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' as const },
+      title: { display: true, text: 'Tỷ lệ doanh thu hàng tháng' },
+    },
+  };
+
   if (loading) return <p>Đang tải...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
@@ -99,13 +135,19 @@ const Finance: React.FC = () => {
           onClick={() => setViewMode('chart')}
           className={`px-4 py-2 rounded ${viewMode === 'chart' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
         >
-          Xem biểu đồ
+          Xem cột
         </button>
         <button
           onClick={() => setViewMode('table')}
           className={`ml-2 px-4 py-2 rounded ${viewMode === 'table' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
         >
           Xem bảng
+        </button>
+        <button
+          onClick={() => setViewMode('pie')}
+          className={`ml-2 px-4 py-2 rounded ${viewMode === 'pie' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+        >
+          Xem biểu đồ tròn
         </button>
       </div>
 
@@ -122,7 +164,6 @@ const Finance: React.FC = () => {
                   setStart(value);
                 }
               }}
-              
               className="w-28 px-4 py-2 border rounded"
               placeholder="1-12"
               min="1"
@@ -141,7 +182,6 @@ const Finance: React.FC = () => {
                   setEnd(value);
                 }
               }}
-        
               className="w-28 px-4 py-2 border rounded"
               placeholder="1-12"
               min="1"
@@ -150,27 +190,23 @@ const Finance: React.FC = () => {
           </div>
 
           <div>
-          <label className="block mb-2">Năm</label>
-          <input
-            type="number"
-            value={year || ''}
-            onChange={(e) => {
-              const value = parseInt(e.target.value);
-              // Kiểm tra xem giá trị có hợp lệ không
-              if (!isNaN(value)) {
-                setYear(value);
-              }
-            }}
-            className="w-28 px-4 py-2 border rounded"
-            placeholder="Năm"
-            min="2024" 
-            max="9999"
-          />
-
-            <button type="submit" className="ml-4 bg-blue-500 text-white px-4 py-2 rounded">
-              Lấy Dữ liệu
-            </button>
+            <label className="block mb-2">Năm</label>
+            <input
+              type="number"
+              value={year || ''}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) {
+                  setYear(value);
+                }
+              }}
+              className="w-28 px-4 py-2 border rounded"
+              placeholder="Năm"
+              min="2024" 
+              max="9999"
+            />
           </div>
+
           <div>
             <label className="block mb-2">Sắp xếp theo</label>
             <select
@@ -183,6 +219,10 @@ const Finance: React.FC = () => {
             </select>
           </div>
         </div>
+
+        <button type="submit" className="ml-4 bg-blue-500 text-white px-4 py-2 rounded">
+          Lấy Dữ liệu
+        </button>
       </form>
 
       {/* Hiển thị biểu đồ hoặc bảng */}
@@ -190,27 +230,30 @@ const Finance: React.FC = () => {
         <div className="w-full lg:w-3/4 mx-auto">
           <Bar data={chartData} options={chartOptions} />
         </div>
+      ) : viewMode === 'pie' ? (
+        <div className="w-full lg:w-2/4 mx-auto">
+          <Pie data={pieData} options={pieOptions} />
+        </div>
       ) : (
         <div className="overflow-x-auto w-full mx-auto">
-          <table className="w-full border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border border-gray-300 px-4 py-2">Tháng</th>
-                {financeData.map((data) => (
-                  <th key={data.month} className="border border-gray-300 px-4 py-2">{data.month}</th>
-                ))}
+        <table className="w-full border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2">Tháng</th>
+              <th className="border border-gray-300 px-4 py-2">Doanh thu</th>
+            </tr>
+          </thead>
+          <tbody>
+            {financeData.map((data) => (
+              <tr key={data.month}>
+                <td className="border border-gray-300 px-4 py-2">{`Tháng ${data.month}`}</td>
+                <td className="border border-gray-300 px-4 py-2">{data.total}</td>
+                {/* Add other financial data columns if necessary */}
               </tr>
-            </thead>
-            <tbody>
-              <tr className="hover:bg-gray-100">
-                <td className="border border-gray-300 px-4 py-2">Tổng doanh thu (VND)</td>
-                {financeData.map((data) => (
-                  <td key={data.month} className="border border-gray-300 px-4 py-2">{data.total}</td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
       )}
     </div>
   );
