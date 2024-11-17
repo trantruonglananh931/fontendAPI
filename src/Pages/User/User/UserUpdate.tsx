@@ -7,7 +7,7 @@ import Navbar from "../../../Components/Navbar/Navbar";
 const UserUpdate: React.FC = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState<UserInformation>({
-    image: "", // Chứa đường dẫn ảnh
+    image: "", 
     birthDay: "",
   });
   const [loading, setLoading] = useState(false);
@@ -19,12 +19,13 @@ const UserUpdate: React.FC = () => {
     if (files && files.length > 0) {
       const formData = new FormData();
       formData.append("files", files[0]);
-      formData.append("isMainImage", "true"); // Đặt thành true nếu là ảnh chính
-
+  
+      const apiUrl = "/v2/api/images?isUserAvatar=true";
+  
       // Gửi file đến API backend
       setLoading(true);
       axios
-        .post("/v2/api/UploadImages", formData, {
+        .post(apiUrl, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -41,6 +42,7 @@ const UserUpdate: React.FC = () => {
         });
     }
   };
+  
 
   // Hàm xử lý thay đổi ngày sinh
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
