@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Slidebar from "../../Components/Slidebar/Sliderbar";
 import AdminNavbar from "../../Components/Navbar/AdminNavbar";
+import { useAuth } from "../../Context/useAuth";
 
 const Admin: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const { user } = useAuth(); 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    
+    if (user?.role !== "Admin") {
+      navigate("/product"); 
+    }
+  }, [user, navigate]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);

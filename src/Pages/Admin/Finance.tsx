@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
+import { useAuth } from "../../Context/useAuth";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Bar, Pie } from 'react-chartjs-2';
 import { FinanceData } from "../../Models/FinanceData";
@@ -26,8 +27,9 @@ const Finance: React.FC = () => {
   const [end, setEnd] = useState<number | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [isDescendingByPrice, setIsDescendingByPrice] = useState<boolean>(false);
-
-  const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
+  const { user } = useAuth(); // Access user info from context
+  const navigate = useNavigate();
+  const token = user?.token;
 
   const fetchFinanceData = async () => {
     setLoading(true);
@@ -62,6 +64,9 @@ const Finance: React.FC = () => {
   };
 
   useEffect(() => {
+    if (user?.role !== "Admin") {
+      navigate("/product"); // Or redirect to any other page you prefer
+    }
     fetchFinanceData();
   }, [isDescendingByPrice]); 
 

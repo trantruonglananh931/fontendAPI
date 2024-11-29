@@ -61,6 +61,8 @@ export const UserProvider = ({ children }: Props) => {
           user: {
             userName: userProfile.name,
             email: userProfile.email,
+            token : userProfile.token,
+            role: userProfile.role, 
           },
         };
   
@@ -104,6 +106,9 @@ export const UserProvider = ({ children }: Props) => {
           const userObj = {
             userName: res?.data.userName,
             email: res?.data.email,
+            token : res?.data.token,
+            role: res?.data.role, 
+            
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           console.log("User Object:", userObj);
@@ -120,20 +125,33 @@ export const UserProvider = ({ children }: Props) => {
     await loginAPI(username, password)
       .then((res) => {
         if (res) {
+          // Save the token and user details including the role
           localStorage.setItem("token", res?.data.token);
           const userObj = {
             userName: res?.data.userName,
             email: res?.data.email,
+            token : res?.data.token,
+            role: res?.data.role,  
           };
           localStorage.setItem("user", JSON.stringify(userObj));
+          
+          // Update state with the user details and token
           setToken(res?.data.token!);
           setUser(userObj!);
+          
           toast.success("Login Success!");
-          navigate("/product");
+  
+          // Redirect based on role
+          if (res?.data.role === "Admin") {
+            navigate("/admin");
+          } else if (res?.data.role === "User") {
+            navigate("/product");
+          }
         }
       })
-      .catch((e) => toast.warning("Server error occured"));
+      .catch((e) => toast.warning("Server error occurred"));
   };
+  
 
   const isLoggedIn = () => {
     return !!user;

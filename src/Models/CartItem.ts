@@ -1,14 +1,26 @@
 export type CartItem = {
-  productId: string;
+  productId: string;   
   productName: string;
   price: number;
   quantity: number;
   image?: string;
+  sizeDetails: {
+    sizeId : number; 
+    sizeName: string; 
+    quantity: number }[]; 
+  selectedSize: string; 
 };
 
 export type CartItem_ = {
-  ProductId: string;
-  productName: string;
+  productId: string;  
+  productName?: string;
   price: number;
-  Quantity: number;
+  quantity: number;
+  image?: string;
+  sizeId?: number;
+  sizeDetails?: {
+    sizeId : number; 
+    sizeName: string; 
+    quantity: number }[]; 
+  selectedSize?: string; 
 };

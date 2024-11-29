@@ -4,6 +4,8 @@ import { OrderItem, OrderDetailItem } from "../../Models/OrderItem";
 import Table from "../../Components/Table/Table";
 import OrderDetail from "../../Components/Orders/OrderDetail";
 import { FaEye } from "react-icons/fa"; 
+import { useAuth } from "../../Context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const AllOrders: React.FC = () => {
   const [orders, setOrders] = useState<OrderItem[]>([]);
@@ -11,8 +13,13 @@ const AllOrders: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [orderDetails, setOrderDetails] = useState<OrderDetailItem[]>([]);
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const { user } = useAuth(); // Access user info from context
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (user?.role !== "Admin") {
+      navigate("/product"); // Or redirect to any other page you prefer
+    }
     const fetchOrders = async () => {
       try {
         const response = await axios.get("/v5/Api/Order/Admin");
@@ -33,7 +40,7 @@ const AllOrders: React.FC = () => {
     "Tổng",
     "Địa chỉ",
     "Trạng thái đơn hàng",
-    "Trạng thái vận chuyển",
+
     "Phương thức thanh toán",
     ""
   ];
@@ -68,14 +75,14 @@ const AllOrders: React.FC = () => {
         data={orders}
         renderRow={(order: OrderItem) => (
           <>
-            <td className="py-4 px-4">{order.id}</td>
-            <td className="py-4 px-4">{new Date(order.date).toLocaleString()}</td>
-            <td className="py-4 px-4">{order.totalPrice}đ</td>
-            <td className="py-4 px-4">{order.address}</td>
-            <td className="py-4 px-4">{order.stateOrder}</td>
-            <td className="py-4 px-4">{order.stateTransport}</td>
-            <td className="py-4 px-4">{order.methodOfPayment}</td>
-            <td className="py-4 px-4">
+            <td className="py-2 px-2">{order.id}</td>
+            <td className="py-2 px-2">{new Date(order.date).toLocaleString()}</td>
+            <td className="py-2 px-2">{order.totalPrice}đ</td>
+            <td className="py-2 px-2">{order.address}</td>
+            <td className="py-2 px-2">{order.stateOrder}</td>
+    
+            <td className="py-2 px-2">{order.methodOfPayment}</td>
+            <td className="py-2 px-2">
               <button
                 className="text-blue-600 hover:text-blue-700 transition duration-200"
                 onClick={() => fetchOrderDetails(order.id)}

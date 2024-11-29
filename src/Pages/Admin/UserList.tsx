@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../Models/User"
+import { useAuth } from "../../Context/useAuth";
 
 
 const UserList: React.FC = () => {
@@ -11,10 +12,11 @@ const UserList: React.FC = () => {
   const [editEmailAddress, setEditEmailAddress] = useState<string>("");
   const [editImage, setEditImage] = useState<string | null>(null);
   const [editBirthDay, setEditBirthDay] = useState<string | null>(null);
+  const { user } = useAuth();  // Giả sử đây là nơi chứa thông tin người dùng và token
+  const token = user?.token;
 
   const navigate = useNavigate();
 
-  const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRyYW50cnVvbmdsYW5hbmgwQGdtQUlMLkNPTSIsImdpdmVuX25hbWUiOiJzdHJpbmcxMiIsIm5iZiI6MTcyOTIzMjU3MywiZXhwIjoxNzI5ODM3MzczLCJpYXQiOjE3MjkyMzI1NzMsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI0NiIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTI0NiJ9.9PCXyZrBKxF_GFvllrK7O7f9TfCxaXFEwvhU7XJ1nzqJMYLMEfwDAxD_Gs9bLABcXXnyivISsx3ySXfnUoJmvg";
 
   const fetchUsers = async () => {
     try {
@@ -37,6 +39,9 @@ const UserList: React.FC = () => {
   };
 
   useEffect(() => {
+    if (user?.role !== "Admin") {
+      navigate("/product"); 
+    }
     fetchUsers(); 
   }, []);
 
@@ -88,82 +93,75 @@ const UserList: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <ul className="space-y-4">
-        {users.length > 0 ? (
-          users.map(user => (
-            <li key={user.username} className="flex justify-between items-center border rounded-lg shadow-md p-4 bg-white">
-              {editUserId === user.username ? (
-                <div className="flex flex-col space-y-2">
-                  <input
-                    type="text"
-                    value={editUsername}
-                    onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-48 py-2 px-4 border border-gray-300 rounded-lg"
-                  />
-                  <input
-                    type="email"
-                    value={editEmailAddress}
-                    onChange={(e) => setEditEmailAddress(e.target.value)}
-                    className="w-96 py-2 px-4 border border-gray-300 rounded-lg"
-                  />
-                  <input
-                    type="text"
-                    placeholder="URL hình ảnh"
-                    value={editImage || ""}
-                    onChange={(e) => setEditImage(e.target.value)}
-                    className="w-full py-2 px-4 border border-gray-300 rounded-lg"
-                  />
-                  <input
-                    type="date"
-                    value={editBirthDay || ""}
-                    onChange={(e) => setEditBirthDay(e.target.value)}
-                    className="w-full py-2 px-4 border border-gray-300 rounded-lg"
-                  />
-                </div>
-              ) : (
-                <div>
-                  <h2 className="text-lg font-bold">{user.username}</h2>
-                  <p className="text-gray-600">{user.emailAddress}</p>
-                  {user.image && <img src={user.image} alt={`${user.username}'s avatar`} className="w-16 h-16 rounded-full" />}
-                  <p className="text-gray-600">{user.birthDay ? `Ngày sinh: ${user.birthDay}` : "Ngày sinh: N/A"}</p>
-                </div>
-              )}
-              <div className="space-x-2">
-                {editUserId === user.username ? (
-                  <>
-                    <button
-                      onClick={handleUpdate}
-                      className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
-                    >
-                      Lưu
-                    </button>
-                    <button
-                      onClick={handleCancelEdit}
-                      className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
-                    >
-                      Hủy
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => handleEdit(user)}
-                      className="bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600"
-                    >
-                      Cập nhật
-                    </button>
-                  </>
-                )}
-              </div>
-            </li>
-          ))
-        ) : (
-          <p>Không tìm thấy người dùng nào.</p>
-        )}
-      </ul>
+    <div className="container mx-auto rounded-sm">
+      <table className="min-w-full border-collapse border border-gray-300 ">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border border-gray-300 p-2">Tên người dùng</th>
+            <th className="border border-gray-300 p-2">Email</th>
+            <th className="border border-gray-300 p-2">Hình ảnh</th>
+            <th className="border border-gray-300 p-2">Ngày sinh</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.length > 0 ? (
+            users.map(user => (
+              <tr key={user.username} className="border-b hover:bg-gray-100">
+                <td className="border border-gray-300 p-2">
+                  {editUserId === user.username ? (
+                    <input
+                      type="text"
+                      value={editUsername}
+                      onChange={(e) => setEditUsername(e.target.value)}
+                      className="w-full py-2 px-4 border border-gray-300 rounded-lg"
+                    />
+                  ) : (
+                    <span className="font-bold">{user.username}</span>
+                  )}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {editUserId === user.username ? (
+                    <input
+                      type="email"
+                      value={editEmailAddress}
+                      onChange={(e) => setEditEmailAddress(e.target.value)}
+                      className="w-full py-2 px-4 border border-gray-300 rounded-lg"
+                    />
+                  ) : (
+                    <span>{user.emailAddress}</span>
+                  )}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {user.image ? (
+                    <img src={user.image} alt={`${user.username}'s avatar`} className="w-16 h-16 rounded-full" />
+                  ) : (
+                    "Không có"
+                  )}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {editUserId === user.username ? (
+                    <input
+                      type="date"
+                      value={editBirthDay || ""}
+                      onChange={(e) => setEditBirthDay(e.target.value)}
+                      className="w-full py-2 px-4 border border-gray-300 rounded-lg"
+                    />
+                  ) : (
+                    <span>{user.birthDay ? user.birthDay : "N/A"}</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={4} className="text-center p-4">Không tìm thấy người dùng nào.</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
+
 
 export default UserList;

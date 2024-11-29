@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Product} from "../../../Models/Product";
+import { useAuth } from "../../../Context/useAuth";
 
 const ProductUpdate: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth(); 
+ 
+  const token = user?.token;
   const [product, setProduct] = useState<Product>({
     id: "",
     productName: "",
@@ -19,9 +23,13 @@ const ProductUpdate: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if the user is an admin
+    if (user?.role !== "Admin") {
+      navigate("/product"); // Redirect to another page if not admin
+    }
     const fetchProductDetails = async () => {
-      const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
-
+      const token = user?.token;
+      
       try {
         const response = await axios.get(`/v2/api/Product/${id}`, {
           headers: {
@@ -88,7 +96,6 @@ const ProductUpdate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...";
 
     try {
       await axios.put(
@@ -96,9 +103,9 @@ const ProductUpdate: React.FC = () => {
         product,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            accept: '*/*',
+          },
         }
       );
       alert("Cập nhật sản phẩm thành công!");

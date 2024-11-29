@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; 
 import axios from "axios";
+import { useAuth } from "../../../Context/useAuth";
 import { CartItem, CartItem_ } from "../../../Models/CartItem";
 import { NewOrder } from "../../../Models/OrderItem";
 import Navbar from "../../../Components/Navbar/Navbar";
@@ -11,6 +12,8 @@ const Checkout: React.FC = () => {
   const [selectedItems, setSelectedItems] = useState<CartItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate(); 
+  const { user } = useAuth(); 
+  const token = user?.token;
   const location = useLocation();
 
   useEffect(() => {
@@ -23,14 +26,20 @@ const Checkout: React.FC = () => {
     setError(null);
   
     try {
-      const token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."; 
+  
       for (const product of selectedItems) {
+        // Tìm sizeId dựa trên selectedSize
+        const sizeDetail = product.sizeDetails.find(
+          (detail) => detail.sizeName === product.selectedSize
+        );
+      
         const cartItem: CartItem_ = {
-          ProductId: String(product.productId),
-          productName: product.productName,
+          productId: String(product.productId),
+          quantity: product.quantity,
           price: product.price,
-          Quantity: product.quantity,
+          sizeId: sizeDetail?.sizeId || 0,
         };
+      
         try {
           await axios.post("/v2/api/Product/sessions", cartItem, {
             headers: {
@@ -43,6 +52,7 @@ const Checkout: React.FC = () => {
           alert(`Không thể thêm sản phẩm ${product.productName} vào giỏ hàng.`);
         }
       }
+      
   
       const newOrder: NewOrder = {
         address,
@@ -62,10 +72,10 @@ const Checkout: React.FC = () => {
         const updatedCart = (JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[]).filter(
           (item) => !selectedItems.some((selected) => selected.productId === item.productId)
         );
-        
+  
         localStorage.setItem("cart", JSON.stringify(updatedCart));
-        
-        alert("Đơn hàng đã được tạo thành công!");
+  
+        alert("Đặt hàng thành công!");
         navigate("/history-orders");
       } else {
         setError(response.data.message || "Không thể tạo đơn hàng.");
@@ -77,6 +87,7 @@ const Checkout: React.FC = () => {
       setLoading(false);
     }
   };
+  
 
   const calculateTotal = () => {
     return selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -105,7 +116,7 @@ const Checkout: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-lg mb-2">Địa chỉ giao hàng:</label>
+        <label className="block text-lg mb-2">Số điện thoại và địa chỉ giao hàng:</label>
         <textarea
           rows={3}
           className="w-full p-2 border border-gray-300 rounded-lg"

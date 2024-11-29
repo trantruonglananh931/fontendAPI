@@ -11,9 +11,17 @@ export type Product = {
   imageUrls?: string[];
   listStringImage?: string[];
   sizeDetails?: {
-      sizeId: number;
-      quantity: number;
+    sizeId : number;
+    sizeName: string;  
+    quantity: number;
   }[];
+  messageDetails?: {
+    userName : string;
+    time : Date;
+    image: string;  
+    message: string;
+  }[];
+  
 };
 
 export type NewProduct = {

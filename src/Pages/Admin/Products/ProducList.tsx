@@ -4,15 +4,29 @@ import { useNavigate } from "react-router-dom";
 import { Product } from "../../../Models/Product";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../../../Context/useAuth";
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
+  const { user } = useAuth(); 
+  const token = user?.token;
 
   useEffect(() => {
+    // Check if the user is an admin
+    if (user?.role !== "Admin") {
+      navigate("/product"); // Redirect to another page if not admin
+    }
+
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("/v2/api/Product");
+        const response = await axios.get('/v2/api/Product',{
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'accept': '*/*',
+          }
+        });
+        
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
         } else {
@@ -23,7 +37,7 @@ const ProductList: React.FC = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [user, navigate]); 
 
   const handleDelete = async (id: string, image: string, listStringImage?: string[]) => {
     const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa?");
@@ -63,11 +77,11 @@ const ProductList: React.FC = () => {
   };
 
   const handleUpdate = (id: string) => {
-    navigate(`/product/update/${id}`);
+    navigate(`/admin/product/update/${id}`);
   };
 
   const handleAddNewProduct = () => {
-    navigate("/product/add");
+    navigate("/admin/product/add");
   };
 
   return (
@@ -78,25 +92,29 @@ const ProductList: React.FC = () => {
 
       <table className="min-w-full bg-white">
         <thead>
-          <tr>
-            <th className="py-2 px-4 border">Mã sản phẩm</th>
-            <th className="py-2 px-4 border">Tên sản phẩm</th>
-            <th className="py-2 px-4 border">Giá</th>
-            <th className="py-2 px-4 border">Xem trước</th>
-            <th className="py-2 px-4 border">Hành động</th>
+          <tr className=" bg-gray-100">
+            <th className="w-2/12 py-2 px-2 border ">Mã sản phẩm</th>
+            <th className="w-2/12 py-2 px-2 border ">Tên sản phẩm</th>
+            <th className="w-2/12 py-2 px-2 border text-center">Giá</th>
+            <th className="w-1/12 py-2 px-2 border text-center">Xem trước</th>
+            <th className="w-2/12 py-2 px-2 border text-center">Số lượng đã bán</th>
+            <th className="w-2/12 py-2 px-2 border text-center">Số lượng trong kho</th>
+            <th className="w-2/12 py-2 px-2 border text-center">Hành động</th>
           </tr>
         </thead>
         <tbody>
           {products.length > 0 ? (
             products.map((product) => (
-              <tr key={product.id} onClick={() => handleDetail(product.id)} className="cursor-pointer">
-                <td className="py-2 px-4 border">{product.id}</td>
-                <td className="py-2 px-4 border">{product.productName}</td>
-                <td className="py-2 px-4 border">{product.price}đ</td>
-                <td className="py-2 px-4 border">
+              <tr key={product.id} onClick={() => handleDetail(product.id)} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer">
+                <td className="w-2/12 py-2 px-2 border ">{product.id}</td>
+                <td className="w-2/12 py-2 px-2 border ">{product.productName}</td>
+                <td className="w-2/12 py-2 px-2 border text-center">{product.price}đ</td>
+                <td className="w-1/12 py-2 px-2 border text-center">
                   <img src={product.image} alt={product.productName} className="w-16 h-16 object-cover" />
                 </td>
-                <td className="py-2 px-4 border">
+                <td className="w-2/12 py-2 px-2 border text-center">{product.quantitySellSucesss}</td>
+                <td className="w-2/12 py-2 px-2 border text-center">{product.quantityStock}</td>
+                <td className="w-2/12 py-2 px-2 border text-center">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -107,20 +125,20 @@ const ProductList: React.FC = () => {
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
                   <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(product.id, product.image, product.listStringImage || []);  // Truyền thêm imageUrls và listStringImage
-                      }}
-                      className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(product.id, product.image, product.listStringImage || []);
+                    }}
+                    className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={5} className="text-center py-4">
+              <td colSpan={7} className="text-center py-4">
                 Không tìm thấy sản phẩm nào.
               </td>
             </tr>

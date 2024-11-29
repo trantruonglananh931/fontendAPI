@@ -29,12 +29,12 @@ const HistoryOrders: React.FC = () => {
   }, []);
 
   const headers = [
-    "ID Đơn Hàng",
-    "Ngày Đặt Hàng",
-    "Tổng Giá",
-    "Địa Chỉ",
-    "Trạng Thái Đơn",
-    "Trạng Thái Vận Chuyển",
+    "ID đơn hàng",
+    "Thời gian đặt hàng",
+    "Tổng tiền",
+    "Số điện thoại, địa chỉ",
+    "Trạng thái",
+
     ""
   ];
 
@@ -76,7 +76,7 @@ const HistoryOrders: React.FC = () => {
                 <td className="py-4 px-4">{order.totalPrice}đ</td>
                 <td className="py-4 px-4">{order.address}</td>
                 <td className="py-4 px-4">{order.stateOrder}</td>
-                <td className="py-4 px-4">{order.stateTransport}</td>
+            
                 <td className="py-4 px-4">
                   <button
                     className="text-blue-600 hover:text-blue-700 transition duration-200"
