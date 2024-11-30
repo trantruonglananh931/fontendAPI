@@ -44,7 +44,7 @@ const Navbar: React.FC<Props> = () => {
           </Link>
 
           <div className="flex space-x-6">
-            <Link to="/product" className="hover:text-blue-600 font-extrabold text-white">YyDoo</Link>
+            <Link to="/product" className="hover:text-blue-600 font-extrabold text-white"></Link>
           </div>
           <form onSubmit={handleSearch} className="flex flex-grow items-center text-black ">
             <input

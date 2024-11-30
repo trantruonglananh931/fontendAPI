@@ -11,7 +11,7 @@ import ProductUpdate from "../Pages/Admin/Products/ProductUpdate";
 import ProductList from "../Pages/Admin/Products/ProducList";
 import ProductAdd from "../Pages/Admin/Products/ProductAdd";
 import UserList from "../Pages/Admin/UserList";
-import ChangePassword from "../Pages/User/User/ChagePassword";
+import ChangePassword from "../Pages/Accounts/ChagePassword";
 import UserUpdate from "../Pages/User/User/UserUpdate";
 import Cart from "../Pages/User/Orders/Cart";
 import Checkout from "../Pages/User/Orders/Checkout";
@@ -21,6 +21,8 @@ import AllOrders from "../Pages/Admin/AllOrders";
 import Finance from "../Pages/Admin/Finance";
 import Admin from "../Pages/Admin/Admin";
 import Winter2024 from "../Components/InformationWeb/winter2024";
+import ForgotPassword from "../Pages/Accounts/ForgotPassword";
+import ResetPassword from "../Pages/Accounts/ResetPassword";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -51,6 +53,8 @@ export const router = createBrowserRouter([
       { path: "history-orders", element: <HistoryOrders/> },
       { path: "user/update/:name", element: <UserUpdate/>},
       { path:"change-password", element: <ChangePassword/>},
+      { path:"forgot-password", element: <ForgotPassword/>},
+      { path:"reset-password", element: <ResetPassword/>},
       { path:"user/:username", element: <UserProfile/>},
       { path:"category/:categoryId" ,element:<ProductCategoryView />},
       {path:"gioi-thieu", element:<Winter2024/>},

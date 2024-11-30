@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import Navbar from "../../../Components/Navbar/Navbar";
+import Navbar from "../../Components/Navbar/Navbar";
 const ChangePassword: React.FC = () => {
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
@@ -22,7 +22,7 @@ const ChangePassword: React.FC = () => {
     }
 
     try {
-      const response = await axios.put("/v3/api/user/ChangePassWord", {
+      const response = await axios.put("/ForGotPassWord", {
         oldPassword,
         newPassword,
         confirmNewPassword,
