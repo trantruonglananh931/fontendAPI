@@ -19,7 +19,7 @@ const ProductUpdate: React.FC = () => {
     price: 0,
     categoryId: "",
   });
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,6 +52,7 @@ const ProductUpdate: React.FC = () => {
         const response = await axios.get("/v4/api/Category");
         if (response.data && Array.isArray(response.data.data)) {
           setCategories(response.data.data);
+          console.log(response.data.data);
         } else {
           console.error("Dữ liệu danh mục không phải là một mảng");
           setCategories([]);
@@ -195,7 +196,7 @@ const ProductUpdate: React.FC = () => {
             <option value="">Chọn một danh mục</option>
             {categories.map((category) => (
               <option className="text-black" key={category.id} value={category.id}>
-                {category.name}
+                {category.categorName}
               </option>
             ))}
           </select>
