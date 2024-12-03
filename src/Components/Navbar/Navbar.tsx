@@ -4,6 +4,7 @@ import logo from "./logo.png";
 import { useAuth } from "../../Context/useAuth";
 import { FaUserCircle, FaShoppingCart } from 'react-icons/fa'; 
 import { FaFacebook, FaInstagram, FaYoutube, FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+
 interface Props {}
 
 const Navbar: React.FC<Props> = () => {
@@ -37,7 +38,7 @@ const Navbar: React.FC<Props> = () => {
 
   return (
     <nav className="relative w-full p-2 bg-green-500 shadow-md sticky top-0 z-50 px-32 text-white">
-      <div className="flex items-center text-lg justify-between">
+      <div className="flex items-center text-lg justify-between"> 
         <div className="flex items-center space-x-6">
           <Link to="/product">
             <img src={logo} alt="Logo" className="h-14" />
@@ -59,17 +60,19 @@ const Navbar: React.FC<Props> = () => {
               </a>
             </div>
           </div>
-
           <div className="flex space-x-6">
             <Link to="/product" className="hover:text-blue-600 font-extrabold text-white"></Link>
           </div>
-          <form onSubmit={handleSearch} className="flex flex-grow items-center text-black ">
+        </div>
+
+        <div>
+        <form onSubmit={handleSearch} className="flex flex-grow items-center text-black">
             <input
               type="text"
               placeholder="Tìm kiếm sản phẩm..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full py-2 px-4 border border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500"
+              className="w-full py-2 px-4 mr-16 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
             />
           </form>
           <Link to="/ai1">
@@ -77,7 +80,6 @@ const Navbar: React.FC<Props> = () => {
           </Link>
         </div>
 
-        
 
         <div className="flex items-center space-x-6">
           {isLoggedIn() && ( 
@@ -93,7 +95,7 @@ const Navbar: React.FC<Props> = () => {
             </div>
           )}
 
-        {user ? (
+          {isLoggedIn() ? (
           <div className="hidden lg:flex items-center space-x-6">
             <div className="relative flex items-start">
               <button onClick={() => setMenuOpen(!menuOpen)}>
