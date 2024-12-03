@@ -43,7 +43,7 @@ const Navbar: React.FC<Props> = () => {
           <Link to="/product">
             <img src={logo} alt="Logo" className="h-14" />
           </Link>
-
+          
           
 
           <div>
@@ -60,6 +60,9 @@ const Navbar: React.FC<Props> = () => {
               </a>
             </div>
           </div>
+          <Link to="/ai1">
+            Gợi ý trang phục
+          </Link>
           <div className="flex space-x-6">
             <Link to="/product" className="hover:text-blue-600 font-extrabold text-white"></Link>
           </div>
@@ -75,9 +78,7 @@ const Navbar: React.FC<Props> = () => {
               className="w-full py-2 px-4 mr-16 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
             />
           </form>
-          <Link to="/ai1">
-            Gợi ý trang phục
-          </Link>
+          
         </div>
 
 
@@ -96,41 +97,40 @@ const Navbar: React.FC<Props> = () => {
           )}
 
           {isLoggedIn() ? (
-          <div className="hidden lg:flex items-center space-x-6">
-            <div className="relative flex items-start">
-              <button onClick={() => setMenuOpen(!menuOpen)}>
-                <FaUserCircle className="text-2xl hover:text-blue-600" />
-              </button>
-              {menuOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-white text-green-700 border rounded-lg shadow-lg z-10 text-lg">
-                  <Link to={`/user/${user.userName}`} className="block px-4 py-2 hover:bg-gray-100">
-                    Hồ sơ
-                  </Link>
-                  <Link to={`/user/update/${user.userName}`} className="block px-4 py-2 hover:bg-gray-100">
-                    Cập nhật hồ sơ
-                  </Link>
-                  <Link to="/change-password" className="block px-4 py-2 hover:bg-gray-100">
-                    Đổi mật khẩu
-                  </Link>
-                  <Link to="/history-orders" className="block px-4 py-2 hover:bg-gray-100">
-                    Lịch sử đơn hàng
-                  </Link>
-                  <button onClick={logout} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                    Đăng xuất
-                  </button>
-                </div>
-              )}
+            <div className="hidden lg:flex items-center space-x-6">
+              <div className="relative flex items-start">
+                <button onClick={() => setMenuOpen(!menuOpen)}>
+                  <FaUserCircle className="text-2xl hover:text-blue-600" />
+                </button>
+                {menuOpen && (
+                  <div className="absolute right-0 mt-2 w-52 bg-white text-green-700 border rounded-lg shadow-lg z-10 text-lg">
+                    <Link to={`/user/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
+                      Hồ sơ
+                    </Link>
+                    <Link to={`/user/update/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
+                      Cập nhật hồ sơ
+                    </Link>
+                    <Link to="/change-password" className="block px-4 py-2 hover:bg-gray-100">
+                      Đổi mật khẩu
+                    </Link>
+                    <Link to="/history-orders" className="block px-4 py-2 hover:bg-gray-100">
+                      Lịch sử đơn hàng
+                    </Link>
+                    <button onClick={logout} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                      Đăng xuất
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="hidden lg:flex items-center space-x-6 font-bold text-white">
-            <Link to="/login" className="hover:text-blue-600">Đăng nhập</Link>
-            <Link to="/register" className="px-5 py-2 font-bold rounded text-white bg-blue-500 hover:bg-blue-600">
-              Đăng ký
-            </Link>
-          </div>
-        )}
-
+          ) : (
+            <div className="hidden lg:flex items-center space-x-6 font-bold text-white">
+              <Link to="/login" className="hover:text-blue-600">Đăng nhập</Link>
+              <Link to="/register" className="px-5 py-2 font-bold rounded text-white bg-blue-500 hover:bg-blue-600">
+                Đăng ký
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </nav>
