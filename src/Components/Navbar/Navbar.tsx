@@ -43,6 +43,9 @@ const Navbar: React.FC<Props> = () => {
           <Link to="/product">
             <img src={logo} alt="Logo" className="h-14" />
           </Link>
+
+          
+
           <div>
             <p>Liên hệ chúng tôi</p>
             <div className="flex space-x-4 ">
@@ -72,6 +75,9 @@ const Navbar: React.FC<Props> = () => {
               className="w-full py-2 px-4 mr-16 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
             />
           </form>
+          <Link to="/ai1">
+            Gợi ý trang phục
+          </Link>
         </div>
 
 

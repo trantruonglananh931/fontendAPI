@@ -23,7 +23,7 @@ const ResetPassword: React.FC = () => {
       setMessage("Mật khẩu mới và mật khẩu xác nhận không khớp.");
       return;
     }
-
+  
     try {
       const resetResponse = await axios.put("/Mail/ForGotPassWord", {
         emailUser: email,
@@ -31,12 +31,12 @@ const ResetPassword: React.FC = () => {
         newPassword: newPassword,
         confirmNewPassword: confirmPassword,
       });
-
+  
       if (resetResponse.data.status) {
         alert("Thay đổi mật khẩu thành công. Mời bạn đăng nhập lại.");
         setTimeout(() => {
           navigate("/login");
-        }, 2000);
+        }, 500);
       } else {
         setMessage(resetResponse.data.message);
       }
@@ -45,6 +45,7 @@ const ResetPassword: React.FC = () => {
       setMessage("Đã xảy ra lỗi khi đặt lại mật khẩu.");
     }
   };
+  
 
   return (
     <div className="w-full">

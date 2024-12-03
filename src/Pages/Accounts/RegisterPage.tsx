@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Navbar from "../../Components/Navbar/Navbar";
 type Props = {};
 
@@ -21,12 +22,17 @@ const validation = Yup.object().shape({
 
 const RegisterPage = (props: Props) => {
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const emailFromGoogle = location.state?.email || "";
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormsInputs>({ resolver: yupResolver(validation) });
+  } = useForm<RegisterFormsInputs>({
+    resolver: yupResolver(validation),
+    defaultValues: { email: emailFromGoogle }, 
+  });
   const navigate = useNavigate();
 
   const handleRegister = async (form: RegisterFormsInputs) => {
@@ -41,7 +47,7 @@ const RegisterPage = (props: Props) => {
       });
 
       if (response.data) {
-        alert("Đăng ký thành công!");
+        alert("Đăng ký thành công, mời bạn đăng nhập!");
         navigate("/login");
       }
     } catch (error) {
@@ -98,6 +104,7 @@ const RegisterPage = (props: Props) => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Email"
                   {...register("email")}
+                  readOnly={!!emailFromGoogle}
                 />
                 {errors.email && (
                   <p className="text-red-500">{errors.email.message}</p>
