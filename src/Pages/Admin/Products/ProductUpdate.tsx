@@ -52,6 +52,7 @@ const ProductUpdate: React.FC = () => {
         const response = await axios.get("/v4/api/Category");
         if (response.data && Array.isArray(response.data.data)) {
           setCategories(response.data.data);
+          console.log(response.data.data);
         } else {
           console.error("Dữ liệu danh mục không phải là một mảng");
           setCategories([]);
