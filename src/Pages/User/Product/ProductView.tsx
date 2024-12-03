@@ -15,7 +15,6 @@ const ProductView: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | "">("");
-
   const [minPrice, setMinPrice] = useState<number | "">(0);
   const [maxPrice, setMaxPrice] = useState<number | "">(0);
   const productsPerPage = 10;

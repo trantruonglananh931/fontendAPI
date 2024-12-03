@@ -22,6 +22,7 @@ const ProductDetail: React.FC = () => {
   const [imageFiles, setImageFiles] = useState<FileList | null>(null);  // Lưu các file hình ảnh
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);  // Lưu các URL hình ảnh đã tải lên
   const { user } = useAuth(); 
+  
   const navigate = useNavigate();
   const token = user?.token;
   const [selectedImage, setSelectedImage] = useState<string | null>(null); // Trạng thái lưu hình ảnh được chọn
@@ -79,6 +80,11 @@ const ProductDetail: React.FC = () => {
   };
 
   const handleAddToCart = () => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      navigate('/login'); // Chuyển hướng đến trang đăng nhập
+      return;
+    }
     if (!selectedSize) {
       return alert("Vui lòng chọn kích thước sản phẩm!");
     }
@@ -125,6 +131,13 @@ const ProductDetail: React.FC = () => {
   };
   
   const handleSubmitReview = async (e: React.FormEvent) => {
+
+    if (!user) {
+      alert("Vui lòng đăng nhập để gửi đánh giá!");
+      navigate('/login');
+      return;
+    }
+    
     e.preventDefault();
   
     try {
@@ -133,15 +146,20 @@ const ProductDetail: React.FC = () => {
       if (imageFiles) {
         const formData = new FormData();
         Array.from(imageFiles).forEach((file) => formData.append("files", file));
-  
-        const uploadResponse = await axios.post(`/v2/api/images/rateProduct`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-  
-        imageUrls = uploadResponse.data?.urls || [];
+        
+        try {
+          const uploadResponse = await axios.post(`/v2/api/images/rateProduct`, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          imageUrls = uploadResponse.data?.urls || [];
+        } catch (error) {
+          console.error("Lỗi tải ảnh:", error);
+          alert("Không thể tải ảnh lên. Vui lòng thử lại!");
+          return;
+        }
       }
  
       const newAddMessage = {
@@ -177,6 +195,7 @@ const ProductDetail: React.FC = () => {
     <div className="w-full">
       <Navbar />
       <div className="max-w-screen-xl mx-auto p-6 bg-white">
+        
         <div className="flex flex-col lg:flex-row items-start space-x-8">
           {/* Hình ảnh thu nhỏ bên trái */}
           <div className="w-full lg:w-1/12 flex flex-col space-y-2 mb-4 lg:mb-0">
@@ -199,6 +218,8 @@ const ProductDetail: React.FC = () => {
               className="w-full h-3/4 object-cover shadow-md"
             />
           </div>
+          
+          
   
           {/* Thông tin sản phẩm */}
           <div className="lg:ml-6 w-full lg:w-1/2 space-y-4">
@@ -250,55 +271,78 @@ const ProductDetail: React.FC = () => {
                       Thêm vào giỏ hàng
                     </button>
   
-                     {/* Nút mua ngay 
+                   
                     <button
                       className="px-5 py-3 bg-orange-500 text-white font-medium rounded-md"
                     >
                       Mua ngay
-                    </button> */}
+                    </button> 
                   </div>
                 </>
               ) : (
                 <p className="text-red-500 mt-4">Size này đã hết hàng.</p>
               )}
             </div>
+
+            
   
             {/* Sử dụng PaymentMethods component */}
             <PaymentMethods />
   
-            <form onSubmit={handleSubmitReview} className="space-y-4">
-              <div>
-                <label className="block text-gray-700">Nội dung đánh giá</label>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  placeholder="Chia sẻ trải nghiệm của bạn..."
-                  required
-                />
-              </div>
-  
-              <div>
-                <label className="block text-gray-700">Chọn hình ảnh</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => setImageFiles(e.target.files)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                />
-              </div>
-  
-              <button type="submit" className="w-full bg-blue-500 text-white py-3 rounded-lg">
-                Gửi đánh giá
-              </button>
-            </form>
-  
-            {/* Danh sách đánh giá */}
-            <div className="mt-12 w-full flex flex-col">
-              <div className="text-lg font-semibold">Danh sách đánh giá</div>
+            
+          </div>
+        </div>
+        <div className="flex space-x-8">
+        {/* Cột bên trái: Form nhập bình luận */}
+        <div className="w-1/2 mt-12">
+          <form onSubmit={handleSubmitReview} className="space-y-4">
+            <div>
+              <label className="block text-green-700 text-lg font-semibold">Nội dung bình luận</label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                placeholder="Chia sẻ trải nghiệm của bạn..."
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-green-700">Chọn hình ảnh</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => setImageFiles(e.target.files)}
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              />
+
+              {/* Hiển thị ảnh xem trước */}
+              {imageFiles && (
+                <div className="flex gap-4 mt-4">
+                  {Array.from(imageFiles).map((file, index) => (
+                    <img
+                      key={index}
+                      src={URL.createObjectURL(file)}
+                      alt={`Ảnh ${index + 1}`}
+                      className="w-30 h-20 object-cover border border-gray-300 rounded-sm"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button type="submit" className="w-full bg-blue-500 text-white py-3 rounded-lg">
+              Gửi bình luận
+            </button>
+          </form>
+        </div>
+
+        {/* Cột bên phải: Danh sách đánh giá */}
+        <div className="pl-16 w-1/2 mt-12 ">
+          <div className=" font-semibold text-green-600 text-lg">Bình luận</div>
           {product?.messageDetails?.map((messageDetail, index) => (
-            <div key={index} className="border-b border-gray-300 py-4">
+            <div key={index} className="border-b border-gray-300 ">
               <div className="flex items-center gap-4">
                 <div>
                   <p className="font-semibold">{messageDetail.userName}</p>
@@ -307,11 +351,11 @@ const ProductDetail: React.FC = () => {
                     src={messageDetail.image || "/default-avatar.jpg"}
                     alt={messageDetail.userName}
                     className="w-20 h-20 cursor-pointer"
-                    onClick={() => handleImageClick(messageDetail.image)} // Khi click vào hình, hiển thị to ra
+                    onClick={() => handleImageClick(messageDetail.image)} 
                   />
                 </div>
               </div>
-              <p className="mt-2">{messageDetail.message}</p>
+              <p className="mb-6 mt-1">{messageDetail.message}</p>
             </div>
           ))}
 
@@ -332,10 +376,10 @@ const ProductDetail: React.FC = () => {
                 />
               </div>
             </div>
-            )}
-            </div>
-          </div>
+          )}
         </div>
+      </div>
+
       </div>
     </div>
   );

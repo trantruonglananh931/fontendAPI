@@ -37,8 +37,8 @@ const AllOrders: React.FC = () => {
   const headers = [
     "Mã đơn hàng",
     "Ngày đặt hàng",
-    "Tổng",
-    "Địa chỉ",
+    "Giá tiền",
+    "Số điện thoại, địa chỉ",
     "Trạng thái đơn hàng",
 
     "Phương thức thanh toán",

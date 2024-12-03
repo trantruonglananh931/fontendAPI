@@ -9,13 +9,6 @@ const Admin: React.FC = () => {
   const { user } = useAuth(); 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    
-    if (user?.role !== "Admin") {
-      navigate("/product"); 
-    }
-  }, [user, navigate]);
-
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };

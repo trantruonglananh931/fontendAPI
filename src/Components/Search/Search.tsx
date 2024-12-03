@@ -16,18 +16,15 @@ const SearchPage: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth(); 
   const token = user?.token;
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | "">("");
+
   const navigate = useNavigate();
-  const [minPrice, setMinPrice] = useState<number | "">(0);
-  const [maxPrice, setMaxPrice] = useState<number | "">(0);
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  
   const productsPerPage = 10;
-
-
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -42,18 +39,25 @@ const SearchPage: React.FC = () => {
         headers: {
           'Authorization': `Bearer ${token}`,
           'accept': '*/*',
-        }
+        },
       });
-
+  
       if (response.data && response.data.data) {
         let fetchedProducts = response.data.data;
-
+  
         if (sortOrder !== null) {
           fetchedProducts = fetchedProducts.sort((a: Product, b: Product) =>
             sortOrder ? a.price - b.price : b.price - a.price
           );
         }
-
+  
+        if (minPrice !== null) {
+          fetchedProducts = fetchedProducts.filter((product: Product) => product.price >= minPrice);
+        }
+        if (maxPrice !== null) {
+          fetchedProducts = fetchedProducts.filter((product: Product) => product.price <= maxPrice);
+        }
+  
         setProducts(fetchedProducts);
       } else {
         setProducts([]);
@@ -62,34 +66,20 @@ const SearchPage: React.FC = () => {
       console.error('Lỗi khi lấy sản phẩm:', error);
     }
   };
-  // Fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/v4/api/Category");
-        if (response.data && response.data.data) {
-          setCategories(response.data.data);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy danh sách loại sản phẩm:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
-
   
-
-  // Handle product detail navigation
+  useEffect(() => {
+    fetchProducts(searchTerm.trim());
+  }, [minPrice, maxPrice]);
+  
   const handleDetail = (id: string) => {
     navigate(`/product/${id}`);
   };
 
-  // Handle finding similar products
   const handleFindSimilar = (id: string) => {
     alert(`Tìm sản phẩm tương tự cho sản phẩm ${id}`);
   };
 
-  // Handle sorting
+
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     if (value === "asc") {
@@ -101,7 +91,6 @@ const SearchPage: React.FC = () => {
     }
   };
 
-  // Handle filtering by price
   const filterByPrice = (products: Product[]) => {
     return products.filter((product) => {
       const price = product.price;
@@ -112,7 +101,6 @@ const SearchPage: React.FC = () => {
     });
   };
 
-  // Handle pagination
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     const productContainer = document.querySelector(".product-container");
@@ -131,8 +119,21 @@ const SearchPage: React.FC = () => {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    fetchProducts(searchTerm.trim());
+    const formattedQuery = searchTerm.trim().replace(/\s+/g, "+");
+    fetchProducts(formattedQuery);
   };
+  
+
+  const handleMinPriceChange = (value: string) => {
+    const price = value ? Math.max(0, parseFloat(value)) : null;
+    setMinPrice(price);
+  };
+  
+  const handleMaxPriceChange = (value: string) => {
+    const price = value ? Math.max(0, parseFloat(value)) : null;
+    setMaxPrice(price);
+  };
+  
 
 
 
@@ -152,15 +153,11 @@ const SearchPage: React.FC = () => {
               <input
                 type="number"
                 id="minPrice"
-                value={minPrice === 0 ? "" : minPrice}
-                onChange={(e) => {
-                  const value = e.target.value === "" ? "" : +e.target.value;
-                  if (value === "" || (typeof value === "number" && value >= 0)) {
-                    setMinPrice(value);
-                  }
-                }}
-                placeholder="Giá"
+                value={minPrice !== null ? minPrice : ''}
+                onChange={(e) => handleMinPriceChange(e.target.value)}
+                min="0"
                 className="w-28 py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Giá"
               />
             </div>
   
@@ -172,40 +169,17 @@ const SearchPage: React.FC = () => {
               <input
                 type="number"
                 id="maxPrice"
-                value={maxPrice === 0 ? "" : maxPrice}
-                onChange={(e) => {
-                  const value = e.target.value === "" ? "" : +e.target.value;
-                  if (value === "" || (typeof value === "number" && value >= 0)) {
-                    setMaxPrice(value);
-                  }
-                }}
-                placeholder="Giá"
+                value={maxPrice !== null ? maxPrice : ''}
+                onChange={(e) => handleMaxPriceChange(e.target.value)}
+                min="0"
                 className="w-28 py-2 px-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                placeholder="Giá"
               />
             </div>
           </div>
   
           <div className="flex items-center gap-4">
-            {/* Lọc theo danh mục */}
-            <div className="flex items-center gap-2">
-              <label htmlFor="category" className="text-gray-600 font-medium">
-                Danh mục:
-              </label>
-              <select
-                id="category"
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                value={selectedCategory}
-                className="py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              >
-                <option value="">Tất cả</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.categorName}
-                  </option>
-                ))}
-              </select>
-            </div>
-  
+          
             {/* Sắp xếp theo giá */}
             <div className="flex items-center gap-2">
               <label htmlFor="sort" className="text-gray-600 font-medium">
@@ -218,29 +192,42 @@ const SearchPage: React.FC = () => {
                 className="py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
                 <option value="none">Mặc định</option>
-                <option value="asc">Giá giảm dần</option>
-                <option value="desc">Giá tăng dần</option>
+                <option value="asc">Giá tăng dần</option>
+                <option value="desc">Giá giảm dần</option>
               </select>
             </div>
           </div>
         </div>
   
-        <ul className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <ul className="grid grid-cols-2 lg:grid-cols-5 gap-3 product-container transition-opacity duration-300">
           {Array.isArray(products) && products.length > 0 ? (
             products.map((product) => (
               <li
                 key={product.id}
-                className="cursor-pointer"
+                className="cursor-pointer relative border-2 border-transparent hover:border-green-500 transform transition-transform duration-300 shadow-sm hover:shadow-lg "
                 onClick={() => handleDetail(product.id)}
               >
                 <img
                   src={product.image}
                   alt={product.productName}
-                  className="w-full h-150 object-cover"
+                  className="w-full h-150 object-cover "
                 />
-                <div className="mt-4">
-                  <h2 className="text-l">{product.productName}</h2>
-                  <p className="text-red-600 font-semibold text-xl">{product.price}đ</p>
+                <div className="mt-2 ml-2">
+                  <h2 className="text-base">{product.productName}</h2>
+                  <p className="text-red-500 text-base font-semibold">{product.price}đ</p>
+                  <p className="text-gray-600">{product.categoryId}</p>
+                </div>
+
+                <div className="absolute bottom-0 left-0 right-0 px-1 py-1 group ">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFindSimilar(product.id);
+                        }}
+                        className="bg-green-500 text-white w-full mt-2 px-4 py-2 group-hover:block hidden hover:bg-green-600 transition duration-300"
+                      >
+                        Tìm sản phẩm tương tự
+                      </button>
                 </div>
               </li>
             ))

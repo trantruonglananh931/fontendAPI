@@ -31,7 +31,7 @@ const HistoryOrders: React.FC = () => {
   const headers = [
     "ID đơn hàng",
     "Thời gian đặt hàng",
-    "Tổng tiền",
+    "Giá tiền",
     "Số điện thoại, địa chỉ",
     "Trạng thái",
 

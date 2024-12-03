@@ -23,12 +23,19 @@ import Admin from "../Pages/Admin/Admin";
 import Winter2024 from "../Components/InformationWeb/winter2024";
 import ForgotPassword from "../Pages/Accounts/ForgotPassword";
 import ResetPassword from "../Pages/Accounts/ResetPassword";
+import ProtectedRoute from "./ProtectedRoute";
+import AIUi from "../Pages/AI/AIUi";
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-        { path: "admin", element: <Admin />,
+        { path: "admin", 
+          element: (
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          ),
       children: [
         { index: true, element: <Finance /> },
         { path: "productlist", element: <ProductList /> },
@@ -46,8 +53,7 @@ export const router = createBrowserRouter([
       { path: "", element: <ProductView /> },
       { path: "product", element: <ProductView /> },
       { path: "product/:id", element: <ProductDetail /> },
-      
-    
+      { path: "ai1", element: <AIUi/> },
       { path: "cart" , element: <Cart/>},
       { path: "checkout", element: <Checkout/> },
       { path: "history-orders", element: <HistoryOrders/> },

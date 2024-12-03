@@ -23,7 +23,7 @@ const ForgotPassword: React.FC = () => {
         setMessage(response.data.message);
       }
     } catch {
-      setMessage("Đã xảy ra lỗi khi gửi mã OTP.");
+      setMessage("Email của bạn không đúng hoặc chưa đăng ký. Mời bạn kiểm tra lại!");
     }
   };
 
@@ -41,7 +41,8 @@ const ForgotPassword: React.FC = () => {
   };
 
   const handleResendOtp = async () => {
-    // Gửi lại mã OTP
+  // Kiểm tra nếu countdown đã kết thúc mới gửi lại mã OTP
+  if (countdown === 0) {
     try {
       const response = await axios.post("/Mail", { emailToId: email });
       if (response.data.status) {
@@ -53,13 +54,14 @@ const ForgotPassword: React.FC = () => {
     } catch {
       setMessage("Đã xảy ra lỗi khi gửi lại mã OTP.");
     }
-  };
-
+  }
+};
   const handleCancel = () => {
     navigate("/login"); 
   };
 
-  const handleVerifyOtp = async () => {
+  const handleVerifyOtp = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     try {
       const response = await axios.post(`/Mail/verifyCode?code=${otp}&email=${email}`);
       if (response.data.status) {

@@ -30,17 +30,27 @@ export const UserProvider = ({ children }: Props) => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     const token = localStorage.getItem("token");
-    if (user && token) {
-      setUser(JSON.parse(user));
-      setToken(token);
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+    
+    try {
+      if (user && token) {
+        setUser(JSON.parse(user)); // Parse JSON an toàn
+        setToken(token);
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+      }
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error);
+      localStorage.removeItem("user"); // Xóa dữ liệu không hợp lệ
+      localStorage.removeItem("token");
     }
+  
     setIsReady(true);
   }, []);
+  
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
+        // Lấy thông tin người dùng từ Google
         const res = await axios.get(
           `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
           {
@@ -52,37 +62,34 @@ export const UserProvider = ({ children }: Props) => {
         );
   
         const userProfile = res.data;
-        setUser(userProfile);
-  
-        // Tạm thời giả lập phản hồi từ backend
-        const backendResponse = {
-          success: true,
-          token: "fake_token", 
-          user: {
-            userName: userProfile.name,
-            email: userProfile.email,
-            token : userProfile.token,
-            role: userProfile.role, 
-          },
-        };
-  
-        if (backendResponse.success) {
-          
-          localStorage.setItem("token", backendResponse.token);
-          localStorage.setItem("user", JSON.stringify(backendResponse.user));
-  
-          
-          setToken(backendResponse.token);
-          setUser(backendResponse.user);
-  
-          // Chuyển hướng đến trang /product
-          navigate('/product');
-        } else {
-          toast.error("Login failed. Please try again.");
-        }
         
-      } catch (err) {
-        console.error('Failed to fetch user info:', err);
+        // Gọi API để kiểm tra email tồn tại
+        const emailCheckResponse = await axios.post('/v1/account/check-email', {
+          email: userProfile.email,
+        });
+  
+        if (emailCheckResponse.data.exists) {
+          // Email đã tồn tại, tự động đăng nhập
+          const loginResponse = await axios.post('/v1/account/google-login', {
+            email: userProfile.email,
+          });
+  
+          if (loginResponse.data.token) {
+            // Lưu thông tin người dùng vào localStorage
+            localStorage.setItem("token", loginResponse.data.token);
+            localStorage.setItem("user", JSON.stringify(loginResponse.data.user));
+            setToken(loginResponse.data.token);
+            setUser(loginResponse.data.user);
+  
+            toast.success("Đăng nhập với Google thành công!");
+            navigate('/product');
+          }
+        } else {
+          // Email chưa tồn tại, chuyển đến trang đăng ký
+          toast.info("Bạn chưa có tài khoản Google. Mời bạn đăng ký với tài khoản Google.");
+          navigate('/register', { state: { email: userProfile.email } });
+        }
+      } catch (err) {console.error('Đăng nhập với Google thất bại:', err);
         toast.error("Login failed. Please try again.");
       }
     },
@@ -91,6 +98,7 @@ export const UserProvider = ({ children }: Props) => {
       toast.error("Google Login Failed");
     },
   });
+  
   
 
   const registerUser = async (
@@ -114,11 +122,11 @@ export const UserProvider = ({ children }: Props) => {
           console.log("User Object:", userObj);
           setToken(res?.data.token!);
           setUser(userObj!);
-          toast.success("Login Success!");
+          toast.success("Đăng ký thành công, mời bạn đăng nhập lại");
           navigate("");
         }
       })
-      .catch((e) => toast.warning("Server error occured"));
+      .catch((e) => toast.warning("Lỗi"));
   };
 
   const loginUser = async (username: string, password: string) => {
@@ -139,7 +147,7 @@ export const UserProvider = ({ children }: Props) => {
           setToken(res?.data.token!);
           setUser(userObj!);
           
-          toast.success("Login Success!");
+          toast.success("Đăng nhập thành công!");
   
           // Redirect based on role
           if (res?.data.role === "Admin") {
