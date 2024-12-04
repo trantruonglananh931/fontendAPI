@@ -6,6 +6,9 @@ import Carousel from "../../../Components/Carousel/Carousel";
 import Pagination from "../../../Components/Pagination/Pagination";
 import Footer from "../../../Components/Footer/Footer";
 import Navbar from "../../../Components/Navbar/Navbar";
+import { Link } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const ProductView: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,6 +22,31 @@ const ProductView: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState<number | "">(0);
   const productsPerPage = 10;
   const navigate = useNavigate();
+  const [scrollTop, setScrollTop] = useState(0);
+  const [isScroll,setIsScroll] = useState(false);
+  useEffect(() =>{
+    AOS.init(); 
+  },[])
+
+  useEffect(() => {
+
+  scrollTop >= 500 ?setIsScroll(false):setIsScroll(true);
+   const handleScroll = () => {
+    setScrollTop(window.scrollY)
+   };
+   console.log(scrollTop)
+    window.addEventListener('scroll',handleScroll);
+    return () =>{
+      window.removeEventListener('scroll',handleScroll);
+    }
+    
+  },[scrollTop]
+  )
+
+  const handleScroll = () =>{
+    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+  }
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -112,7 +140,9 @@ const ProductView: React.FC = () => {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   return (
-    <div className="w-full">
+    <div className="w-full relative"
+  //  data-aos="fade-up"
+    >
       <Navbar />
       <div className="container mx-auto p-4">
         <Carousel />
@@ -120,7 +150,10 @@ const ProductView: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
   {/* Giá từ */}
-  <div className="flex items-center gap-2">
+  <div className="flex items-center gap-2"
+     data-aos="fade-down"
+     data-aos-duration="1000"
+     >
     <label htmlFor="minPrice" className="text-gray-600 font-medium">
       Giá từ:
     </label>
@@ -140,7 +173,10 @@ const ProductView: React.FC = () => {
   </div>
 
   {/* Giá đến */}
-  <div className="flex items-center gap-2">
+  <div className="flex items-center gap-2"
+  data-aos="fade-down"
+  data-aos-duration="1000"
+  >
     <label htmlFor="maxPrice" className="text-gray-600 font-medium">
       Giá đến:
     </label>
@@ -161,7 +197,10 @@ const ProductView: React.FC = () => {
 </div>
 
 
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4"
+      data-aos="fade-down"
+      data-aos-duration="1000"
+      >
       {/* Lọc theo danh mục */}
       <div className="flex items-center gap-2">
         <label htmlFor="category" className="text-gray-600 font-medium">
@@ -202,7 +241,10 @@ const ProductView: React.FC = () => {
  
 
         </div>
-        <ul className="grid grid-cols-2 lg:grid-cols-5 gap-3 product-container transition-opacity duration-300">
+        <ul className="grid grid-cols-2 lg:grid-cols-5 gap-3 product-container transition-opacity duration-300"
+              data-aos="fade-down"
+              data-aos-duration="1000"
+          >
           {isLoading
             ? Array.from({ length: 10 }).map((_, index) => (
                 <li key={index} className="animate-pulse border-2 rounded-lg bg-gray-200 h-48"></li>
@@ -223,6 +265,7 @@ const ProductView: React.FC = () => {
                         src={product.image}
                         alt={product.productName}
                         className="w-full h-150 object-cover"
+                        loading="lazy"
                       />
                       <div className="mt-2 ml-2">
                         <h2 className="text-base">{product.productName}</h2>
@@ -254,8 +297,35 @@ const ProductView: React.FC = () => {
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
+        <div className="w-100 border-t-2 border-gray-600 scale-125 my-2"></div>
+        <div className="grid grid-cols-2 gap-0">
+          <div>
+            <Link to="/product">
+                <img className="" src="/images/Footer/footerImg.webp" alt="Lỗi"/>
+            </Link>
+          </div>
+          <div>
+            <img className="" src="/images/Footer/0608.jpg_wh860.webp" alt="Lỗi"/>
+          </div>
+
+        </div>
+        <div 
+        data-aos="fade-up"
+        data-aos-duration="1000"
+        >
         <Footer />
-      </div>
+        </div>
+       
+                  
+        {isScroll || (
+          <div className="fixed"
+            style={{bottom:"11px",right:"9px"}}
+             onClick={handleScroll}
+           >
+              <svg className="h-10 w-10 text-blue-500"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <circle cx="12" cy="12" r="10" />  <polyline points="16 12 12 8 8 12" />  <line x1="12" y1="16" x2="12" y2="8" /></svg>
+           </div>)
+        }
+        </div>
     </div>
   );
 };

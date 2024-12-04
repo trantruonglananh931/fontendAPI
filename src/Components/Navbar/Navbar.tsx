@@ -60,7 +60,7 @@ const Navbar: React.FC<Props> = () => {
               </a>
             </div>
           </div>
-          <Link to="/ai1">
+          <Link to="/ai1" className="font-bold">
             Gợi ý trang phục
           </Link>
           <div className="flex space-x-6">

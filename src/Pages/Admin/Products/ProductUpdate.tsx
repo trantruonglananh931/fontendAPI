@@ -41,6 +41,10 @@ const ProductUpdate: React.FC = () => {
           setProduct(response.data.data);
         } else {
           console.error("Dữ liệu sản phẩm không khả dụng");
+  
+  
+  
+  
         }
       } catch (error) {
         console.error("Lỗi khi lấy thông tin sản phẩm:", error);

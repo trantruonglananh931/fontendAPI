@@ -43,7 +43,7 @@ const AIUi: React.FC = () => {
             <div className="flex justify-center items-center">
                 <div>
                     <p className="font-bold text-2xl">Vui lòng chọn hình ảnh!</p>
-                    <input className="w-200" type="file" accept="image/*" onChange={handleFileChange} />
+                    <div className=""><input className="w-200 ml-8" type="file" accept="image/*" onChange={handleFileChange} /></div>
                     {TemImage && (
                         <img className="w-96 h-80 mt-4" src={TemImage} alt="" />
                     )}
