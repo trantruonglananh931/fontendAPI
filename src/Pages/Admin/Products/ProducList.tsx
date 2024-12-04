@@ -80,16 +80,9 @@ const ProductList: React.FC = () => {
     navigate(`/admin/product/update/${id}`);
   };
 
-  const handleAddNewProduct = () => {
-    navigate("/admin/product/add");
-  };
 
   return (
     <div>
-      <button onClick={handleAddNewProduct} className="bg-green-500 text-white py-2 px-4 rounded-sm hover:bg-green-600 mb-4">
-        Thêm sản phẩm mới
-      </button>
-
       <table className="min-w-full bg-white">
         <thead>
           <tr className=" bg-gray-100">
