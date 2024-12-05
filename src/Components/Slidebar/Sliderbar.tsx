@@ -7,27 +7,35 @@ import { CgViewMonth } from "react-icons/cg";
 import { TbCategoryFilled } from "react-icons/tb";
 import { FaUser } from "react-icons/fa6";
 import { FaChartSimple } from "react-icons/fa6";
+import ProductList from '../../Pages/Admin/Products/ProducList';
+import ProductAdd from '../../Pages/Admin/Products/ProductAdd';
+import CategoryList from '../../Pages/Admin/CategoryList';
+import UserList from "../../Pages/Admin/UserList";
+import AllOrders from "../../Pages/Admin/AllOrders";
+import Finance from "../../Pages/Admin/Finance";
 
 interface SidebarProps {
   isOpen: boolean;
+  addTab: (key: string, label: string, component: JSX.Element) => void;
 }
 
-const Slidebar: React.FC<SidebarProps> = ({ isOpen }) => {
+const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
   const navigate = useNavigate();
 
-  const handleNavigation = (path: string) => {
+  const handleNavigation = (path: string,label: string, key: string,component :JSX.Element) => {
     navigate(path);
+    addTab(key, label, component);
   };
 
   const menu = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/productlist')} className="w-full  text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black " style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('/admin/productlist','Danh sách sản phẩm', 'ProductList',<ProductList/>)} className="w-full  text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black " style={{ fontSize:"15px"}}>
         Danh sách sản phẩm
       </button>
 
     },
     {      
-      menuItem: <button onClick={() => handleNavigation("/admin/product/add")} className=" w-full text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+      menuItem: <button onClick={() => handleNavigation("/admin/product/add", 'Thêm sản phẩm mới', 'ProductAdd',<ProductAdd/>)} className=" w-full text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
       Thêm sản phẩm mới
     </button>
     }
@@ -35,7 +43,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
    const menu1 = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/category')} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('/admin/category', 'Danh sách danh mục', 'CategoryList',<CategoryList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
         Danh sách danh mục
       </button>
 
@@ -49,8 +57,8 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
    const menu2 = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/user')} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
-        Danh sách danh mục
+       menuItem: <button onClick={() => handleNavigation('/admin/user', 'Danh sách người dùng', 'UserList',<UserList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+        Danh sách người dùng
       </button>
 
     }
@@ -58,7 +66,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
    const menu3 = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/orders')} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('/admin/orders', 'Danh sách đơn hàng', 'AllOrders',<AllOrders/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
         Danh sách đơn hàng
       </button>
 
@@ -67,8 +75,8 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
     const menu4 = [
       {
-         menuItem: <button onClick={() => handleNavigation('/admin/finance')} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
-          Danh sách danh mục
+         menuItem: <button onClick={() => handleNavigation('/admin/finance', 'Thống kê', 'Finance',<Finance/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+          Thống kê doanh số
         </button>
   
       }
