@@ -11,7 +11,7 @@ const ProductAdd: React.FC = () => {
     productName: "",
     quantitySellSucesss: 0,
     description: "",
-    image: "",
+    image: null,
     quantityStock: 0,
     price: 0,
     categoryId: "",
@@ -24,7 +24,7 @@ const ProductAdd: React.FC = () => {
   const token = user?.token;
 
   const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<File | null>(null);
   const sizeMapping: { [key: number]: string } = {
     8: "XXS",
     9: "XS",
@@ -138,7 +138,7 @@ const ProductAdd: React.FC = () => {
       productName: product.productName,
       quantitySellSucesss: product.quantitySellSucesss,
       description: product.description,
-      image: product.image,
+      image: imageUrl,
       quantityStock: product.quantityStock,
       price: product.price,
       categoryId: product.categoryId,
@@ -153,6 +153,7 @@ const ProductAdd: React.FC = () => {
           headers: {
             'Authorization': `Bearer ${token}`,
             'accept': '*/*',
+            "Content-Type": "multipart/form-data" ,
           }
         });
       alert("Sản phẩm đã được thêm thành công!");
@@ -167,6 +168,12 @@ const ProductAdd: React.FC = () => {
     }
   };
 
+
+  const handleImageChangeMain = (event: React.ChangeEvent<HTMLInputElement>) => { 
+    if (!event.target.files) return;  
+    const file = event.target.files[0]; 
+    setImageUrl(file);
+  }
   return (
     <div className="  p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-6">Thêm Sản Phẩm Mới</h1>
@@ -211,7 +218,7 @@ const ProductAdd: React.FC = () => {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => handleImageChange(e, true)}
+              onChange={(e) => handleImageChangeMain(e)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               required
             />

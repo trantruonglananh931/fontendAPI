@@ -32,7 +32,7 @@ export type NewProduct = {
   productName: string;
   quantitySellSucesss: number;
   description: string;
-  image: string;
+  image: File | null;
   quantityStock: number;
   price: number;
   categoryId: string;
