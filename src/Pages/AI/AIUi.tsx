@@ -1,61 +1,62 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../../Components/Navbar/Navbar";
+
 const AIUi: React.FC = () => {
-    const [Image, setImage] = useState<File | null>(null);
+    const [image, setImage] = useState<File | null>(null);
     const [recommend, setRecommend] = useState<string | null>(null);
-    const [TemImage, setTemImage] = useState<string | null>(null);
+    const [tempImage, setTempImage] = useState<string | null>(null);
 
-    // Chỉ định kiểu cho tham số e
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectFile = e.target?.files?.[0] || null;
-        setImage(selectFile);
-        if (selectFile) {
-            setTemImage(URL.createObjectURL(selectFile)); // tạo đường dẫn ảnh tạm
+        const selectedFile = e.target?.files?.[0] || null;
+        setImage(selectedFile);
+        if (selectedFile) {
+            setTempImage(URL.createObjectURL(selectedFile)); // Tạo đường dẫn ảnh tạm
         }
-    }
+    };
 
-    const FetchReconmmend = async (file: File) => {
+    const fetchRecommend = async (file: File) => {
         try {
             const formData = new FormData();
             formData.append("file", file); // Đảm bảo key là "file"
             const response = await axios.post("http://127.0.0.1:5000/upload", formData, {
                 headers: {
-                    "Content-Type": "multipart/form-data", // dùng để đinh nghĩa header là 1 file
+                    "Content-Type": "multipart/form-data",
                 },
             });
             setRecommend(response.data);
         } catch (error) {
-            console.log(error);
+            console.error("Lỗi khi tải gợi ý:", error);
         }
-    }
+    };
 
     useEffect(() => {
-        if (Image) {
-            FetchReconmmend(Image);
-            console.log(recommend);
+        if (image) {
+            fetchRecommend(image);
         }
-    }, [Image]);
+    }, [image]);
 
     return (
-        <div className="AI">
-              <Navbar />
-            <div className="flex justify-center items-center">
-                <div>
-                    <p className="font-bold text-2xl">Vui lòng chọn hình ảnh!</p>
-                    <div className=""><input className="w-200 ml-8" type="file" accept="image/*" onChange={handleFileChange} /></div>
-                    {TemImage && (
-                        <img className="w-96 h-80 mt-4" src={TemImage} alt="" />
-                    )}
-                </div>
-                <div></div>
+        <div className="AI bg-gray-50 min-h-screen">
+            <Navbar />
+            <div className="flex flex-col items-center p-6">
+                <h1 className="font-bold text-3xl mb-4 text-gray-800">Vui lòng chọn hình ảnh!</h1>
+                <input
+                    className="w-full max-w-xs border border-gray-300 rounded-lg p-2 mb-4"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                />
+                {tempImage && (
+                    <img className="w-96 h-80 object-cover rounded-lg shadow-md" src={tempImage} alt="Hình ảnh đã chọn" />
+                )}
             </div>
 
-            <div className="mx-11 my-5">
+            <div className="mx-auto my-5 max-w-md">
                 {recommend && (
-                    <div className="border-2 border-indigo-600 border-solid rounded-md">
-                        <p className="font-bold text-2xl">Gợi ý của chúng tôi là:</p>
-                        <p className="text-xl">{recommend}</p>
+                    <div className="border-2 border-indigo-600 border-solid rounded-md bg-white p-4 shadow-lg">
+                        <h2 className="font-bold text-2xl text-indigo-600">Gợi ý của chúng tôi là:</h2>
+                        <p className="text-xl text-gray-700">{recommend}</p>
                     </div>
                 )}
             </div>

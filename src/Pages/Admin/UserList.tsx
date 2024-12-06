@@ -12,11 +12,8 @@ const UserList: React.FC = () => {
   const [editEmailAddress, setEditEmailAddress] = useState<string>("");
   const [editImage, setEditImage] = useState<string | null>(null);
   const [editBirthDay, setEditBirthDay] = useState<string | null>(null);
-  const { user } = useAuth();  // Giả sử đây là nơi chứa thông tin người dùng và token
+  const { user } = useAuth();  
   const token = user?.token;
-
-  const navigate = useNavigate();
-
 
   const fetchUsers = async () => {
     try {
@@ -39,9 +36,6 @@ const UserList: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user?.role !== "Admin") {
-      navigate("/product"); 
-    }
     fetchUsers(); 
   }, []);
 

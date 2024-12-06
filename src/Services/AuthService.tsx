@@ -17,18 +17,25 @@ export const loginAPI = async (username: string, password: string) => {
 };
 
 export const registerAPI = async (
-  username: string,
-  email: string,
-  password: string
+  payload: {
+    username: string;
+    emailAddress: string;
+    password: string | null; // Cho phép null nếu đăng ký bằng Google
+    nameOfUser: string;
+    resigterWithgoogle: boolean;
+  }
 ) => {
   try {
     const data = await axios.post<UserProfileToken>(api + "account/register", {
-      Username: username,    
-      EmailAddress: email, 
-      Password: password,    
+      Username: payload.username,  // Tên trường đúng backend
+      EmailAddress: payload.emailAddress,
+      Password: payload.password ?? "ThanhLoc@123", // Mật khẩu mặc định nếu null
+      NameOfUser: payload.nameOfUser,
+      ResigterWithgoogle: payload.resigterWithgoogle,
     });
     return data;
   } catch (error) {
     handleError(error);
   }
 };
+

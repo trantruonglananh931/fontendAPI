@@ -83,51 +83,41 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
      ]
 
 
-  return (
-   
-    <div className={`w-52 bg-green-500 text-white ${isOpen ? 'block' : 'hidden'} transition-all duration-300`}>
- 
-      <ul className="space-y-2 mt-14 text-xl pt-4 ml-3" style={{ fontSize:"18px"}}>
-        <li >
+     return (
+      <div className={`w-64 bg-green-600 text-white ${isOpen ? 'block' : 'hidden'} transition-all duration-300 `}>
+        <ul className="space-y-3 mt-10 text-sm pt-4 ml-3" style={{ fontSize: "18px" }}>
+          <li>
             <DropDownFC
-            trigger={<button className='font-bold hover:text-red-700 flex'><CgViewMonth />Quản Lí Sản phẩm</button>}
-            menu={menu}
-          />
-        </li>
-        <li  >
-          {/* <button onClick={() => handleNavigation('/admin/category')} className="w-full text-left p-2 hover:bg-green-600">
-            Danh mục
-          </button> */}
+              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><CgViewMonth className="mr-2" />Quản Lí Sản phẩm</button>}
+              menu={menu}
+            />
+          </li>
+          <li>
             <DropDownFC
-              trigger={<button className='font-bold  hover:text-red-700 flex'><TbCategoryFilled />Quản Lí Danh mục</button>}
+              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><TbCategoryFilled className="mr-2" />Quản Lí Danh mục</button>}
               menu={menu1}
             />
-        </li>
-        <li>
-          <DropDownFC
-            trigger={<button className='font-bold  hover:text-red-700 flex'><FaUser />Quản Lí Người dùng</button>}
-            menu={menu2}
-          />
-        </li>
-        <li>
-          {/* <button onClick={() => handleNavigation('/admin/orders')} className="w-full text-left p-2 hover:bg-green-600">
-            Tất cả đơn hàng
-          </button> */}
-          <DropDownFC
-            trigger={<button className='font-bold hover:text-red-700 flex'><FaCartShopping />Quản Lí Đơn Hàng</button>}
-            menu={menu3}
-          />
-        </li>
-        <li>
-
-          <DropDownFC
-            trigger={<button className='font-bold hover:text-red-700 flex'><FaChartSimple />Thống kê đơn hàng</button>}
-            menu={menu4}
-          />
-        </li>
-      </ul>
-    </div>
-  );
-};
-
+          </li>
+          <li>
+            <DropDownFC
+              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><FaUser className="mr-2" />Quản Lí Người dùng</button>}
+              menu={menu2}
+            />
+          </li>
+          <li>
+            <DropDownFC
+              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><FaCartShopping className="mr-2" />Quản Lí Đơn Hàng</button>}
+              menu={menu3}
+            />
+          </li>
+          <li>
+            <DropDownFC
+              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2 '><FaChartSimple className="mr-2" />Thống kê đơn hàng</button>}
+              menu={menu4}
+            />
+          </li>
+        </ul>
+      </div>
+    );
+  };    
 export default Slidebar;

@@ -50,6 +50,7 @@ export const router = createBrowserRouter([
      
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
+      { path: "product/update/:id", element: <ProductUpdate/>},
       { path: "", element: <ProductView /> },
       { path: "product", element: <ProductView /> },
       { path: "product/:id", element: <ProductDetail /> },

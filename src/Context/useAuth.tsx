@@ -10,12 +10,19 @@ import { useGoogleLogin, googleLogout } from '@react-oauth/google';
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
-  registerUser: ( username: string, email: string, password: string) => void;
+  registerUser: (
+    username: string,
+    email: string,
+    password: string,
+    nameOfUser: string,
+    registerWithGoogle: boolean
+  ) => Promise<void>;
   loginUser: (username: string, password: string) => void;
   loginWithGoogle: () => void;
   logout: () => void;
   isLoggedIn: () => boolean;
 };
+
 
 type Props = { children: React.ReactNode };
 
@@ -28,98 +35,122 @@ export const UserProvider = ({ children }: Props) => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-    
     try {
+      const user = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
+  
       if (user && token) {
-        setUser(JSON.parse(user)); // Parse JSON an toàn
+        const parsedUser = JSON.parse(user);
+        setUser(parsedUser);
         setToken(token);
         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
       }
     } catch (error) {
-      console.error("Error parsing user data from localStorage:", error);
-      localStorage.removeItem("user"); // Xóa dữ liệu không hợp lệ
+      console.error("Lỗi khi lấy dữ liệu từ localStorage:", error);
+      localStorage.removeItem("user");
       localStorage.removeItem("token");
     }
-  
     setIsReady(true);
   }, []);
   
+  
 
   const loginWithGoogle = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        // Lấy thông tin người dùng từ Google
-        const res = await axios.get(
-          `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-              Accept: 'application/json',
-            },
-          }
-        );
-  
-        const userProfile = res.data;
-        
-        // Gọi API để kiểm tra email tồn tại
-        const emailCheckResponse = await axios.post('/v1/account/check-email', {
-          email: userProfile.email,
-        });
-  
-        if (emailCheckResponse.data.exists) {
-          // Email đã tồn tại, tự động đăng nhập
-          const loginResponse = await axios.post('/v1/account/google-login', {
-            email: userProfile.email,
-          });
-  
-          if (loginResponse.data.token) {
-            // Lưu thông tin người dùng vào localStorage
-            localStorage.setItem("token", loginResponse.data.token);
-            localStorage.setItem("user", JSON.stringify(loginResponse.data.user));
-            setToken(loginResponse.data.token);
-            setUser(loginResponse.data.user);
-  
-            toast.success("Đăng nhập với Google thành công!");
-            navigate('/product');
-          }
-        } else {
-          // Email chưa tồn tại, chuyển đến trang đăng ký
-          toast.info("Bạn chưa có tài khoản Google. Mời bạn đăng ký với tài khoản Google.");
-          navigate('/register', { state: { email: userProfile.email } });
+  onSuccess: async (tokenResponse) => {
+    try {
+      const res = await axios.get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+            Accept: "application/json",
+          },
         }
-      } catch (err) {console.error('Đăng nhập với Google thất bại:', err);
-        toast.error("Login failed. Please try again.");
+      );
+
+      const userProfile = res.data;
+
+      const emailCheckResponse = await axios.post('/v1/account/check-email', {
+        email: userProfile.email,
+      });
+
+      if (emailCheckResponse.data.exists) {
+        const loginResponse = await axios.post('/v1/account/google-login', {
+          email: userProfile.email,
+          nameOfUser: userProfile.name,
+        });
+
+        if (loginResponse.data.token) {
+          localStorage.setItem("token", loginResponse.data.token);
+          const userObj = {
+            userName: loginResponse.data.username,
+            email: loginResponse.data.emailAddress,
+            token: loginResponse.data.token,
+            role: loginResponse.data.role,
+          };
+          localStorage.setItem("user", JSON.stringify(userObj));
+          setUser(userObj);
+          setToken(loginResponse.data.token);
+          toast.success("Đăng nhập với Google thành công!");
+          
+          navigate('/product');
+          
+        }
+      } else {
+        const registerPayload = {
+          username: userProfile.name,
+          emailAddress: userProfile.email,
+          password: null, // Không cần mật khẩu
+          nameOfUser: userProfile.name,
+          resigterWithgoogle: true,
+        };
+
+        await registerAPI(registerPayload);
+        toast.success("Đăng ký với Google thành công!");
+        
+        navigate('/product');
       }
-    },
-    onError: (error) => {
-      console.error('Google Login Failed:', error);
-      toast.error("Google Login Failed");
-    },
-  });
+    } catch (err) {
+      console.error("Đăng nhập với Google thất bại:", err);
+      toast.error("Google Login Failed. Please try again.");
+    }
+  },
+  onError: (error) => {
+    console.error("Google Login Failed:", error);
+    toast.error("Google Login Failed");
+  },
+});
+
   
   
 
   const registerUser = async (
     username: string,
     email: string,
-    password: string
+    password: string,
+    nameOfUser: string,
+    registerWithGoogle: boolean
   ) => {
-    await registerAPI(username, email, password)
+    const payload = {
+      username,
+      emailAddress: email,
+      password,
+      nameOfUser,
+      resigterWithgoogle: registerWithGoogle,
+    };
+  
+    await registerAPI(payload)
       .then((res) => {
         if (res) {
           localStorage.setItem("token", res?.data.token);
-          
+  
           const userObj = {
             userName: res?.data.userName,
             email: res?.data.email,
-            token : res?.data.token,
-            role: res?.data.role, 
-            
+            token: res?.data.token,
+            role: res?.data.role,
           };
           localStorage.setItem("user", JSON.stringify(userObj));
-          console.log("User Object:", userObj);
           setToken(res?.data.token!);
           setUser(userObj!);
           toast.success("Đăng ký thành công, mời bạn đăng nhập lại");
@@ -128,6 +159,7 @@ export const UserProvider = ({ children }: Props) => {
       })
       .catch((e) => toast.warning("Lỗi"));
   };
+  
 
   const loginUser = async (username: string, password: string) => {
     await loginAPI(username, password)
@@ -157,7 +189,7 @@ export const UserProvider = ({ children }: Props) => {
           }
         }
       })
-      .catch((e) => toast.warning("Server error occurred"));
+      .catch((e) => toast.warning("Lỗi máy chủ. Vui lòng thử lại."));
   };
   
 
@@ -173,6 +205,9 @@ export const UserProvider = ({ children }: Props) => {
     setToken("");
     navigate("/");
   };
+
+
+  
 
   return (
     <UserContext.Provider

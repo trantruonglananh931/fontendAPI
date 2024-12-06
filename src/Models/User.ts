@@ -16,6 +16,9 @@ export type User = {
   username: string;
   emailAddress: string;
   password?: string; 
+  nameOfUser: string; 
+  resigterWithgoogle: boolean; 
+  token: string;
   image: string | null;
   birthDay: string | null;
 };

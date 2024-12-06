@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Product} from "../../../Models/Product";
+import { Product } from "../../../Models/Product"; 
 import { useAuth } from "../../../Context/useAuth";
 
 const ProductUpdate: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth(); 
- 
+
   const token = user?.token;
   const [product, setProduct] = useState<Product>({
     id: "",
@@ -18,18 +18,30 @@ const ProductUpdate: React.FC = () => {
     quantityStock: 0,
     price: 0,
     categoryId: "",
+    imageUrls: [], // Thêm trường imageUrls
+    sizes: Array.from({ length: 7 }, (_, index) => ({
+      sizeId: index + 8, 
+      quantity: 0,        
+    })),
   });
   const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
   const [loading, setLoading] = useState(true);
+  const sizeMapping: { [key: number]: string } = {
+    8: "XXS",
+    9: "XS",
+    10: "S",
+    11: "M",
+    12: "L",
+    13: "XL",
+    14: "XXL",
+  };
 
   useEffect(() => {
-    // Check if the user is an admin
     if (user?.role !== "Admin") {
-      navigate("/product"); // Redirect to another page if not admin
+      navigate("/product");
     }
+
     const fetchProductDetails = async () => {
-      const token = user?.token;
-      
       try {
         const response = await axios.get(`/v2/api/Product/${id}`, {
           headers: {
@@ -38,13 +50,16 @@ const ProductUpdate: React.FC = () => {
         });
 
         if (response.data && response.data.data) {
-          setProduct(response.data.data);
+          setProduct(prev => ({
+            ...prev,
+            ...response.data.data,
+            sizes: response.data.data.sizes || Array.from({ length: 7 }, (_, index) => ({
+              sizeId: index + 8,
+              quantity: 0,
+            })),
+          }));
         } else {
           console.error("Dữ liệu sản phẩm không khả dụng");
-  
-  
-  
-  
         }
       } catch (error) {
         console.error("Lỗi khi lấy thông tin sản phẩm:", error);
@@ -56,7 +71,6 @@ const ProductUpdate: React.FC = () => {
         const response = await axios.get("/v4/api/Category");
         if (response.data && Array.isArray(response.data.data)) {
           setCategories(response.data.data);
-          console.log(response.data.data);
         } else {
           console.error("Dữ liệu danh mục không phải là một mảng");
           setCategories([]);
@@ -71,7 +85,7 @@ const ProductUpdate: React.FC = () => {
 
     fetchProductDetails();
     fetchCategories();
-  }, [id]);
+  }, [id, token, user?.role, navigate]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -85,19 +99,63 @@ const ProductUpdate: React.FC = () => {
     });
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProduct((prev) => ({
-          ...prev,
-          image: reader.result as string, 
-        }));
-      };
-      reader.readAsDataURL(file);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, isMainImage: boolean = false) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      const formData = new FormData();
+  
+      newFiles.forEach(file => {
+        formData.append("files", file);
+      });
+  
+      try {
+        // Gửi hình ảnh lên API
+        const response = await axios.post("/v2/api/images", formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          params: { isMainImage },
+        });
+        
+        if (response.data.urls) {
+          // Cập nhật sản phẩm với URL hình ảnh trả về
+          if (isMainImage) {
+            setProduct(prev => ({ ...prev, image: response.data.urls[0] }));
+          } else {
+            setProduct(prev => ({ ...prev, imageUrls: [...prev.imageUrls, ...response.data.urls] }));
+          }
+        }
+        
+      } catch (error) {
+        console.error("Lỗi khi tải lên hình ảnh:", error);
+        alert("Không thể tải lên hình ảnh.");
+      }
     }
   };
+
+  const removeImageUrl = (index: number) => {
+    setProduct(prev => {
+      const updatedImageUrls = prev.imageUrls.filter((_, idx) => idx !== index);
+      return { ...prev, imageUrls: updatedImageUrls };
+    });
+  };
+
+  const handleSizeDetailChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const updatedSizes = [...product.sizes];
+    updatedSizes[index].quantity = Math.max(+e.target.value, 0); 
+
+    const totalQuantity = updatedSizes.reduce((sum, size) => sum + size.quantity, 0);
+    
+    setProduct({ 
+      ...product, 
+      sizes: updatedSizes,
+      quantityStock: totalQuantity,
+    });
+  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +184,7 @@ const ProductUpdate: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div className="p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-6">Cập nhật sản phẩm</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -151,59 +209,106 @@ const ProductUpdate: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh</label>
-          <input
-            type="file"
-            accept="image/*" // Chỉ cho phép chọn hình ảnh
-            onChange={handleImageChange}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          />
-          {product.image && (
-            <img
-              src={product.image}
-              alt="Product Preview"
-              className="mt-2 w-28 h-40 object-cover rounded-lg"
+        <div className="flex space-x-4">
+          <div className="w-1/2">
+          <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh phụ</label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => handleImageChange(e)}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
-          )}
+          </div>
+          <div className="w-1/2">
+          <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh chính</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageChange(e, true)}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              required
+            />
+           
+          </div>
         </div>
-        <div>
-          <label className="block text-gray-700 font-semibold mb-2">Số lượng trong kho</label>
-          <input
-            type="number"
-            name="quantityStock"
-            value={product.quantityStock}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700 font-semibold mb-2">Giá</label>
-          <input
-            type="number"
-            name="price"
-            value={product.price}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-black font-semibold mb-2">Danh mục</label>
-          <select
-            name="categoryId"
-            value={product.categoryId}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-black"
-            required
-          >
-            <option value="">Chọn một danh mục</option>
-            {categories.map((category) => (
-              <option className="text-black" key={category.id} value={category.id}>
-                {category.categorName}
-              </option>
+  
+        <div className="mt-6">
+          <h2 className=" text-lg ">Hình ảnh phụ:</h2>
+          <ul>
+            {product.imageUrls.map((url, index) => (
+              <li key={index} className=" text-gray-700">
+                <span>{url}</span>
+                <button type="button" onClick={() => removeImageUrl(index)} className="ml-2 text-red-500 hover:underline">
+                  Xóa
+                </button>
+              </li>
             ))}
-          </select>
+          </ul>
+        </div>
+        </div>
+        <div className="flex space-x-4">
+          <div className="w-1/3">
+            <label className="block text-gray-700 font-semibold mb-2">Giá</label>
+            <input
+              type="number"
+              name="price"
+              value={product.price}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              min="0"
+              required
+            />
+          </div>
+          <div className="w-1/3">
+            <label className="block text-gray-700 font-semibold mb-2">Số lượng kho</label>
+            <input
+              type="number"
+              name="quantityStock"
+              value={product.quantityStock}
+              readOnly
+              className="w-full p-2 border border-gray-300 rounded-lg bg-gray-100"
+            />
+          </div>
+          <div className="w-1/3">
+            <label className="block text-gray-700 font-semibold mb-2">Danh mục</label>
+            <select
+              name="categoryId"
+              value={product.categoryId}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              required
+            >
+              <option value="">Chọn danh mục</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.categorName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+  
+         
+         
+
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold">Thông tin Size</h2>
+          <div className="flex items-center space-x-6">
+            {Array.isArray(product.sizes) && product.sizes.map((size, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <label className="text-sm font-semibold text-gray-700">{sizeMapping[size.sizeId]}:</label>
+                <input
+                  type="number"
+                  value={size.quantity}
+                  onChange={(e) => handleSizeDetailChange(e, index)}
+                  className="w-16 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-center"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+            ))}
+          </div>
         </div>
         <div className="flex justify-end">
           <button

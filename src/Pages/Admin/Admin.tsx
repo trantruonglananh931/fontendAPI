@@ -32,7 +32,7 @@ const Admin: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen  ">
       {/* Sidebar */}
       <Slidebar isOpen={isSidebarOpen} addTab={addTab}  />
 

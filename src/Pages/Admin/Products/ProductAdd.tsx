@@ -17,13 +17,13 @@ const ProductAdd: React.FC = () => {
     categoryId: "",
     imageUrls: [],
     sizeDetails: Array.from({ length: 7 }, (_, index) => ({
-      sizeId: index + 8,  // Mặc định sizeId từ 1 đến 7
-      quantity: 0,        // Mặc định quantity là 0
+      sizeId: index + 8, 
+      quantity: 0,        
     })),
   });
   const token = user?.token;
 
-  const [categories, setCategories] = useState<{ id: string; categoryName: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
   const [imageUrl, setImageUrl] = useState<string>("");
   const sizeMapping: { [key: number]: string } = {
     8: "XXS",
@@ -36,10 +36,6 @@ const ProductAdd: React.FC = () => {
   };
   
   useEffect(() => {
-     // Check if the user is an admin
-     if (user?.role !== "Admin") {
-      navigate("/product"); // Redirect to another page if not admin
-    }
     const fetchCategories = async () => {
       try {
         const response = await axios.get('/v4/api/Category',{
@@ -63,7 +59,7 @@ const ProductAdd: React.FC = () => {
     fetchCategories();
   }, []);
 
-  // Tính tổng số lượng từ sizeDetails
+
   const calculateTotalQuantity = (sizeDetails: { sizeId: number; quantity: number }[]) => {
     return sizeDetails.reduce((total, size) => total + size.quantity, 0);
   };
@@ -84,7 +80,7 @@ const ProductAdd: React.FC = () => {
     field: "quantity"
   ) => {
     const updatedSizeDetails = [...product.sizeDetails];
-    updatedSizeDetails[index][field] = Math.max(+e.target.value, 0); // Đảm bảo min = 0
+    updatedSizeDetails[index][field] = Math.max(+e.target.value, 0);
 
     const totalQuantity = calculateTotalQuantity(updatedSizeDetails);
 
@@ -94,6 +90,7 @@ const ProductAdd: React.FC = () => {
       quantityStock: totalQuantity, // Cập nhật tổng số lượng
     });
   };
+  
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, isMainImage: boolean = false) => {
     const files = e.target.files;
     if (files) {
@@ -101,7 +98,7 @@ const ProductAdd: React.FC = () => {
       const formData = new FormData();
   
       newFiles.forEach(file => {
-        formData.append("files", file); // Thêm các file vào FormData
+        formData.append("files", file);
       });
   
       try {
@@ -271,7 +268,7 @@ const ProductAdd: React.FC = () => {
               <option value="">Chọn danh mục</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
-                  {category.categoryName}
+                  {category.categorName}
                 </option>
               ))}
             </select>
@@ -280,26 +277,26 @@ const ProductAdd: React.FC = () => {
   
         <div className="mt-6">
   
-  <div className="flex items-center space-x-6">
-  <h2 className="text-lg font-semibold">Thông tin Size</h2>
-    {product.sizeDetails.map((sizeDetail, index) => (
-      <div key={index} className="flex items-center space-x-2">
-        {/* Tên size */}
-        <label className="text-sm font-semibold text-gray-700">{sizeMapping[sizeDetail.sizeId]} : </label>
-        {/* Ô nhập số lượng */}
-        <input
-          type="number"
-          name={`quantity_${sizeDetail.sizeId}`}
-          value={sizeDetail.quantity}
-          onChange={(e) => handleSizeDetailChange(e, index, "quantity")}
-          className="w-16 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-center"
-          placeholder="0"
-          min="0"
-        />
-      </div>
-    ))}
-  </div>
-</div>
+          <div className="flex items-center space-x-6">
+          <h2 className="text-lg font-semibold">Thông tin Size</h2>
+            {product.sizeDetails.map((sizeDetail, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                {/* Tên size */}
+                <label className="text-sm font-semibold text-gray-700">{sizeMapping[sizeDetail.sizeId]} : </label>
+                {/* Ô nhập số lượng */}
+                <input
+                  type="number"
+                  name={`quantity_${sizeDetail.sizeId}`}
+                  value={sizeDetail.quantity}
+                  onChange={(e) => handleSizeDetailChange(e, index, "quantity")}
+                  className="w-16 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-center"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
   
         <button

@@ -36,9 +36,6 @@ const CategoryList: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user?.role !== "Admin") {
-      navigate("/product"); // Or redirect to any other page you prefer
-    }
     fetchCategories();
   }, []);
 

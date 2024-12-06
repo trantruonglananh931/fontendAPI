@@ -8,11 +8,15 @@ export type Product = {
   price: number;
   categoryId?: string;
   categoryName?: string;
-  imageUrls?: string[];
+  imageUrls: string[];
   listStringImage?: string[];
   sizeDetails?: {
     sizeId : number;
-    sizeName: string;  
+    sizeName?: string;  
+    quantity: number;
+  }[];
+  sizes: {
+    sizeId : number;
     quantity: number;
   }[];
   messageDetails?: {

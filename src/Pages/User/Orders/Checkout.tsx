@@ -28,7 +28,6 @@ const Checkout: React.FC = () => {
     try {
   
       for (const product of selectedItems) {
-        // Tìm sizeId dựa trên selectedSize
         const sizeDetail = product.sizeDetails.find(
           (detail) => detail.sizeName === product.selectedSize
         );
@@ -134,7 +133,7 @@ const Checkout: React.FC = () => {
           onChange={(e) => setPaymentMethodId(Number(e.target.value))}
         >
           <option value={1}>Thanh toán khi nhận hàng</option>
-          <option value={2}>PayPal</option>
+          <option value={2}>Chuyển khoản</option>
         </select>
       </div>
 

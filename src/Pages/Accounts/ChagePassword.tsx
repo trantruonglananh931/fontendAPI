@@ -22,7 +22,7 @@ const ChangePassword: React.FC = () => {
     }
 
     try {
-      const response = await axios.put("/ForGotPassWord", {
+      const response = await axios.put("/v3/api/user/ChangePassWord", {
         oldPassword,
         newPassword,
         confirmNewPassword,
@@ -45,10 +45,10 @@ const ChangePassword: React.FC = () => {
     
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Đổi Mật Khẩu</h1>
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div className="relative">
-            <label className="block mb-1">Mật Khẩu Cũ</label>
+            <label className="block mb-1">Mật khẩu cũ</label>
             <input
               type={showOldPassword ? "text" : "password"}
               value={oldPassword}
@@ -59,13 +59,13 @@ const ChangePassword: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowOldPassword(!showOldPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/4 flex items-center"
+              className="absolute right-2 top-1/2 mt-2 -translate-y-1/4 flex items-center"
             >
-              <FontAwesomeIcon icon={showOldPassword ? faEyeSlash : faEye} />
+              <FontAwesomeIcon icon={showOldPassword ? faEye : faEyeSlash} />
             </button>
           </div>
           <div className="relative">
-            <label className="block mb-1">Mật Khẩu Mới</label>
+            <label className="block mb-1">Mật khẩu mới</label>
             <input
               type={showNewPassword ? "text" : "password"}
               value={newPassword}
@@ -76,13 +76,13 @@ const ChangePassword: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/4 flex items-center"
+              className="absolute right-2 top-1/2 -translate-y-1/4 flex mt-2  items-center"
             >
-              <FontAwesomeIcon icon={showNewPassword ? faEyeSlash : faEye} />
+              <FontAwesomeIcon icon={showNewPassword ? faEye : faEyeSlash} />
             </button>
           </div>
           <div className="relative">
-            <label className="block mb-1">Xác Nhận Mật Khẩu Mới</label>
+            <label className="block mb-1">Xác nhận mật khẩu mới</label>
             <input
               type={showConfirmNewPassword ? "text" : "password"}
               value={confirmNewPassword}
@@ -93,9 +93,9 @@ const ChangePassword: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/4 flex items-center"
+              className="absolute right-2 mt-2  top-1/2 -translate-y-1/4 flex items-center"
             >
-              <FontAwesomeIcon icon={showConfirmNewPassword ? faEyeSlash : faEye} />
+              <FontAwesomeIcon icon={showConfirmNewPassword ? faEye : faEyeSlash} />
             </button>
           </div>
           <div className="flex justify-center">

@@ -13,10 +13,6 @@ const ProductList: React.FC = () => {
   const token = user?.token;
 
   useEffect(() => {
-    // Check if the user is an admin
-    if (user?.role !== "Admin") {
-      navigate("/product"); // Redirect to another page if not admin
-    }
 
     const fetchProducts = async () => {
       try {
@@ -44,17 +40,15 @@ const ProductList: React.FC = () => {
     if (!isConfirmed) return;
   
     try {
-      // Xóa sản phẩm
+
       await axios.delete(`/v2/api/Product/${id}`);
   
-      // Xóa hình ảnh chính
       const imageName = image.split('/').pop();
       console.log('imageName:', imageName);
       if (imageName) {
         await axios.delete(`/v2/api/images?imageName=${encodeURIComponent(imageName)}&isMainImage=true`);
       }
   
-      // Xóa các hình ảnh phụ
       if (listStringImage && listStringImage.length > 0) {
         for (let img of listStringImage) {
           const imageNameInList = img.split('/').pop();
@@ -62,12 +56,11 @@ const ProductList: React.FC = () => {
         }
       }
   
-      // Cập nhật lại danh sách sản phẩm
       setProducts(products.filter((product) => product.id !== id));
-      alert("Xóa sản phẩm thành công!");
+     
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm hoặc hình ảnh:", error);
-      alert("Xóa sản phẩm thất bại.");
+
     }
   };
   
