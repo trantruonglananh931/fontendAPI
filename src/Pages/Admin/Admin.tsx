@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate,useLocation  } from 'react-router-dom';
 import Slidebar from "../../Components/Slidebar/Sliderbar";
 import AdminNavbar from "../../Components/Navbar/AdminNavbar";
 import { useAuth } from "../../Context/useAuth";
@@ -9,6 +9,7 @@ const Admin: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const { user } = useAuth(); 
   const navigate = useNavigate();
+  const location = useLocation(); 
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -30,9 +31,10 @@ const Admin: React.FC = () => {
       setActiveTab(tabs[0].key);  // Chuyển sang tab đầu tiên nếu tab hiện tại bị đóng
     }
   };
+  const isProductUpdate = location.pathname.includes('/admin/product/update');
 
   return (
-    <div className="flex h-screen  ">
+    <div className="flex h-screen">
       {/* Sidebar */}
       <Slidebar isOpen={isSidebarOpen} addTab={addTab}  />
 
@@ -66,9 +68,15 @@ const Admin: React.FC = () => {
         </div>
 
         <div className="p-4 w-full">
-        {}
-        {tabs.find((tab) => tab.key === activeTab)?.component}
+        
+        {isProductUpdate ? (       
+              <Outlet /> 
+            ) : tabs.find((tab) => tab.key === activeTab)?.component}
+        <div>
+         
+          </div>
         </div>
+
       </div>
     </div>
   );

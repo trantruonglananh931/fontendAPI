@@ -19,8 +19,9 @@ const ProductUpdate: React.FC = () => {
     price: 0,
     categoryId: "",
     imageUrls: [], // Thêm trường imageUrls
-    sizes: Array.from({ length: 7 }, (_, index) => ({
+    sizeDetails: Array.from({ length: 7 }, (_, index) => ({
       sizeId: index + 8, 
+      sizeName: "Test",
       quantity: 0,        
     })),
   });
@@ -144,14 +145,14 @@ const ProductUpdate: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) => {
-    const updatedSizes = [...product.sizes];
+    const updatedSizes = [...product.sizeDetails];
     updatedSizes[index].quantity = Math.max(+e.target.value, 0); 
 
     const totalQuantity = updatedSizes.reduce((sum, size) => sum + size.quantity, 0);
     
     setProduct({ 
       ...product, 
-      sizes: updatedSizes,
+      sizeDetails: updatedSizes,
       quantityStock: totalQuantity,
     });
   };
@@ -183,8 +184,9 @@ const ProductUpdate: React.FC = () => {
     return <p>Đang tải...</p>;
   }
 
+
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg">
+    <div className="p-6 bg-white shadow-md rounded-lg ">
       <h1 className="text-2xl font-bold mb-6">Cập nhật sản phẩm</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -295,12 +297,13 @@ const ProductUpdate: React.FC = () => {
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Thông tin Size</h2>
           <div className="flex items-center space-x-6">
-            {Array.isArray(product.sizes) && product.sizes.map((size, index) => (
+            {
+            product.sizeDetails.map((sizeDetails, index) => (
               <div key={index} className="flex items-center space-x-2">
-                <label className="text-sm font-semibold text-gray-700">{sizeMapping[size.sizeId]}:</label>
+                <label className="text-sm font-semibold text-gray-700">{sizeMapping[sizeDetails.sizeId]}:</label>
                 <input
                   type="number"
-                  value={size.quantity}
+                  value={sizeDetails.quantity !=0 ? sizeDetails.quantity : 0 }  
                   onChange={(e) => handleSizeDetailChange(e, index)}
                   className="w-16 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-center"
                   placeholder="0"
