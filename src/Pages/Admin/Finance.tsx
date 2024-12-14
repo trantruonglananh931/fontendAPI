@@ -220,11 +220,12 @@ const Finance: React.FC = () => {
               <option value="desc">Giảm dần</option>
             </select>
           </div>
-        </div>
-
-        <button type="submit" className="ml-4 bg-blue-500 text-white px-4 py-2 rounded">
+          <button type="submit" className="ml-4 bg-blue-500 text-white px-4 py-2 rounded">
           Lấy Dữ liệu
         </button>
+        </div>
+
+        
       </form>
 
       {/* Hiển thị biểu đồ hoặc bảng */}

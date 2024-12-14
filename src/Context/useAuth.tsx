@@ -23,7 +23,6 @@ type UserContextType = {
   isLoggedIn: () => boolean;
 };
 
-
 type Props = { children: React.ReactNode };
 
 const UserContext = createContext<UserContextType>({} as UserContextType);
@@ -52,78 +51,87 @@ export const UserProvider = ({ children }: Props) => {
     }
     setIsReady(true);
   }, []);
-  
-  
+
 
   const loginWithGoogle = useGoogleLogin({
-  onSuccess: async (tokenResponse) => {
-    try {
-      const res = await axios.get(
-        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`,
-            Accept: "application/json",
-          },
-        }
-      );
-
-      const userProfile = res.data;
-
-      const emailCheckResponse = await axios.post('/v1/account/check-email', {
-        email: userProfile.email,
-      });
-
-      if (emailCheckResponse.data.exists) {
-        const loginResponse = await axios.post('/v1/account/google-login', {
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await axios.get(
+          `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+              Accept: "application/json",
+            },
+          }
+        );
+  
+        const userProfile = res.data;
+  
+        const emailCheckResponse = await axios.post('/v1/account/check-email', {
           email: userProfile.email,
-          nameOfUser: userProfile.name,
         });
-
-        if (loginResponse.data.token) {
-          localStorage.setItem("token", loginResponse.data.token);
-          const userObj = {
-            userName: loginResponse.data.username,
-            email: loginResponse.data.emailAddress,
-            token: loginResponse.data.token,
-            role: loginResponse.data.role,
+  
+        if (emailCheckResponse.data.exists) {
+          const loginResponse = await axios.post('/v1/account/google-login', {
+            email: userProfile.email,
+            nameOfUser: userProfile.name,
+          });
+  
+          if (loginResponse.data.token) {
+            localStorage.setItem("token", loginResponse.data.token);
+            const userObj = {
+              userName: loginResponse.data.username,
+              email: loginResponse.data.emailAddress,
+              token: loginResponse.data.token,
+              role: loginResponse.data.role,
+            };
+            localStorage.setItem("user", JSON.stringify(userObj));
+            setUser(userObj);
+            setToken(loginResponse.data.token);
+            toast.success("Đăng nhập với Google thành công!");
+            
+            navigate('/product');
+          }
+        } else {
+          const registerPayload = {
+            username: userProfile.name,
+            emailAddress: userProfile.email,
+            password: null, 
+            nameOfUser: userProfile.name,
+            resigterWithgoogle: true,
           };
-          localStorage.setItem("user", JSON.stringify(userObj));
-          setUser(userObj);
-          setToken(loginResponse.data.token);
-          toast.success("Đăng nhập với Google thành công!");
-          
-          navigate('/product');
-          
+  
+          const registerResponse = await registerAPI(registerPayload);
+
+          if (registerResponse?.data?.token) {
+            const userObj = {
+              userName: registerResponse.data.userName,
+              email: registerResponse.data.email,
+              token: registerResponse.data.token,
+              role: registerResponse.data.role,
+            };
+            localStorage.setItem("token", registerResponse.data.token);
+            localStorage.setItem("user", JSON.stringify(userObj));
+
+            setUser(userObj);
+            setToken(registerResponse.data.token);
+            toast.success("Đăng ký với Google thành công!");
+            
+            navigate('/product');
+          }
         }
-      } else {
-        const registerPayload = {
-          username: userProfile.name,
-          emailAddress: userProfile.email,
-          password: null, // Không cần mật khẩu
-          nameOfUser: userProfile.name,
-          resigterWithgoogle: true,
-        };
-
-        await registerAPI(registerPayload);
-        toast.success("Đăng ký với Google thành công!");
-        
-        navigate('/product');
+      } catch (err) {
+        console.error("Đăng nhập với Google thất bại:", err);
+        toast.error("Google Login Failed. Please try again.");
       }
-    } catch (err) {
-      console.error("Đăng nhập với Google thất bại:", err);
-      toast.error("Google Login Failed. Please try again.");
-    }
-  },
-  onError: (error) => {
-    console.error("Google Login Failed:", error);
-    toast.error("Google Login Failed");
-  },
-});
-
+    },
+    onError: (error) => {
+      console.error("Google Login Failed:", error);
+      toast.error("Google Login Failed");
+    },
+  });
   
-  
-
   const registerUser = async (
     username: string,
     email: string,
@@ -165,7 +173,6 @@ export const UserProvider = ({ children }: Props) => {
     await loginAPI(username, password)
       .then((res) => {
         if (res) {
-          // Save the token and user details including the role
           localStorage.setItem("token", res?.data.token);
           const userObj = {
             userName: res?.data.userName,
@@ -174,14 +181,9 @@ export const UserProvider = ({ children }: Props) => {
             role: res?.data.role,  
           };
           localStorage.setItem("user", JSON.stringify(userObj));
-          
-          // Update state with the user details and token
           setToken(res?.data.token!);
           setUser(userObj!);
-          
           toast.success("Đăng nhập thành công!");
-  
-          // Redirect based on role
           if (res?.data.role === "Admin") {
             navigate("/admin");
           } else if (res?.data.role === "User") {
@@ -192,10 +194,9 @@ export const UserProvider = ({ children }: Props) => {
       .catch((e) => toast.warning("Lỗi máy chủ. Vui lòng thử lại."));
   };
   
-
   const isLoggedIn = () => {
     return !!user;
-  };
+  }
 
   const logout = () => {
     googleLogout();
@@ -203,7 +204,7 @@ export const UserProvider = ({ children }: Props) => {
     localStorage.removeItem("user");
     setUser(null);
     setToken("");
-    navigate("/");
+    navigate("/login");
   };
 
 

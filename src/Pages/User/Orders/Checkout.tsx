@@ -42,9 +42,9 @@ const Checkout: React.FC = () => {
         try {
           await axios.post("/v2/api/Product/sessions", cartItem, {
             headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+              'Authorization': `Bearer ${token}`,
+              'accept': '*/*',
+            }
           });
         } catch (error) {
           console.error("Lỗi khi thêm sản phẩm vào giỏ hàng:", error);
@@ -86,7 +86,8 @@ const Checkout: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
+
 
   const calculateTotal = () => {
     return selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);

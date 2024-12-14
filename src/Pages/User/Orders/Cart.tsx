@@ -42,6 +42,7 @@ const Cart: React.FC = () => {
     fetchCartItems();
   }, []);
 
+  
   const handleQuantityChange = (productId: string, selectedSize: string, change: number) => {
     const updatedItems = cartItems.map((item) => {
       if (item.productId === productId && item.selectedSize === selectedSize) {

@@ -113,16 +113,16 @@ const LoginPage = (props: Props) => {
             <div className="flex space-x-4 text-sm">
                 <button
                   onClick={loginWithGoogle}
-                  className="w-1/2 h-10 border-2 border-gray-800 rounded-full font-semibold text-gray-800 hover:bg-gray-800 hover:text-white transition duration-200"
+                  className="w-full h-10 border-2 border-gray-800 rounded-full font-semibold text-gray-800 hover:bg-gray-800 hover:text-white transition duration-200"
                 >
                   Đăng nhập với Google
                 </button>
-                <button
-                  /* onClick={loginWithFacebook} */
+                {/* <button
+                   onClick={loginWithFacebook} 
                   className="w-1/2 h-10 border-2 border-blue-600 rounded-full font-semibold text-blue-600 hover:bg-blue-600 hover:text-white transition duration-200"
                 >
                   Đăng nhập với Facebook
-                </button>
+                </button> */}
               </div>
           </div>
         </div>

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "../../Components/Navbar/Navbar";
-import { useNavigate } from "react-router-dom"; // Sử dụng useNavigate
+import { useNavigate } from "react-router-dom"; 
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   const [otp, setOtp] = useState<string>("");
   const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
-  const [countdown, setCountdown] = useState<number>(120); // 2 phút
-  const navigate = useNavigate(); // Khai báo hook useNavigate
+  const [countdown, setCountdown] = useState<number>(120);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +28,12 @@ const ForgotPassword: React.FC = () => {
   };
 
   const startCountdown = () => {
-    setCountdown(120); // Reset countdown
+    setCountdown(120); 
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          return 0; // Dừng lại khi đếm ngược về 0
+          return 0; 
         }
         return prev - 1;
       });
@@ -41,13 +41,12 @@ const ForgotPassword: React.FC = () => {
   };
 
   const handleResendOtp = async () => {
-  // Kiểm tra nếu countdown đã kết thúc mới gửi lại mã OTP
   if (countdown === 0) {
     try {
       const response = await axios.post("/Mail", { emailToId: email });
       if (response.data.status) {
         setMessage("Mã OTP đã được gửi lại đến email của bạn.");
-        startCountdown(); // Bắt đầu lại đồng hồ đếm ngược
+        startCountdown(); 
       } else {
         setMessage(response.data.message);
       }

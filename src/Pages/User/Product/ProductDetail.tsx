@@ -5,7 +5,7 @@ import { useAuth } from "../../../Context/useAuth";
 import { Product } from "../../../Models/Product";
 import { addMessage } from "../../../Models/Message";
 import { CartItem } from "../../../Models/CartItem";
-import PaymentMethods from "../../../Components/Payment/PaymentMethods"; // Import component PaymentMethods
+import PaymentMethods from "../../../Components/Payment/PaymentMethods"; 
 import Navbar from "../../../Components/Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 
@@ -16,16 +16,16 @@ const ProductDetail: React.FC = () => {
   const [imageList, setImageList] = useState<string[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null); // Add selected size state
-  const [sizeStock, setSizeStock] = useState<number>(0); // Add state for selected size stock
-  const [message, setMessage] = useState<string>('');  // Lưu tin nhắn
-  const [imageFiles, setImageFiles] = useState<FileList | null>(null);  // Lưu các file hình ảnh
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);  // Lưu các URL hình ảnh đã tải lên
+  const [selectedSize, setSelectedSize] = useState<string | null>(null); 
+  const [sizeStock, setSizeStock] = useState<number>(0); 
+  const [message, setMessage] = useState<string>('');  
+  const [imageFiles, setImageFiles] = useState<FileList | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);  
   const { user } = useAuth(); 
   
   const navigate = useNavigate();
   const token = user?.token;
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // Trạng thái lưu hình ảnh được chọn
+  const [selectedImage, setSelectedImage] = useState<string | null>(null); 
 
   const handleImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl); 
@@ -75,14 +75,14 @@ const ProductDetail: React.FC = () => {
     if (selectedSizeDetail) {
       setSelectedSize(size);
       setSizeStock(selectedSizeDetail.quantity);
-      setQuantity(1); // Reset quantity to 1 when size is changed
+      setQuantity(1); 
     }
   };
 
   const handleAddToCart = () => {
     if (!user) {
       alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
-      navigate('/login'); // Chuyển hướng đến trang đăng nhập
+      navigate('/login'); 
       return;
     }
     if (!selectedSize) {
@@ -129,24 +129,62 @@ const ProductDetail: React.FC = () => {
     saveCartToLocalStorage(updatedCart);
     alert("Sản phẩm đã được thêm vào giỏ hàng!");
   };
-  
-  const handleSubmitReview = async (e: React.FormEvent) => {
 
+  const handleBuyNow = () => {
+    if (!user) {
+      alert("Vui lòng đăng nhập để tiếp tục!");
+      navigate("/login");
+      return;
+    }
+  
+    if (!selectedSize) {
+      return alert("Vui lòng chọn kích thước sản phẩm!");
+    }
+  
+    const selectedSizeDetail = product?.sizeDetails?.find(
+      (size) => size.sizeName === selectedSize
+    );
+  
+    if (!selectedSizeDetail) {
+      return alert("Kích thước không hợp lệ!");
+    }
+  
+    if (quantity > selectedSizeDetail.quantity) {
+      setQuantity(selectedSizeDetail.quantity);
+      return alert(
+        `Số lượng vượt quá giới hạn. Chỉ còn ${selectedSizeDetail.quantity}`
+      );
+    }
+  
+    const newItem: CartItem = {
+      productId: product?.id!,
+      productName: product?.productName!,
+      image: product?.image!,
+      price: product?.price!,
+      quantity,
+      sizeDetails: product?.sizeDetails || [],
+      selectedSize,
+    };
+  
+    navigate("/checkout", { state: { selectedCartItems: [newItem] } });
+  };
+  
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
     if (!user) {
       alert("Vui lòng đăng nhập để gửi đánh giá!");
       navigate('/login');
       return;
     }
-    
+  
     e.preventDefault();
   
     try {
       let imageUrls: string[] = [];
-  
       if (imageFiles) {
         const formData = new FormData();
         Array.from(imageFiles).forEach((file) => formData.append("files", file));
-        
+  
         try {
           const uploadResponse = await axios.post(`/v2/api/images/rateProduct`, formData, {
             headers: {
@@ -161,31 +199,31 @@ const ProductDetail: React.FC = () => {
           return;
         }
       }
- 
+  
       const newAddMessage = {
         message: message,
-        Image: imageUrls.join(","), 
+        Image: imageUrls.length > 0 ? imageUrls.join(",") : "",
       };
   
       const reviewResponse = await axios.post(
-        `/v2/api/Product/addMessage/${id}`, 
-        null, 
+        `/v2/api/Product/addMessage/${id}`,
+        null,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          params: newAddMessage, 
+          params: newAddMessage,
         }
       );
   
       alert("Đánh giá đã được gửi thành công!");
       window.location.reload();
-      
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error);
       alert("Không thể gửi đánh giá.");
     }
   };
+  
   
   if (!product) {
     return <div className="text-center">Đang tải...</div>;
@@ -273,10 +311,12 @@ const ProductDetail: React.FC = () => {
   
                    
                     <button
+                      onClick={handleBuyNow}
                       className="px-5 py-3 bg-orange-500 text-white font-medium rounded-md"
                     >
                       Mua ngay
-                    </button> 
+                    </button>
+
                   </div>
                 </>
               ) : (
@@ -351,7 +391,7 @@ const ProductDetail: React.FC = () => {
                     src={messageDetail.image || "/default-avatar.jpg"}
                     alt={messageDetail.userName}
                     className="w-20 h-20 cursor-pointer"
-                    onClick={() => handleImageClick(messageDetail.image)} 
+                    onClick={() => handleImageClick(messageDetail.image || "null")} 
                   />
                 </div>
               </div>

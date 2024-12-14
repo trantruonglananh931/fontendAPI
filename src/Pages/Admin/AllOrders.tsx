@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react"; 
 import axios from "axios";
 import { OrderItem, OrderDetailItem } from "../../Models/OrderItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import OrderDetail from "../../Components/Orders/OrderDetail";
 import { FaEye } from "react-icons/fa"; 
 import { useAuth } from "../../Context/useAuth";
@@ -107,7 +109,7 @@ const AllOrders: React.FC = () => {
               {orders.length === 0 ? (
                 <tr>
                   <td colSpan={headers.length} className="text-center py-4 text-gray-600">
-                    Không có đơn hàng nào.
+                    Đang tải...
                   </td>
                 </tr>
               ) : (
@@ -123,7 +125,7 @@ const AllOrders: React.FC = () => {
                      
                       {/* Cập nhật trạng thái đơn hàng */}
                       {order.stateOrder === "Hủy đơn hàng" ? (
-                        <button className="px-4 py-2 bg-gray-500 text-white cursor-not-allowed" disabled>
+                        <button className="px-1 py-1 bg-gray-500 text-white cursor-not-allowed" disabled>
                           Đã hủy
                         </button>
                       ) : order.stateOrder === "Đã xác nhận" ? (
@@ -131,7 +133,7 @@ const AllOrders: React.FC = () => {
                           className="px-1 py-1 bg-blue-500 text-white"
                           onClick={() => changeOrderStatus(order.id, 3)}
                         >
-                          Đang giao hàng
+                          Đang giao
                         </button>
                       ) : order.stateOrder === "Đang giao hàng" ? (
                         <button className="px-4 py-2 bg-gray-500 text-white cursor-not-allowed" disabled>
@@ -161,7 +163,7 @@ const AllOrders: React.FC = () => {
                         className="text-blue-600 hover:text-blue-700 transition duration-200"
                         onClick={() => fetchOrderDetails(order.id)}
                       >
-                        <FaEye size={20} /> {/* Icon mắt */}
+                      <FontAwesomeIcon icon={faEye}  /> {/* Icon mắt */}
                       </button>
                     </td>
                   </tr>

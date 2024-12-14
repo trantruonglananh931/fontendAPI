@@ -101,7 +101,7 @@ const ChangePassword: React.FC = () => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="w-full py-2 px-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+              className="w-full py-2 px-4 text-white bg-green-500 rounded-lg hover:bg-green-600"
             >
               Đổi Mật Khẩu
             </button>

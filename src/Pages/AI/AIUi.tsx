@@ -37,9 +37,10 @@ const AIUi: React.FC = () => {
     }, [image]);
 
     return (
-        <div className="AI bg-gray-50 min-h-screen">
-            <Navbar />
-            <div className="flex flex-col items-center p-6">
+        <div className="AI w-full bg-gray-50 min-h-screen">
+        <Navbar />
+        <div className="flex flex-row h-full">
+            <div className="w-1/2 flex flex-col items-center p-6 border-r border-gray-300">
                 <h1 className="font-bold text-3xl mb-4 text-gray-800">Vui lòng chọn hình ảnh!</h1>
                 <input
                     className="w-full max-w-xs border border-gray-300 rounded-lg p-2 mb-4"
@@ -48,19 +49,27 @@ const AIUi: React.FC = () => {
                     onChange={handleFileChange}
                 />
                 {tempImage && (
-                    <img className="w-96 h-80 object-cover rounded-lg shadow-md" src={tempImage} alt="Hình ảnh đã chọn" />
+                    <img
+                        className="w-96 h-132 object-cover rounded-sm shadow-md"
+                        src={tempImage}
+                        alt="Hình ảnh đã chọn"
+                    />
                 )}
             </div>
 
-            <div className="mx-auto my-5 max-w-md">
-                {recommend && (
-                    <div className="border-2 border-indigo-600 border-solid rounded-md bg-white p-4 shadow-lg">
-                        <h2 className="font-bold text-2xl text-indigo-600">Gợi ý của chúng tôi là:</h2>
+            <div className="w-1/2 flex items-center justify-center p-6">
+                {recommend ? (
+                    <div className="border-2 border-indigo-600 rounded-md bg-white p-6 shadow-lg">
+                        <h2 className="font-sans text-2xl text-indigo-600 mb-2">Gợi ý của chúng tôi là:</h2>
                         <p className="text-xl text-gray-700">{recommend}</p>
                     </div>
+                ) : (
+                    <p className="text-xl text-gray-500">Chưa có gợi ý nào, vui lòng chọn hình ảnh.</p>
                 )}
             </div>
         </div>
+    </div>
+
     );
 };
 

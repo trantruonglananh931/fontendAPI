@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react"; 
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { User } from "../../Models/User"
 import { useAuth } from "../../Context/useAuth";
-
+import { User } from "../../Models/User";
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [editUserId, setEditUserId] = useState<string | null>(null);
-  const [editUsername, setEditUsername] = useState<string>("");
-  const [editEmailAddress, setEditEmailAddress] = useState<string>("");
-  const [editImage, setEditImage] = useState<string | null>(null);
-  const [editBirthDay, setEditBirthDay] = useState<string | null>(null);
   const { user } = useAuth();  
   const token = user?.token;
 
@@ -39,51 +32,13 @@ const UserList: React.FC = () => {
     fetchUsers(); 
   }, []);
 
-  const handleEdit = (user: User) => {
-    setEditUserId(user.username);
-    setEditUsername(user.username);
-    setEditEmailAddress(user.emailAddress);
-    setEditImage(user.image);
-    setEditBirthDay(user.birthDay);
-  };
-
-  const handleCancelEdit = () => {
-    setEditUserId(null);
-    setEditUsername("");
-    setEditEmailAddress("");
-    setEditImage(null);
-    setEditBirthDay(null);
-  };
-
-  const handleUpdate = async () => {
-    if (!editUsername.trim() || !editEmailAddress.trim()) {
-      alert("Tất cả các trường đều cần thiết để cập nhật!");
-      return;
-    }
-    try {
-      await axios.put(`/v3/api/user/${editUserId}`, {
-        username: editUsername,
-        emailAddress: editEmailAddress,
-        password: "********",
-        image: editImage,
-        birthDay: editBirthDay
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'accept': '*/*',
-        }
-      });
-      setEditUserId(null);
-      setEditUsername("");
-      setEditEmailAddress("");
-      setEditImage(null);
-      setEditBirthDay(null);
-      alert("Người dùng đã được cập nhật thành công!");
-      fetchUsers();
-    } catch (error) {
-      console.error("Lỗi khi cập nhật người dùng:", error);
-      alert("Cập nhật người dùng không thành công.");
-    }
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -102,28 +57,10 @@ const UserList: React.FC = () => {
             users.map(user => (
               <tr key={user.username} className="border-b hover:bg-gray-100">
                 <td className="border border-gray-300 p-2">
-                  {editUserId === user.username ? (
-                    <input
-                      type="text"
-                      value={editUsername}
-                      onChange={(e) => setEditUsername(e.target.value)}
-                      className="w-full py-2 px-4 border border-gray-300 rounded-lg"
-                    />
-                  ) : (
-                    <span className="font-bold">{user.username}</span>
-                  )}
+                  <span className="font-bold">{user.username}</span>
                 </td>
                 <td className="border border-gray-300 p-2">
-                  {editUserId === user.username ? (
-                    <input
-                      type="email"
-                      value={editEmailAddress}
-                      onChange={(e) => setEditEmailAddress(e.target.value)}
-                      className="w-full py-2 px-4 border border-gray-300 rounded-lg"
-                    />
-                  ) : (
-                    <span>{user.emailAddress}</span>
-                  )}
+                  <span>{user.emailAddress}</span>
                 </td>
                 <td className="border border-gray-300 p-2">
                   {user.image ? (
@@ -133,16 +70,7 @@ const UserList: React.FC = () => {
                   )}
                 </td>
                 <td className="border border-gray-300 p-2">
-                  {editUserId === user.username ? (
-                    <input
-                      type="date"
-                      value={editBirthDay || ""}
-                      onChange={(e) => setEditBirthDay(e.target.value)}
-                      className="w-full py-2 px-4 border border-gray-300 rounded-lg"
-                    />
-                  ) : (
-                    <span>{user.birthDay ? user.birthDay : "N/A"}</span>
-                  )}
+                  <span>{formatDate(user.birthDay)}</span>
                 </td>
               </tr>
             ))
@@ -156,6 +84,5 @@ const UserList: React.FC = () => {
     </div>
   );
 };
-
 
 export default UserList;

@@ -25,6 +25,7 @@ import ForgotPassword from "../Pages/Accounts/ForgotPassword";
 import ResetPassword from "../Pages/Accounts/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import AIUi from "../Pages/AI/AIUi";
+import ProductDetailAdm from "../Pages/Admin/Products/ProductDetailAdm";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -45,12 +46,13 @@ export const router = createBrowserRouter([
         { path:"finance", element: <Finance/>},
         { path: "product/update/:id", element: <ProductUpdate/>},
         { path: "product/add", element: <ProductAdd/>},
+        { path: "product/:id", element: <ProductDetailAdm /> },
        ],
       },
      
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
-      { path: "product/update/:id", element: <ProductUpdate/>},
+      { path: "/admin/product/:id", element: <ProductDetailAdm /> },
       { path: "", element: <ProductView /> },
       { path: "product", element: <ProductView /> },
       { path: "product/:id", element: <ProductDetail /> },
