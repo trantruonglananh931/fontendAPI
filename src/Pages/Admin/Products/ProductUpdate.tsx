@@ -45,7 +45,7 @@ const ProductUpdate: React.FC = () => {
             'Authorization': `Bearer ${token}`,
           },
         });
-
+  
         if (response.data && response.data.data) {
           const fetchedData = response.data.data;
           setProduct(prev => ({
@@ -154,7 +154,6 @@ const ProductUpdate: React.FC = () => {
       quantityStock: totalQuantity,
     });
   };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,7 +207,6 @@ const ProductUpdate: React.FC = () => {
             required
           />
         </div>
-        <div>
         <div className="flex space-x-4">
           <div className="w-1/2">
             <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh chính</label>
@@ -226,7 +224,6 @@ const ProductUpdate: React.FC = () => {
                 </>
               )}
             </div>
-          </div>
           </div>
           <div className="w-1/2">
             <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh phụ</label>
@@ -303,7 +300,7 @@ const ProductUpdate: React.FC = () => {
                 <label className="text-sm font-semibold text-gray-700">{sizeMapping[sizeDetails.sizeId]}:</label>
                 <input
                   type="number"
-                  value={sizeDetails.quantity !=0 ? sizeDetails.quantity : 0 }  
+                  value={sizeDetails.quantity !== 0 ? sizeDetails.quantity : 0}  
                   onChange={(e) => handleSizeDetailChange(e, index)}
                   className="w-16 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-center"
                   placeholder="0"
