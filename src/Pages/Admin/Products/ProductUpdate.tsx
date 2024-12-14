@@ -18,7 +18,7 @@ const ProductUpdate: React.FC = () => {
     quantityStock: 0,
     price: 0,
     categoryId: "",
-    imageUrls: [], // Thêm trường imageUrls
+    listStringImage: [],
     sizeDetails: Array.from({ length: 7 }, (_, index) => ({
       sizeId: index + 8, 
       sizeName: "Test",
@@ -38,10 +38,6 @@ const ProductUpdate: React.FC = () => {
   };
 
   useEffect(() => {
-    if (user?.role !== "Admin") {
-      navigate("/product");
-    }
-
     const fetchProductDetails = async () => {
       try {
         const response = await axios.get(`/v2/api/Product/${id}`, {
@@ -51,14 +47,19 @@ const ProductUpdate: React.FC = () => {
         });
 
         if (response.data && response.data.data) {
+          const fetchedData = response.data.data;
           setProduct(prev => ({
             ...prev,
-            ...response.data.data,
-            sizes: response.data.data.sizes || Array.from({ length: 7 }, (_, index) => ({
-              sizeId: index + 8,
-              quantity: 0,
-            })),
+            ...fetchedData,
+            sizeDetails: fetchedData.sizeDetails && fetchedData.sizeDetails.length > 0 
+              ? fetchedData.sizeDetails 
+              : Array.from({ length: 7 }, (_, index) => ({
+                  sizeId: index + 8,
+                  quantity: 0,
+                })),
           }));
+
+          
         } else {
           console.error("Dữ liệu sản phẩm không khả dụng");
         }
@@ -66,7 +67,7 @@ const ProductUpdate: React.FC = () => {
         console.error("Lỗi khi lấy thông tin sản phẩm:", error);
       }
     };
-
+    
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/v4/api/Category");
@@ -100,7 +101,6 @@ const ProductUpdate: React.FC = () => {
     });
   };
 
-
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, isMainImage: boolean = false) => {
     const files = e.target.files;
     if (files) {
@@ -112,18 +112,16 @@ const ProductUpdate: React.FC = () => {
       });
   
       try {
-        // Gửi hình ảnh lên API
         const response = await axios.post("/v2/api/images", formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           params: { isMainImage },
         });
         
         if (response.data.urls) {
-          // Cập nhật sản phẩm với URL hình ảnh trả về
           if (isMainImage) {
             setProduct(prev => ({ ...prev, image: response.data.urls[0] }));
           } else {
-            setProduct(prev => ({ ...prev, imageUrls: [...prev.imageUrls, ...response.data.urls] }));
+            setProduct(prev => ({ ...prev, listStringImage: [...prev.listStringImage, ...response.data.urls] }));
           }
         }
         
@@ -136,8 +134,8 @@ const ProductUpdate: React.FC = () => {
 
   const removeImageUrl = (index: number) => {
     setProduct(prev => {
-      const updatedImageUrls = prev.imageUrls.filter((_, idx) => idx !== index);
-      return { ...prev, imageUrls: updatedImageUrls };
+      const updatedImageUrls = prev.listStringImage.filter((_, idx) => idx !== index);
+      return { ...prev, listStringImage: updatedImageUrls };
     });
   };
 
@@ -160,6 +158,7 @@ const ProductUpdate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Thông tin sản phẩm sau khi nhấn submit:", product);
 
     try {
       await axios.put(
@@ -183,7 +182,6 @@ const ProductUpdate: React.FC = () => {
   if (loading) {
     return <p>Đang tải...</p>;
   }
-
 
   return (
     <div className="p-6 bg-white shadow-md rounded-lg ">
@@ -213,7 +211,24 @@ const ProductUpdate: React.FC = () => {
         <div>
         <div className="flex space-x-4">
           <div className="w-1/2">
-          <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh phụ</label>
+            <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh chính</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageChange(e, true)}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            />
+            <div className="mt-2">
+              {product.image && (
+                <>
+                  <img src={product.image} alt="Hình ảnh chính" className="w-40 h-45 object-cover border border-gray-300 rounded-md" />
+                  <p className="text-gray-600 mt-1">{product.image}</p> {/* Hiển thị đường link hình ảnh chính */}
+                </>
+              )}
+            </div>
+          </div>
+          <div className="w-1/2">
+            <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh phụ</label>
             <input
               type="file"
               accept="image/*"
@@ -221,34 +236,22 @@ const ProductUpdate: React.FC = () => {
               onChange={(e) => handleImageChange(e)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
+            <div className="mt-2">
+              <ul>
+                {Array.isArray(product.listStringImage) && product.listStringImage.map((url, index) => (
+                  <li key={index} className="text-gray-700 flex items-center">
+                    <img src={url} alt={`Hình ảnh phụ ${index + 1}`} className="w-20 h-25 mt-2 object-cover border border-gray-300 rounded-md mr-2" />
+                    <span>{url}</span>
+                    <button type="button" onClick={() => removeImageUrl(index)} className="ml-2 text-red-500 hover:underline">
+                      Xóa
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="w-1/2">
-          <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh chính</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageChange(e, true)}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              required
-            />
-           
-          </div>
         </div>
-  
-        <div className="mt-6">
-          <h2 className=" text-lg ">Hình ảnh phụ:</h2>
-          <ul>
-            {product.imageUrls.map((url, index) => (
-              <li key={index} className=" text-gray-700">
-                <span>{url}</span>
-                <button type="button" onClick={() => removeImageUrl(index)} className="ml-2 text-red-500 hover:underline">
-                  Xóa
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        </div>
+
         <div className="flex space-x-4">
           <div className="w-1/3">
             <label className="block text-gray-700 font-semibold mb-2">Giá</label>
@@ -290,15 +293,11 @@ const ProductUpdate: React.FC = () => {
             </select>
           </div>
         </div>
-  
-         
-         
 
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Thông tin Size</h2>
           <div className="flex items-center space-x-6">
-            {
-            product.sizeDetails.map((sizeDetails, index) => (
+            {Array.isArray(product.sizeDetails) && product.sizeDetails.map((sizeDetails, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <label className="text-sm font-semibold text-gray-700">{sizeMapping[sizeDetails.sizeId]}:</label>
                 <input
@@ -313,6 +312,7 @@ const ProductUpdate: React.FC = () => {
             ))}
           </div>
         </div>
+
         <div className="flex justify-end">
           <button
             type="submit"

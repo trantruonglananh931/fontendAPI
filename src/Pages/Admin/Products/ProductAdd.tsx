@@ -11,7 +11,7 @@ const ProductAdd: React.FC = () => {
     productName: "",
     quantitySellSucesss: 0,
     description: "",
-    image: null,
+    Image: null,
     quantityStock: 0,
     price: 0,
     categoryId: "",
@@ -24,7 +24,7 @@ const ProductAdd: React.FC = () => {
   const token = user?.token;
 
   const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
-  const [imageUrl, setImageUrl] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>("");
   const sizeMapping: { [key: number]: string } = {
     8: "XXS",
     9: "XS",
@@ -90,6 +90,16 @@ const ProductAdd: React.FC = () => {
       quantityStock: totalQuantity, // Cập nhật tổng số lượng
     });
   };
+
+  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setProduct((prev) => ({
+        ...prev,
+        Image: files[0], // Lưu file ảnh chính vào state
+      }));
+    }
+  };
   
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, isMainImage: boolean = false) => {
     const files = e.target.files;
@@ -134,11 +144,31 @@ const ProductAdd: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!product.productName || product.productName.length < 5 || product.productName.length > 100) {
+      alert("Tên sản phẩm không hợp lệ. Nó phải có độ dài từ 5 đến 100 ký tự.");
+      return;
+    }
+  
+    if (!product.description) {
+      alert("Mô tả không được để trống.");
+      return;
+    }
+  
+    if (!product.Image) {
+      alert("Hình ảnh chính là bắt buộc.");
+      return;
+    }
+  
+    if (product.sizeDetails.every(size => size.quantity <= 0)) {
+      alert("Ít nhất một kích thước cần có số lượng lớn hơn 0.");
+      return;
+    }
+
     const productData = {
       productName: product.productName,
       quantitySellSucesss: product.quantitySellSucesss,
       description: product.description,
-      image: imageUrl,
+      Image: product.Image,
       quantityStock: product.quantityStock,
       price: product.price,
       categoryId: product.categoryId,
@@ -152,8 +182,7 @@ const ProductAdd: React.FC = () => {
         productData,{
           headers: {
             'Authorization': `Bearer ${token}`,
-            'accept': '*/*',
-            "Content-Type": "multipart/form-data" ,
+            'Content-Type': 'multipart/form-data',
           }
         });
       alert("Sản phẩm đã được thêm thành công!");
@@ -168,12 +197,6 @@ const ProductAdd: React.FC = () => {
     }
   };
 
-
-  const handleImageChangeMain = (event: React.ChangeEvent<HTMLInputElement>) => { 
-    if (!event.target.files) return;  
-    const file = event.target.files[0]; 
-    setImageUrl(file);
-  }
   return (
     <div className="  p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-6">Thêm Sản Phẩm Mới</h1>
@@ -218,7 +241,7 @@ const ProductAdd: React.FC = () => {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => handleImageChangeMain(e)}
+              onChange={(e) => handleMainImageChange(e)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               required
             />

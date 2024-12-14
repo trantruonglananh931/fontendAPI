@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Product } from "../../../Models/Product";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash ,faEye} from "@fortawesome/free-solid-svg-icons";
+
 import { useAuth } from "../../../Context/useAuth";
 
 const ProductList: React.FC = () => {
@@ -66,7 +67,7 @@ const ProductList: React.FC = () => {
   
   
   const handleDetail = (id: string) => {
-    navigate(`/product/${id}`);
+    navigate(`/admin/product/${id}`);
   };
 
   const handleUpdate = (id: string) => {
@@ -83,24 +84,33 @@ const ProductList: React.FC = () => {
             <th className="w-2/12 py-2 px-2 border ">Tên sản phẩm</th>
             <th className="w-2/12 py-2 px-2 border text-center">Giá</th>
             <th className="w-1/12 py-2 px-2 border text-center">Xem trước</th>
-            <th className="w-2/12 py-2 px-2 border text-center">Số lượng đã bán</th>
-            <th className="w-2/12 py-2 px-2 border text-center">Số lượng trong kho</th>
-            <th className="w-2/12 py-2 px-2 border text-center">Hành động</th>
+            <th className="w-1/12 py-2 px-2 border text-center">Đã bán</th>
+            <th className="w-1/12 py-2 px-2 border text-center">Kho</th>
+            <th className="w-/12 py-2 px-2 border text-center"></th>
           </tr>
         </thead>
         <tbody>
           {products.length > 0 ? (
             products.map((product) => (
-              <tr key={product.id} onClick={() => handleDetail(product.id)} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer">
+              <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer">
                 <td className="w-2/12 py-2 px-2 border ">{product.id}</td>
                 <td className="w-2/12 py-2 px-2 border ">{product.productName}</td>
                 <td className="w-2/12 py-2 px-2 border text-center">{product.price}đ</td>
                 <td className="w-1/12 py-2 px-2 border text-center">
                   <img src={product.image} alt={product.productName} className="w-16 h-16 object-cover" />
                 </td>
-                <td className="w-2/12 py-2 px-2 border text-center">{product.quantitySellSucesss}</td>
-                <td className="w-2/12 py-2 px-2 border text-center">{product.quantityStock}</td>
+                <td className="w-1/12 py-2 px-2 border text-center">{product.quantitySellSucesss}</td>
+                <td className="w-1/12 py-2 px-2 border text-center">{product.quantityStock}</td>
                 <td className="w-2/12 py-2 px-2 border text-center">
+                <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDetail(product.id); // Gọi hàm để xem chi tiết
+                    }}
+                    className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 mr-2"
+                  >
+                    <FontAwesomeIcon icon={faEye} />
+                  </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -125,7 +135,7 @@ const ProductList: React.FC = () => {
           ) : (
             <tr>
               <td colSpan={7} className="text-center py-4">
-                Không tìm thấy sản phẩm nào.
+                Đang tải ...
               </td>
             </tr>
           )}
