@@ -227,6 +227,7 @@ const ProductUpdate: React.FC = () => {
               )}
             </div>
           </div>
+          </div>
           <div className="w-1/2">
             <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh phụ</label>
             <input
