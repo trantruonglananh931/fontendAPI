@@ -42,6 +42,7 @@ export const UserProvider = ({ children }: Props) => {
         const parsedUser = JSON.parse(user);
         setUser(parsedUser);
         setToken(token);
+        console.log("User từ localStorage:", parsedUser); 
         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
       }
     } catch (error) {
@@ -90,8 +91,8 @@ export const UserProvider = ({ children }: Props) => {
             localStorage.setItem("user", JSON.stringify(userObj));
             setUser(userObj);
             setToken(loginResponse.data.token);
+            console.log("User đk từ localStorage:", userObj); 
             toast.success("Đăng nhập với Google thành công!");
-            
             navigate('/product');
           }
         } else {
@@ -108,7 +109,7 @@ export const UserProvider = ({ children }: Props) => {
           if (registerResponse?.data?.token) {
             const userObj = {
               userName: registerResponse.data.userName,
-              nameOfUser: registerResponse.data.nameOfUser,
+              nameOfUser: userProfile.name,
               email: registerResponse.data.email,
               token: registerResponse.data.token,
               role: registerResponse.data.role,
@@ -160,6 +161,7 @@ export const UserProvider = ({ children }: Props) => {
             email: res?.data.email,
             token: res?.data.token,
             role: res?.data.role,
+            
           };
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
