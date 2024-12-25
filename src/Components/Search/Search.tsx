@@ -191,7 +191,6 @@ const SearchPage: React.FC = () => {
                 value={sortOrder === null ? "none" : sortOrder ? "asc" : "desc"}
                 className="py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
-                <option value="none">Mặc định</option>
                 <option value="asc">Giá tăng dần</option>
                 <option value="desc">Giá giảm dần</option>
               </select>

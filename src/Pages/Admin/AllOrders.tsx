@@ -100,13 +100,13 @@ const AllOrders: React.FC = () => {
             <thead className="bg-gray-200">
               <tr className="text-gray-700">
                 {headers.map((header, index) => (
-                  <th key={index} className="border border-gray-300 p-2 text-left text-base ">
+                  <th key={index} className="border border-gray-300 p-2 text-left text-xs ">
                     {header}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className = "bg-white divide-y divide-gray-200 text-xs">
               {orders.length === 0 ? (
                 <tr>
                   <td colSpan={headers.length} className="text-center py-4 text-gray-600">
@@ -124,7 +124,7 @@ const AllOrders: React.FC = () => {
                     <td className="border border-gray-300 p-2">{order.methodOfPayment}</td>
                     <td className="border border-gray-300 p-2">{order.stateOrder}</td>
                     
-                    <td className="border border-gray-300 p-2">
+                    <td className="border border-gray-300 p-2 flex">
                      
                       {/* Cập nhật trạng thái đơn hàng */}
                       {order.stateOrder === "Hủy đơn hàng" ? (

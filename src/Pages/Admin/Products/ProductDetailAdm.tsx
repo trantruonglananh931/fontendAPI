@@ -5,12 +5,8 @@ import { useAuth } from "../../../Context/useAuth";
 import { Product } from "../../../Models/Product";
 import Navbar from "../../../Components/Navbar/Navbar";
 
-interface ProductDetailsProps {
-  id1: string;
-}
-
-const AdminProductAdm: React.FC<ProductDetailsProps> = ({id1}) => {
-  const  id  = id1;
+const AdminProductAdm: React.FC<{ id1: string }> = ({ id1 }) => {
+  const id = id1;
   const [product, setProduct] = useState<Product | null>(null);
   const { user } = useAuth();
 
@@ -18,68 +14,73 @@ const AdminProductAdm: React.FC<ProductDetailsProps> = ({id1}) => {
     const fetchProductDetail = async () => {
       try {
         const response = await axios.get(`/v2/api/Product/${id}`);
-        console.log(response.data.data);
         setProduct(response.data.data);
       } catch (error) {
         console.error("Lỗi khi lấy thông tin sản phẩm:", error);
       }
     };
     fetchProductDetail();
-  }, []);
+  }, [id]);
 
   if (!product) {
-    return <div className="text-center">Đang tải...</div>;
+    return <div className="flex justify-center items-center min-h-screen text-lg font-semibold">Đang tải...</div>;
   }
 
   return (
-    <div className="w-full bg-gray-100 min-h-screen">
-      <div className="max-w-screen-xl mx-auto p-8 bg-white mt-6">
-        <h1 className="text-3xl font-sans text-gray-800 mb-4">{product.productName}</h1>
-        <p className="text-gray-600 mb-4">{product.description}</p>
-        <p className="text-red-600 text-2xl font-semibold mb-6">{product.price}đ</p>
+    <div className="w-full bg-gray-50 min-h-screen">
 
-        <div className="mt-6">
-          <h2 className="text-2xl font-sans text-gray-700">Danh sách hình ảnh</h2>
-          <div className="flex space-x-4 mt-4 overflow-x-auto">
-            {product.listStringImage?.map((img, index) => (
-              <img
-                key={index}
-                src={img}
-                alt={`Hình ảnh sản phẩm ${index + 1}`}
-                className="w-40 h-60 object-cover border border-gray-300 rounded-md shadow-md transform transition-transform hover:scale-105"
-              />
-            ))}
-          </div>
-        </div>
+      <div className="container mx-auto p-2">
+        <div className="bg-white shadow-md rounded-sm text-black p-6">
+          <h1 className="text-3xl font-bold  mb-4">Thông tin sản phẩm : {product.productName}</h1>
+          <p className="text-xl mb-4">Mô tả : {product.description}</p>
+          <p className="text-xl mb-4">Danh mục : {product.categoryName}</p>
+          <p className="text-xl mb-4">Giá : {product.price}đ</p>
 
-        <div className="mt-6">
-          <h2 className="text-2xl font-sans text-gray-700">Kích thước và số lượng</h2>
-          <div className="grid grid-cols-7 gap-4 mt-4">
-            {product.sizeDetails?.map((sizeDetail, index) => (
-              <div key={index} className="border rounded-md p-4 bg-gray-50 shadow-sm flex flex-col items-center">
-                <p className="font-sans">{sizeDetail.sizeName}</p>
-                <p className="text-gray-600">{sizeDetail.quantity} còn lại</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <h2 className="text-2xl font-sans text-gray-700">Danh sách bình luận</h2>
-          {product.messageDetails?.map((messageDetail, index) => (
-            <div key={index} className="border-b border-gray-300 mb-4 pb-2">
-              <p className="font-sans text-gray-800">{messageDetail.userName}</p>
-              <p className="text-sm text-gray-600">{new Date(messageDetail.time).toLocaleString()}</p>
-              <p className="text-gray-700">{messageDetail.message}</p>
-              {messageDetail.image && (
+          <div className="mt-2">
+            <h2 className="text-xl text-gray-700 mb-2">Hình ảnh sản phẩm : </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {product.listStringImage?.map((img, index) => (
                 <img
-                  src={messageDetail.image}
-                  alt={messageDetail.userName}
-                  className="w-24 h-24 object-cover rounded-md mt-2"
+                  key={index}
+                  src={img}
+                  alt={`Hình ảnh sản phẩm ${index + 1}`}
+                  className="w-46 rounded-sm shadow-lg "
                 />
-              )}
+              ))}
             </div>
-          ))}
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">Kích thước & số lượng</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-7 ">
+              {product.sizeDetails?.map((sizeDetail, index) => (
+                <div key={index} className="bg-gray-100 p-4 rounded-sm shadow-md text-center">
+                  <p className="text-l font-semibold text-gray-800">{sizeDetail.sizeName}</p>
+                  <p className="text-sm text-gray-600">Còn {sizeDetail.quantity}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">Danh sách bình luận</h2>
+            <div className="space-y-6">
+              {product.messageDetails?.map((messageDetail, index) => (
+                <div key={index} className="p-4 bg-gray-100 rounded-lg shadow-md">
+                  <p className="font-semibold text-gray-800">{messageDetail.userName}</p>
+                  <p className="text-sm text-gray-500">{new Date(messageDetail.time).toLocaleString()}</p>
+                  <p className="text-gray-700 mt-2">{messageDetail.message}</p>
+                  {messageDetail.image && (
+                    <img
+                      src={messageDetail.image}
+                      alt={messageDetail.userName}
+                      className="w-24 h-24 object-cover rounded-md mt-4"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

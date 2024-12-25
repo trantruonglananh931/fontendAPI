@@ -29,13 +29,13 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
   const menu = [
     {
-       menuItem: <button onClick={() => handleNavigation('Danh sách sản phẩm', 'ProductList',<ProductList addTab={addTab}/>)} className="w-full  text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black " style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('Danh sách sản phẩm', 'ProductList',<ProductList addTab={addTab}/>)} className="w-full  text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black text-gray-200 " style={{ fontSize:"15px"}}>
         Danh sách sản phẩm
       </button>
 
     },
     {      
-      menuItem: <button onClick={() => handleNavigation( 'Thêm sản phẩm mới', 'ProductAdd',<ProductAdd/>)} className=" w-full text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+      menuItem: <button onClick={() => handleNavigation( 'Thêm sản phẩm mới', 'ProductAdd',<ProductAdd/>)} className=" w-full text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black text-gray-200" style={{ fontSize:"15px"}}>
       Thêm sản phẩm mới
     </button>
     }
@@ -43,7 +43,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
    const menu1 = [
     {
-       menuItem: <button onClick={() => handleNavigation( 'Danh sách danh mục', 'CategoryList',<CategoryList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation( 'Danh sách danh mục', 'CategoryList',<CategoryList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black text-gray-200" style={{ fontSize:"15px"}}>
         Danh sách danh mục
       </button>
 
@@ -57,7 +57,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
    const menu2 = [
     {
-       menuItem: <button onClick={() => handleNavigation('Danh sách người dùng', 'UserList',<UserList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('Danh sách người dùng', 'UserList',<UserList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black text-gray-200" style={{ fontSize:"15px"}}>
         Danh sách người dùng
       </button>
 
@@ -66,7 +66,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
    const menu3 = [
     {
-       menuItem: <button onClick={() => handleNavigation('Danh sách đơn hàng', 'AllOrders',<AllOrders/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('Danh sách đơn hàng', 'AllOrders',<AllOrders/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black text-gray-200" style={{ fontSize:"15px"}}>
         Danh sách đơn hàng
       </button>
 
@@ -75,7 +75,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
     const menu4 = [
       {
-         menuItem: <button onClick={() => handleNavigation( 'Thống kê', 'Finance',<Finance/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+         menuItem: <button onClick={() => handleNavigation( 'Thống kê', 'Finance',<Finance/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black text-gray-200" style={{ fontSize:"15px"}}>
           Thống kê doanh số
         </button>
   
@@ -84,40 +84,84 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
 
      return (
-      <div className={`w-64 bg-green-600 text-white ${isOpen ? 'block' : 'hidden'} transition-all duration-300 `}>
-        <ul className="space-y-3 mt-10 text-sm pt-4 ml-3" style={{ fontSize: "18px" }}>
-          <li>
+      <div
+        className={`w-64 bg-gray-600 text-white ${
+          isOpen ? 'block' : 'hidden'
+        } transition-all duration-300 shadow-lg`}
+      >
+        <div className="flex items-center justify-center py-2">
+          <img
+            src="https://cdn.haitrieu.com/wp-content/uploads/2022/05/Logo-Yody.png"
+            alt="Logo"
+            className="w-24 h-16 object-contain"
+          />
+        </div>
+    
+        {/* Sidebar Menu */}
+        <ul className="space-y-4 text-base pt-2 px-4">
+          <li className="group">
             <DropDownFC
-              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><CgViewMonth className="mr-2" />Quản Lí Sản phẩm</button>}
+              trigger={
+                <button className="flex items-center gap-3 text-white hover:text-blue-400 transition duration-200">
+                  <CgViewMonth className="text-l text-gray-500 group-hover:text-blue-600" />
+                  Quản Lí Sản phẩm
+                </button>
+              }
               menu={menu}
             />
           </li>
-          <li>
+    
+          <li className="group">
             <DropDownFC
-              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><TbCategoryFilled className="mr-2" />Quản Lí Danh mục</button>}
+              trigger={
+                <button className="flex items-center gap-3 text-white hover:text-blue-400 transition duration-200">
+                  <TbCategoryFilled className="text-l text-gray-500 group-hover:text-blue-600" />
+                  Quản Lí Danh mục
+                </button>
+              }
               menu={menu1}
             />
           </li>
-          <li>
+    
+          <li className="group">
             <DropDownFC
-              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><FaUser className="mr-2" />Quản Lí Người dùng</button>}
+              trigger={
+                <button className="flex items-center gap-3 text-white hover:text-blue-400 transition duration-200">
+                  <FaUser className="text-l text-gray-500 group-hover:text-blue-600" />
+                  Quản Lí Người dùng
+                </button>
+              }
               menu={menu2}
             />
           </li>
-          <li>
+    
+          <li className="group">
             <DropDownFC
-              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><FaCartShopping className="mr-2" />Quản Lí Đơn Hàng</button>}
+              trigger={
+                <button className="flex items-center gap-3 text-white hover:text-blue-400 transition duration-200">
+                  <FaCartShopping className="text-l text-gray-500 group-hover:text-blue-600" />
+                  Quản Lí Đơn Hàng
+                </button>
+              }
               menu={menu3}
             />
           </li>
-          <li>
+    
+          <li className="group">
             <DropDownFC
-              trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2 '><FaChartSimple className="mr-2" />Thống kê đơn hàng</button>}
+              trigger={
+                <button className="flex items-center gap-3 text-white hover:text-blue-400 transition duration-200">
+                  <FaChartSimple className="text-l text-gray-500 group-hover:text-blue-600" />
+                  Thống Kê Đơn Hàng
+                </button>
+              }
               menu={menu4}
             />
           </li>
         </ul>
       </div>
     );
+    
+    
   };    
 export default Slidebar;

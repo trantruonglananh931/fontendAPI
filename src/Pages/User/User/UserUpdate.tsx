@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../../Components/Navbar/Navbar";
-// import { LoadScript, Autocomplete, Libraries } from "@react-google-maps/api";
+import { useAuth } from "../../../Context/useAuth";
+//import { LoadScript, Autocomplete, Libraries } from "@react-google-maps/api";
 
 interface UserInformation {
   phone: string;
@@ -23,6 +24,7 @@ const UserUpdate: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+    const { user } = useAuth()
 
   // const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -203,8 +205,8 @@ const UserUpdate: React.FC = () => {
     <div className="w-full">
       <Navbar />
       <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-sm mt-5 mb-5">
-        <h2 className="text-2xl font-sans mb-4">Thông tin người dùng</h2>
-
+        
+        <h2 className="text-2xl font-sans mb-4">{user?.nameOfUser}</h2>
         {/* Ảnh hồ sơ */}
         <div className="flex items-center gap-8 mb-4">
           {renderProfileImage()}

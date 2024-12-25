@@ -266,6 +266,7 @@ const ProductDetail: React.FC = () => {
           <div className="lg:ml-6 w-full lg:w-1/2 space-y-4">
             <h1 className="text-2xl font-bold">{product.productName}</h1>
             <p className="text-gray-600">{product.description}</p>
+            <p className="text-black">{product.categoryName}</p>
             <p className="text-red-600 text-3xl font-semibold">{product.price}đ</p>
   
             <div className="flex flex-col space-y-4">
