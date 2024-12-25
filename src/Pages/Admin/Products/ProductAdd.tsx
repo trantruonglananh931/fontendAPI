@@ -55,7 +55,6 @@ const ProductAdd: React.FC = () => {
         setCategories([]);
       }
     };
-
     fetchCategories();
   }, []);
 
@@ -112,16 +111,14 @@ const ProductAdd: React.FC = () => {
       });
   
       try {
-        // Gửi hình ảnh lên API
         const response = await axios.post("/v2/api/images", formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           params: { isMainImage },
         });
         
         if (response.data.urls) {
-          // Cập nhật sản phẩm với URL hình ảnh trả về
           if (isMainImage) {
-            setProduct(prev => ({ ...prev, image: response.data.urls[0] }));
+            setProduct(prev => ({ ...prev, Image: response.data.urls[0] }));
           } else {
             setProduct(prev => ({ ...prev, imageUrls: [...prev.imageUrls, ...response.data.urls] }));
           }
@@ -185,7 +182,20 @@ const ProductAdd: React.FC = () => {
             'Content-Type': 'multipart/form-data',
           }
         });
+
       alert("Sản phẩm đã được thêm thành công!");
+      setProduct({
+        productName: "",
+        quantitySellSucesss: 0,
+        description: "",
+        Image: null,
+        quantityStock: 0,
+        price: 0,
+        categoryId: "",
+        imageUrls: [],
+        sizeDetails: [],
+      });
+
       navigate("/admin/productlist");
     } catch (error: any) {
       console.error("Lỗi khi thêm sản phẩm:", error.response?.data);
@@ -236,6 +246,7 @@ const ProductAdd: React.FC = () => {
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
+          
           <div className="w-1/2">
           <label className="block text-gray-700 font-semibold mb-2">Chọn hình ảnh chính</label>
             <input

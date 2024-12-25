@@ -51,6 +51,9 @@ const ProductUpdate: React.FC = () => {
           setProduct(prev => ({
             ...prev,
             ...fetchedData,
+            listStringImage: Array.isArray(fetchedData.listStringImage)
+              ? fetchedData.listStringImage
+              : [],
             sizeDetails: fetchedData.sizeDetails && fetchedData.sizeDetails.length > 0 
               ? fetchedData.sizeDetails 
               : Array.from({ length: 7 }, (_, index) => ({
@@ -100,6 +103,15 @@ const ProductUpdate: React.FC = () => {
       [name]: name === "quantityStock" || name === "price" ? +value : value,
     });
   };
+  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        setProduct((prev) => ({
+          ...prev,
+          Image: files[0], // Lưu file ảnh chính vào state
+        }));
+      }
+    };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, isMainImage: boolean = false) => {
     const files = e.target.files;
@@ -157,7 +169,23 @@ const ProductUpdate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Thông tin sản phẩm sau khi nhấn submit:", product);
+    const payload = {
+      id: product.id,
+      productName: product.productName,
+      description: product.description,
+      image: product.image,
+      quantityStock: product.quantityStock,
+      price: product.price,
+      categoryId: product.categoryId,
+      listStringImage: product.listStringImage,
+      sizeDetails: product.sizeDetails.map(({ sizeId, quantity }) => ({
+        sizeId,
+        quantity,
+      })),
+    };
+
+    console.log("Payload gửi đi:", payload);
+  
 
     try {
       await axios.put(
@@ -213,14 +241,14 @@ const ProductUpdate: React.FC = () => {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => handleImageChange(e, true)}
+              onChange={(e) => handleMainImageChange}
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
             <div className="mt-2">
               {product.image && (
                 <>
                   <img src={product.image} alt="Hình ảnh chính" className="w-40 h-45 object-cover border border-gray-300 rounded-md" />
-                  <p className="text-gray-600 mt-1">{product.image}</p> {/* Hiển thị đường link hình ảnh chính */}
+                  <p className="text-gray-600 mt-1">{product.image}</p> 
                 </>
               )}
             </div>

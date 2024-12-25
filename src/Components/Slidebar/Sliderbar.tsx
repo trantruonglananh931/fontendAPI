@@ -83,7 +83,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
      ]
 
 
-     return (
+     return (      
       <div className={`w-64 bg-green-600 text-white ${isOpen ? 'block' : 'hidden'} transition-all duration-300 `}>
         <ul className="space-y-3 mt-16 text-sm pt-4 ml-3" style={{ fontSize: "18px" }}>
           <li>

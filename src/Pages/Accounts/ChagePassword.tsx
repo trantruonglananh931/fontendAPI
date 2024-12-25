@@ -28,8 +28,7 @@ const ChangePassword: React.FC = () => {
         confirmNewPassword,
       });
 
-      setMessage(response.data.message);
-
+      setMessage("Thay đổi mật khẩu thành công.");
       setOldPassword("");
       setNewPassword("");
       setConfirmNewPassword("");

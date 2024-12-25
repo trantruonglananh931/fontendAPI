@@ -36,34 +36,23 @@ const ProductList: React.FC = () => {
     fetchProducts();
   }, [user, navigate]); 
 
-  const handleDelete = async (id: string, image: string, listStringImage?: string[]) => {
+  const handleDelete = async (id: string) => {
     const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa?");
     if (!isConfirmed) return;
   
     try {
-
-      await axios.delete(`/v2/api/Product/${id}`);
-  
-      const imageName = image.split('/').pop();
-      console.log('imageName:', imageName);
-      if (imageName) {
-        await axios.delete(`/v2/api/images?imageName=${encodeURIComponent(imageName)}&isMainImage=true`);
-      }
-  
-      if (listStringImage && listStringImage.length > 0) {
-        for (let img of listStringImage) {
-          const imageNameInList = img.split('/').pop();
-          const deleteImageResponse = await axios.delete(`/v2/api/images?imageName=${encodeURIComponent(imageNameInList!)}&isMainImage=false`);
+      await axios.delete(`/v2/api/Product/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+          'accept': '*/*',
         }
-      }
-  
-      setProducts(products.filter((product) => product.id !== id));
-     
+      });
+      setProducts(products.filter(product => product.id !== id));
     } catch (error) {
-      console.error("Lỗi khi xóa sản phẩm hoặc hình ảnh:", error);
-
+      console.error("Lỗi khi xóa sản phẩm:", error);
     }
   };
+  
   
   
   const handleDetail = (id: string) => {
@@ -77,7 +66,7 @@ const ProductList: React.FC = () => {
 
   return (
     <div>
-      <table className="min-w-full bg-white">
+      <table className="min-w-full bg-white text-xs">
         <thead>
           <tr className=" bg-gray-100">
             <th className="w-2/12 py-2 px-2 border ">Mã sản phẩm</th>
@@ -105,7 +94,7 @@ const ProductList: React.FC = () => {
                 <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDetail(product.id); // Gọi hàm để xem chi tiết
+                      handleDetail(product.id); 
                     }}
                     className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 mr-2"
                   >
@@ -123,7 +112,7 @@ const ProductList: React.FC = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete(product.id, product.image, product.listStringImage || []);
+                      handleDelete(product.id);
                     }}
                     className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
                   >

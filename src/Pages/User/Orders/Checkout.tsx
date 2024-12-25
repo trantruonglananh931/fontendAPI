@@ -13,7 +13,7 @@ const Checkout: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState<CartItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-
+  
   const navigate = useNavigate();
   const { user } = useAuth();
   const token = user?.token;
@@ -130,8 +130,8 @@ const Checkout: React.FC = () => {
   return (
     <div className="w-full">
       <Navbar />
-      <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-lg">
-        <h3 className="text-xl font-semibold mb-2">Sản phẩm đã chọn</h3>
+      <div className="max-w-6xl mx-auto p-6 bg-white shadow-md rounded-sm mt-2 mb-2">
+        <h3 className="text-2xl text-center font-semibold mb-2">THANH TOÁN ĐƠN HÀNG </h3>
         <div className="mb-4">
           {selectedItems.map((item) => (
             <div key={item.productId} className="flex justify-between items-center mb-2">
@@ -144,12 +144,12 @@ const Checkout: React.FC = () => {
           ))}
         </div>
 
-        <div className="flex justify-between font-bold mb-4">
-          <span>Tổng cộng:</span>
-          <span>{calculateTotal()}đ</span>
+        <div className="flex justify-between font-bold text-xl mb-2">
+          <span></span>
+          <span>Tổng tiền : {calculateTotal()}đ</span>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-2">
         <div className="flex justify-between items-center mb-2">
           <label className="text-lg">Số điện thoại :</label>
           <p
@@ -168,7 +168,7 @@ const Checkout: React.FC = () => {
         />
       </div>
 
-        <div className="mb-4">
+        <div className="mb-2">
         <div className="flex justify-between items-center mb-2">
           <label className="text-lg">Địa chỉ giao hàng:</label>
          
@@ -184,17 +184,52 @@ const Checkout: React.FC = () => {
 
 
 
-        <div className="mb-4">
-          <label className="block text-lg mb-2">Phương thức thanh toán:</label>
-          <select
-            className="w-full p-2 border border-gray-300 rounded-lg"
-            value={paymentMethodId}
-            onChange={(e) => setPaymentMethodId(Number(e.target.value))}
-          >
-            <option value={1}>Thanh toán khi nhận hàng</option>
-            <option value={2}>Chuyển khoản</option>
-          </select>
+      <div className="container mx-auto pb-4">
+      <div className="mb-4">
+        <label className="block text-lg mb-2">Phương thức thanh toán:</label>
+        <select
+          className="w-full p-2 border border-gray-300 rounded-lg"
+          value={paymentMethodId}
+          onChange={(e) => setPaymentMethodId(Number(e.target.value))}
+        >
+          <option value={1}>Thanh toán khi nhận hàng</option>
+          <option value={2}>Chuyển khoản</option>
+        </select>
+      </div>
+
+      {paymentMethodId === 2 && (
+        <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+          <h2 className="text-xl font-semibold mb-4">Thông tin chuyển khoản</h2>
+          <p className="mb-2">
+            <strong>Ngân hàng:</strong> Vietcombank
+          </p>
+          <p className="mb-2">
+            <strong>Số tài khoản:</strong> 0123456789
+          </p>
+          <p className="mb-2">
+            <strong>Chủ tài khoản:</strong> Nguyễn Văn A
+          </p>
+          <p className="text-sm text-gray-600">
+            Vui lòng ghi rõ nội dung chuyển khoản: <strong>[Sđt + Địa chỉ]</strong>
+          </p>
+          <p className="text-sm text-gray-600">
+            Đơn hàng sẽ được xác nhận trong vòng từ 1 giờ đến 3 giờ . Thời gian làm việc từ 8:00 - 20:00 hàng ngày. 
+          </p>
+          <p className="text-sm text-gray-600">
+            Mọi thắc mắc xin liên lạc hoặc nhắn tin <strong>Zalo : 03266389248</strong> 
+          </p>
         </div>
+      )}
+
+      {paymentMethodId === 1 && (
+        <div className="mt-4 p-4 bg-green-50 border border-green-300 rounded-lg">
+          <p className="text-lg">
+            Bạn đã chọn phương thức <strong>Thanh toán khi nhận hàng</strong>. Đơn hàng sẽ được giao đến địa chỉ của bạn và bạn sẽ thanh toán trực tiếp cho nhân viên giao hàng.
+          </p>
+        </div>
+      )}
+    </div>
+
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
 

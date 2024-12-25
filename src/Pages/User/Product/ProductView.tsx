@@ -46,8 +46,6 @@ const ProductView: React.FC = () => {
   const handleScroll = () =>{
     window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
   }
-
-
   useEffect(() => {
     const fetchProducts = async () => {
       setIsLoading(true);
@@ -239,8 +237,6 @@ const ProductView: React.FC = () => {
       </select>
     </div>
   </div>
- 
-
         </div>
         <ul className="grid grid-cols-2 lg:grid-cols-5 gap-3 product-container transition-opacity duration-300"
               data-aos="fade-down"
