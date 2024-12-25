@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"; 
-import { useNavigate } from "react-router-dom"; 
+import React, { useState, useEffect, useRef } from "react";
+ import { useNavigate } from "react-router-dom"; 
 import axios from "axios"; 
 import { useAuth } from "../../../Context/useAuth";
 import { NewProduct } from "../../../Models/Product";
@@ -22,7 +22,8 @@ const ProductAdd: React.FC = () => {
     })),
   });
   const token = user?.token;
-
+  const mainImageInputRef = useRef<HTMLInputElement | null>(null);
+  const subImagesInputRef = useRef<HTMLInputElement | null>(null);
   const [categories, setCategories] = useState<{ id: string; categorName: string }[]>([]);
   const [imageUrl, setImageUrl] = useState<string>("");
   const sizeMapping: { [key: number]: string } = {
@@ -193,8 +194,17 @@ const ProductAdd: React.FC = () => {
         price: 0,
         categoryId: "",
         imageUrls: [],
-        sizeDetails: [],
+        sizeDetails: Array.from({ length: 7 }, (_, index) => ({
+          sizeId: index + 8,
+          quantity: 0, 
+        })),
       });
+      if (mainImageInputRef.current) {
+        mainImageInputRef.current.value = "";
+      }
+      if (subImagesInputRef.current) {
+        subImagesInputRef.current.value = "";
+      }
 
       navigate("/admin/productlist");
     } catch (error: any) {
@@ -243,6 +253,7 @@ const ProductAdd: React.FC = () => {
               accept="image/*"
               multiple
               onChange={(e) => handleImageChange(e)}
+              ref={subImagesInputRef}
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -253,6 +264,7 @@ const ProductAdd: React.FC = () => {
               type="file"
               accept="image/*"
               onChange={(e) => handleMainImageChange(e)}
+              ref={mainImageInputRef}
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               required
             />
