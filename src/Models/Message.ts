@@ -1,5 +1,5 @@
 export type addMessage = {
      message : string,
-     Image : string,
+     Image? : string,
 }
 

@@ -14,12 +14,12 @@ const UserProfile: React.FC = () => {
         const response = await axios.get(
           '/v3/api/user/GetCurrentUser',
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { 
+              Authorization: `Bearer ${token}` },
           }
         );
 
         if (response.data.status) {
-          // Chuyển đổi birthDay thành định dạng ngày tháng thân thiện
           const userData = response.data.data;
           if (userData.birthDay) {
             const birthDate = new Date(userData.birthDay);

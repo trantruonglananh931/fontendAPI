@@ -32,9 +32,9 @@ const AdminNavbar: React.FC<AdminNavbarProps> = ({ toggleSidebar }) => {
         {/* <Link to="/admin/change-password" className="hover:text-gray-300">
           Thay đổi mật khẩu
         </Link> */}
-        <Link to="/admin/settings" className="hover:text-gray-300">
+        {/* <Link to="/admin/settings" className="hover:text-gray-300">
           Cài đặt
-        </Link>
+        </Link> */}
         <button onClick={handleLogout} className="hover:text-gray-300">
           Đăng xuất
         </button>

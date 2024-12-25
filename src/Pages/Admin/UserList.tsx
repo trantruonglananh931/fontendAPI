@@ -50,6 +50,8 @@ const UserList: React.FC = () => {
             <th className="border border-gray-300 p-2">Email</th>
             <th className="border border-gray-300 p-2">Hình ảnh</th>
             <th className="border border-gray-300 p-2">Ngày sinh</th>
+            <th className="border border-gray-300 p-2">Số điện thoại</th>
+            <th className="border border-gray-300 p-2">Địa chỉ</th>
           </tr>
         </thead>
         <tbody>
@@ -72,11 +74,17 @@ const UserList: React.FC = () => {
                 <td className="border border-gray-300 p-2">
                   <span>{formatDate(user.birthDay)}</span>
                 </td>
+                <td className="border border-gray-300 p-2">
+                  <span>{user.phone}</span>
+                </td>
+                <td className="border border-gray-300 p-2">
+                  <span>{user.address}</span>
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={4} className="text-center p-4">Không tìm thấy người dùng nào.</td>
+              <td colSpan={4} className="text-center p-4">Đang tải ...</td>
             </tr>
           )}
         </tbody>

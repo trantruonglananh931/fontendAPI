@@ -27,9 +27,12 @@ const ProductDetail: React.FC = () => {
   const token = user?.token;
   const [selectedImage, setSelectedImage] = useState<string | null>(null); 
 
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl); 
+  const handleImageClick = (imageUrl?: string) => {
+    if (imageUrl) {
+      setSelectedImage(imageUrl);
+    }
   };
+  
 
   const handleCloseModal = () => {
     setSelectedImage(null); 
@@ -333,91 +336,96 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
         <div className="flex space-x-8">
-        {/* Cột bên trái: Form nhập bình luận */}
-        <div className="w-1/2 mt-12">
+          
+        <div className="mt-10 ml-32 w-full">
+          {/* Form để gửi bình luận */}
           <form onSubmit={handleSubmitReview} className="space-y-4">
             <div>
               <label className="block text-green-700 text-lg font-semibold">Nội dung bình luận</label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full mt-2 p-2 border border-gray-300 rounded-lg"
+                className="w-180 mt-2 p-2 border border-gray-300 rounded-lg"
                 placeholder="Chia sẻ trải nghiệm của bạn..."
                 required
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-green-700">Chọn hình ảnh</label>
+              {/* <label className="block font-semibold text-green-700">Chọn hình ảnh</label> */}
               <input
                 type="file"
                 accept="image/*"
                 multiple
                 onChange={(e) => setImageFiles(e.target.files)}
-                className="w-full p-2 border border-gray-300 rounded-lg"
+                className="w-180 p-2 border border-gray-300 rounded-lg"
               />
 
-              {/* Hiển thị ảnh xem trước */}
-              {imageFiles && (
-                <div className="flex gap-4 mt-4">
+              {/* Hiển thị hình ảnh xem trước chỉ khi có tệp được chọn */}
+              {imageFiles && imageFiles.length > 0 && (
+                <div className="flex flex-col gap-4 mt-4">
                   {Array.from(imageFiles).map((file, index) => (
                     <img
                       key={index}
                       src={URL.createObjectURL(file)}
                       alt={`Ảnh ${index + 1}`}
-                      className="w-30 h-20 object-cover border border-gray-300 rounded-sm"
+                      className="w-full object-cover border border-gray-300 rounded-sm"
                     />
                   ))}
                 </div>
               )}
+              <button type="submit" className="ml-4 w-20 bg-blue-500 text-white py-3 rounded-lg">
+              Gửi
+            </button>
             </div>
 
-            <button type="submit" className="w-full bg-blue-500 text-white py-3 rounded-lg">
-              Gửi bình luận
-            </button>
+            
           </form>
-        </div>
 
-        {/* Cột bên phải: Danh sách đánh giá */}
-        <div className="pl-16 w-1/2 mt-12 ">
-          <div className=" font-semibold text-green-600 text-lg">Bình luận</div>
-          {product?.messageDetails?.map((messageDetail, index) => (
-            <div key={index} className="border-b border-gray-300 ">
-              <div className="flex items-center gap-4">
+          {/* Phần bình luận */}
+          <div className="mt-12">
+            <div className="font-semibold text-green-600 text-lg">Danh sách bình luận</div>
+            {product?.messageDetails?.map((messageDetail, index) => (
+              <div key={index} className="border-b border-gray-300 mb-4">
                 <div>
-                  <p className="font-semibold">{messageDetail.userName}</p>
-                  <p className="text-sm text-gray-600">{new Date(messageDetail.time).toLocaleString()}</p>
+                  <p className="font-semibold mt-2">{messageDetail.userName}</p>
+                  <p className="text-sm text-blue-600">
+                    {new Date(messageDetail.time).toLocaleString()}
+                  </p>
+                </div>
+                <p className="mb-1 mt-1">{messageDetail.message}</p>
+                {messageDetail.image && (
                   <img
-                    src={messageDetail.image || "/default-avatar.jpg"}
+                    src={messageDetail.image}
                     alt={messageDetail.userName}
-                    className="w-20 h-20 cursor-pointer"
-                    onClick={() => handleImageClick(messageDetail.image || "null")} 
+                    className="w-24 h-28 cursor-pointer mb-2"
+                    onClick={() => handleImageClick(messageDetail.image)}
+                  />
+                )}
+              </div>
+            ))}
+
+            {/* Hiển thị modal khi một hình ảnh được chọn */}
+            {selectedImage && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="relative bg-white ">
+                  <button
+                    onClick={handleCloseModal}
+                    className="absolute top-2 right-2 text-white bg-gray-500 rounded-sm p-1"
+                  >
+                    X
+                  </button>
+                  <img
+                    src={selectedImage}
+                    alt="Ảnh phóng to"
+                    className="max-w-full max-h-[80vh] object-contain"
                   />
                 </div>
               </div>
-              <p className="mb-6 mt-1">{messageDetail.message}</p>
-            </div>
-          ))}
-
-          {/* Hiển thị modal khi có hình ảnh được chọn */}
-          {selectedImage && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="relative bg-white p-4">
-                <button
-                  onClick={handleCloseModal}
-                  className="absolute top-2 right-2 text-white bg-gray-500 rounded-sm p-3"
-                >
-                  X
-                </button>
-                <img
-                  src={selectedImage}
-                  alt="Expanded view"
-                  className="max-w-full max-h-[80vh] object-contain"
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
+
       </div>
 
       </div>

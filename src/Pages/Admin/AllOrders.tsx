@@ -61,10 +61,11 @@ const AllOrders: React.FC = () => {
     "Mã đơn hàng",
     "Ngày đặt hàng",
     "Giá tiền",
-    "Số điện thoại, địa chỉ",
-    "Trạng thái đơn hàng",
-    "Phương thức thanh toán",
-    "Thay đổi trạng thái",
+    "Sđt",
+    "Địa chỉ",
+    "Thanh toán",
+    "Trạng thái",
+    "Thay đổi TT",
     ""
   ];
 
@@ -118,9 +119,11 @@ const AllOrders: React.FC = () => {
                     <td className="border border-gray-300 p-2">{order.id}</td>
                     <td className="border border-gray-300 p-2">{new Date(order.date).toLocaleString()}</td>
                     <td className="border border-gray-300 p-2">{order.totalPrice}đ</td>
+                    <td className="border border-gray-300 p-2">{order.phone}</td>
                     <td className="border border-gray-300 p-2">{order.address}</td>
-                    <td className="border border-gray-300 p-2">{order.stateOrder}</td>
                     <td className="border border-gray-300 p-2">{order.methodOfPayment}</td>
+                    <td className="border border-gray-300 p-2">{order.stateOrder}</td>
+                    
                     <td className="border border-gray-300 p-2">
                      
                       {/* Cập nhật trạng thái đơn hàng */}

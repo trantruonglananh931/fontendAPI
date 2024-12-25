@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "./logo.png";
 import { useAuth } from "../../Context/useAuth";
+import { User } from "../../Models/User";
 import { FaUserCircle, FaShoppingCart } from 'react-icons/fa'; 
 import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 
@@ -24,10 +25,12 @@ const Navbar: React.FC<Props> = () => {
     }
   };
 
+  
   useEffect(() => {
     if (!location.pathname.startsWith("/search")) {
       setSearchQuery(""); 
     }
+    
   }, [location.pathname]);
 
   return (
@@ -70,7 +73,7 @@ const Navbar: React.FC<Props> = () => {
         <div className="flex items-center space-x-6">
           {isLoggedIn() && (
              <div className="flex items-center space-x-4 ">
-                <span className="text-white italic">{user?.userName }</span> 
+                <span className="text-white italic">{user?.nameOfUser}</span> 
                       <div className="relative">
                         <Link to="/cart" className="hover:text-blue-600 flex items-center">
                           <FaShoppingCart className="text-2xl" />
@@ -94,7 +97,7 @@ const Navbar: React.FC<Props> = () => {
                   
                   <div className="absolute right-0 mt-2 w-52 bg-white text-green-700 border rounded-lg shadow-lg z-10 text-lg">
                     
-                    <Link to={`/user/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
+                    <Link to={`/user/update/${user?.userName}`} className="block px-4 py-2 hover:bg-gray-100">
                       Hồ sơ
                     </Link>
                     <Link to="/change-password" className="block px-4 py-2 hover:bg-gray-100">

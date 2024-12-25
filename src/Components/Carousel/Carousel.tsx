@@ -7,17 +7,15 @@ type Slide = {
 };
 
 const slides: Slide[] = [
+  
   {
-    imageUrl: "/images/caurousel/m1acnkuz77djwysa293cta1800x833.webp",
+    imageUrl: "/images/caurousel/m1h7ajcd0sottxawyzu9a_Heroweb.png",
   },
   {
-    imageUrl: "/images/caurousel/m1h7ajcd0sottxawyzu9a_Heroweb.webp",
+    imageUrl: "/images/caurousel/m1ra3e0i7won6u05a1qJ1800x833.png",
   },
   {
-    imageUrl: "/images/caurousel/m1ra3e0i7won6u05a1qJ1800x833.webp",
-  },
-  {
-    imageUrl: "/images/caurousel/m1h5t6esl6r65pev2xp1800x833b.webp",
+    imageUrl: "/images/caurousel/m1h5t6esl6r65pev2xp1800x833b.png",
   },
 ];
 

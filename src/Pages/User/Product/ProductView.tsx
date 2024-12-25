@@ -55,7 +55,7 @@ const ProductView: React.FC = () => {
         const response = await axios.get("/v2/api/Product", {
           params: {
             IsDecsendingByPrice: sortOrder,
-            categoryId: selectedCategory, // Thêm tham số categoryId
+            categoryId: selectedCategory, 
           },
         });
         if (response.data && Array.isArray(response.data.data)) {
@@ -71,9 +71,9 @@ const ProductView: React.FC = () => {
       }
     };
     fetchProducts();
-  }, [sortOrder, selectedCategory]); // Thêm selectedCategory vào dependency array
+  }, [sortOrder, selectedCategory]);
 
-   // Fetch categories
+
    useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -90,17 +90,21 @@ const ProductView: React.FC = () => {
 
   
 
-  // Handle product detail navigation
   const handleDetail = (id: string) => {
     navigate(`/product/${id}`);
   };
 
-  // Handle finding similar products
-  const handleFindSimilar = (id: string) => {
-    alert(`Tìm sản phẩm tương tự cho sản phẩm ${id}`);
-  };
 
-  // Handle sorting
+  const handleFindSimilar = (image: string) => {
+    if (!image) {
+      alert("Không tìm thấy ảnh sản phẩm!");
+      return;
+    }
+    navigate(`/similar-products`, { state: { image } });
+  };
+  
+  
+
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     if (value === "asc") {
@@ -112,7 +116,6 @@ const ProductView: React.FC = () => {
     }
   };
 
-  // Handle filtering by price
   const filterByPrice = (products: Product[]) => {
     return products.filter((product) => {
       const price = product.price;
@@ -123,7 +126,6 @@ const ProductView: React.FC = () => {
     });
   };
 
-  // Handle pagination
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     const productContainer = document.querySelector(".product-container");
@@ -273,17 +275,20 @@ const ProductView: React.FC = () => {
                         <p className="text-gray-600">{product.categoryId}</p>
                       </div>
                     </div>
+
+                    
                     {/* Nút Find Similar */}
                     <div className="absolute bottom-0 left-0 right-0 px-1 py-1 group">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleFindSimilar(product.id);
-                        }}
-                        className="bg-green-500 text-white w-full mt-2 px-4 py-2 group-hover:block hidden hover:bg-green-600 transition duration-300"
-                      >
-                        Tìm sản phẩm tương tự
-                      </button>
+                    <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFindSimilar(product.image); 
+                          }}
+                          className="bg-green-500 text-white w-full mt-2 px-4 py-2 group-hover:block hidden hover:bg-green-600 transition duration-300"
+                          >
+                          Tìm sản phẩm tương tự
+                        </button>
+
                     </div>
                   </li>
                 ))
@@ -297,15 +302,12 @@ const ProductView: React.FC = () => {
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-        <div className="w-100 border-t-2 border-gray-600 scale-125 my-2"></div>
-        <div className="grid grid-cols-2 gap-0">
+        <div className="w-full mb-2 border-t-2 border-gray-600 scale-125 my-2"></div>
+        <div className="w-full mt-6 ">
           <div>
             <Link to="/product">
-                <img className="" src="/images/Footer/footerImg.webp" alt="Lỗi"/>
+                <img className="" src="/images/Footer/khach-hang-muc-tieu-cua-yody.png" alt="Lỗi"/>
             </Link>
-          </div>
-          <div>
-            <img className="" src="/images/Footer/0608.jpg_wh860.webp" alt="Lỗi"/>
           </div>
 
         </div>
@@ -322,7 +324,11 @@ const ProductView: React.FC = () => {
             style={{bottom:"11px",right:"9px"}}
              onClick={handleScroll}
            >
-              <svg className="h-10 w-10 text-blue-500"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <circle cx="12" cy="12" r="10" />  <polyline points="16 12 12 8 8 12" />  <line x1="12" y1="16" x2="12" y2="8" /></svg>
+          <svg className="h-10 w-10 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="16 12 12 8 8 12" />
+            <line x1="12" y1="16" x2="12" y2="8" />
+          </svg>
            </div>)
         }
         </div>

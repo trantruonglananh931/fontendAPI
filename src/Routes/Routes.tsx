@@ -26,6 +26,7 @@ import ResetPassword from "../Pages/Accounts/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import AIUi from "../Pages/AI/AIUi";
 import ProductDetailAdm from "../Pages/Admin/Products/ProductDetailAdm";
+import SimilarProductsView from "../Pages/AI/SimilarProductsView";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
       { path: "", element: <ProductView /> },
       { path: "product", element: <ProductView /> },
       { path: "product/:id", element: <ProductDetail /> },
+      { path: "/similar-products", element: <SimilarProductsView/> },
       { path: "ai1", element: <AIUi/> },
       { path: "cart" , element: <Cart/>},
       { path: "checkout", element: <Checkout/> },

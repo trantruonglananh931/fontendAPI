@@ -1,5 +1,6 @@
 export type UserProfileToken = {
   userName: string;
+  nameOfUser : string;
   email: string;
   token: string;
   role: string; 
@@ -8,6 +9,7 @@ export type UserProfileToken = {
 export type UserProfile = {
   userName: string;
   email: string;
+  nameOfUser: string; 
   token: string;
   role: string; 
 };
@@ -21,9 +23,13 @@ export type User = {
   token: string;
   image: string | null;
   birthDay: string | null;
+  address : string | null;
+  phone : string | null;
 };
 
 export type UserInformation = {
   image: string | null; 
   birthDay: string;
+  address : string | null;
+  phone : string | null;
 };

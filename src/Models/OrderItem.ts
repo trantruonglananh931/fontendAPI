@@ -2,6 +2,7 @@ export type OrderItem = {
      id: string;
      date: string;
      totalPrice: number;
+     phone : string;
      address: string;
      stateOrder: string;
      stateTransport: string;
@@ -15,6 +16,7 @@ export type OrderDetailItem = {
   };
 
 export type NewOrder = {
+  phone : string;
   address: string;
   methodOfPaymentId: number;
   stateOrderId: number;

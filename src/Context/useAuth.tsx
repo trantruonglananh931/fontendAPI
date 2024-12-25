@@ -81,7 +81,8 @@ export const UserProvider = ({ children }: Props) => {
           if (loginResponse.data.token) {
             localStorage.setItem("token", loginResponse.data.token);
             const userObj = {
-              userName: loginResponse.data.username,
+              userName: loginResponse.data.useName,
+              nameOfUser: loginResponse.data.nameOfUser,
               email: loginResponse.data.emailAddress,
               token: loginResponse.data.token,
               role: loginResponse.data.role,
@@ -107,6 +108,7 @@ export const UserProvider = ({ children }: Props) => {
           if (registerResponse?.data?.token) {
             const userObj = {
               userName: registerResponse.data.userName,
+              nameOfUser: registerResponse.data.nameOfUser,
               email: registerResponse.data.email,
               token: registerResponse.data.token,
               role: registerResponse.data.role,
@@ -154,6 +156,7 @@ export const UserProvider = ({ children }: Props) => {
   
           const userObj = {
             userName: res?.data.userName,
+            nameOfUser : res?.data.nameOfUser,
             email: res?.data.email,
             token: res?.data.token,
             role: res?.data.role,
@@ -176,6 +179,7 @@ export const UserProvider = ({ children }: Props) => {
           localStorage.setItem("token", res?.data.token);
           const userObj = {
             userName: res?.data.userName,
+            nameOfUser : res?.data.nameOfUser,
             email: res?.data.email,
             token : res?.data.token,
             role: res?.data.role,  

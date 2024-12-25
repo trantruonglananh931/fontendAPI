@@ -54,9 +54,10 @@ const HistoryOrders: React.FC = () => {
 
   const headers = [
     "ID đơn hàng",
-    "Thời gian đặt hàng",
+    "Thời gian",
     "Giá tiền",
-    "Số điện thoại, địa chỉ",
+    "Sđt",
+    "Địa chỉ",
     "Trạng thái",
     "",
     ""
@@ -98,6 +99,7 @@ const HistoryOrders: React.FC = () => {
                 <td className="py-4 px-4">{order.id}</td>
                 <td className="py-4 px-4">{new Date(order.date).toLocaleString()}</td>
                 <td className="py-4 px-4">{order.totalPrice}đ</td>
+                <td className="py-4 px-4">{order.phone}</td>
                 <td className="py-4 px-4">{order.address}</td>
                 <td className="py-4 px-4">{order.stateOrder}</td>
                 <td className="py-4 px-4">
