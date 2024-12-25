@@ -22,20 +22,20 @@ interface SidebarProps {
 const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
   const navigate = useNavigate();
 
-  const handleNavigation = (path: string,label: string, key: string,component :JSX.Element) => {
-    navigate(path);
+  const handleNavigation = (label: string, key: string,component :JSX.Element) => {
+    // navigate(path);
     addTab(key, label, component);
   };
 
   const menu = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/productlist','Danh sách sản phẩm', 'ProductList',<ProductList/>)} className="w-full  text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black " style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('Danh sách sản phẩm', 'ProductList',<ProductList addTab={addTab}/>)} className="w-full  text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black " style={{ fontSize:"15px"}}>
         Danh sách sản phẩm
       </button>
 
     },
     {      
-      menuItem: <button onClick={() => handleNavigation("/admin/product/add", 'Thêm sản phẩm mới', 'ProductAdd',<ProductAdd/>)} className=" w-full text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+      menuItem: <button onClick={() => handleNavigation( 'Thêm sản phẩm mới', 'ProductAdd',<ProductAdd/>)} className=" w-full text-nowrap  text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
       Thêm sản phẩm mới
     </button>
     }
@@ -43,7 +43,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
    const menu1 = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/category', 'Danh sách danh mục', 'CategoryList',<CategoryList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation( 'Danh sách danh mục', 'CategoryList',<CategoryList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
         Danh sách danh mục
       </button>
 
@@ -57,7 +57,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
    const menu2 = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/user', 'Danh sách người dùng', 'UserList',<UserList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('Danh sách người dùng', 'UserList',<UserList/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
         Danh sách người dùng
       </button>
 
@@ -66,7 +66,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
    const menu3 = [
     {
-       menuItem: <button onClick={() => handleNavigation('/admin/orders', 'Danh sách đơn hàng', 'AllOrders',<AllOrders/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+       menuItem: <button onClick={() => handleNavigation('Danh sách đơn hàng', 'AllOrders',<AllOrders/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
         Danh sách đơn hàng
       </button>
 
@@ -75,7 +75,7 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
 
     const menu4 = [
       {
-         menuItem: <button onClick={() => handleNavigation('/admin/finance', 'Thống kê', 'Finance',<Finance/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
+         menuItem: <button onClick={() => handleNavigation( 'Thống kê', 'Finance',<Finance/>)} className="w-full text-nowrap text-left p-2 hover:bg-blue-50  hover:text-black" style={{ fontSize:"15px"}}>
           Thống kê doanh số
         </button>
   
@@ -83,9 +83,9 @@ const Slidebar: React.FC<SidebarProps> = ({ isOpen,addTab  }) => {
      ]
 
 
-     return (      
+     return (
       <div className={`w-64 bg-green-600 text-white ${isOpen ? 'block' : 'hidden'} transition-all duration-300 `}>
-        <ul className="space-y-3 mt-16 text-sm pt-4 ml-3" style={{ fontSize: "18px" }}>
+        <ul className="space-y-3 mt-10 text-sm pt-4 ml-3" style={{ fontSize: "18px" }}>
           <li>
             <DropDownFC
               trigger={<button className='font-sans hover:text-sky-950 flex items-center mb-2'><CgViewMonth className="mr-2" />Quản Lí Sản phẩm</button>}

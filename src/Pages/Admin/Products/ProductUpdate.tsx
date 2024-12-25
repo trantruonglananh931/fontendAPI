@@ -4,10 +4,15 @@ import axios from "axios";
 import { Product } from "../../../Models/Product"; 
 import { useAuth } from "../../../Context/useAuth";
 
-const ProductUpdate: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+interface ProductUpdateProps {
+  id1: string;
+}
+
+const ProductUpdate: React.FC<ProductUpdateProps> = ({id1}) => {
+  const  id  = id1;
   const navigate = useNavigate();
   const { user } = useAuth(); 
+  const [categoryName,setCategoryname] = useState("Categoryname");
 
   const token = user?.token;
   const [product, setProduct] = useState<Product>({
@@ -48,6 +53,8 @@ const ProductUpdate: React.FC = () => {
   
         if (response.data && response.data.data) {
           const fetchedData = response.data.data;
+          setCategoryname(fetchedData.categoryName);
+          // console.log(fetchedData.categoryName); 
           setProduct(prev => ({
             ...prev,
             ...fetchedData,
@@ -199,7 +206,7 @@ const ProductUpdate: React.FC = () => {
         }
       );
       alert("Cập nhật sản phẩm thành công!");
-      navigate("/admin/productlist");
+      // navigate("/admin/productlist");
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
       alert("Cập nhật sản phẩm thất bại.");
@@ -310,7 +317,7 @@ const ProductUpdate: React.FC = () => {
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               required
             >
-              <option value="">Chọn danh mục</option>
+              {categoryName}
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.categorName}

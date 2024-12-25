@@ -251,12 +251,12 @@ const ProductView: React.FC = () => {
                   <li
                     id={`product-${product.id}`}
                     key={product.id}
-                    className="relative border-2 border-transparent hover:border-green-500 transform transition-transform duration-300 shadow-sm hover:shadow-lg"
+                    className="product relative group border-2 border-transparent hover:border-green-500 transform transition-transform duration-300 shadow-sm hover:shadow-lg"
                   >
                     {/* Ảnh sản phẩm và thông tin */}
                     <div
                       onClick={() => handleDetail(product.id)}
-                      className="cursor-pointer"
+                      className=" cursor-pointer"
                     >
                       <img
                         src={product.image}
@@ -265,26 +265,27 @@ const ProductView: React.FC = () => {
                         loading="lazy"
                       />
                       <div className="mt-2 ml-2">
-                        <h2 className="text-base">{product.productName}</h2>
+                        <h2 className="truncate">{product.productName}</h2>
                         <p className="text-red-500 text-base font-semibold">{product.price}đ</p>
                         <p className="text-gray-600">{product.categoryId}</p>
                       </div>
+                      <div className="absolute bottom-0 left-0 right-0 px-1 py-1 similar hidden  group-hover:block  ">
+                        <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleFindSimilar(product.image); 
+                              }}
+                              className="bg-green-500 text-white w-full mt-2 px-4 py-2 "
+                              >
+                              Tìm sản phẩm tương tự
+                            </button>
+
+                    </div>
                     </div>
 
                     
                     {/* Nút Find Similar */}
-                    <div className="absolute bottom-0 left-0 right-0 px-1 py-1 group">
-                    <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleFindSimilar(product.image); 
-                          }}
-                          className="bg-green-500 text-white w-full mt-2 px-4 py-2 group-hover:block hidden hover:bg-green-600 transition duration-300"
-                          >
-                          Tìm sản phẩm tương tự
-                        </button>
-
-                    </div>
+                  
                   </li>
                 ))
               ) : (

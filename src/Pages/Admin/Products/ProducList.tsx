@@ -6,12 +6,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash ,faEye} from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "../../../Context/useAuth";
+import ProductUpdate from "../../Admin/Products/ProductUpdate";  
+import ProductDetailAdm from "../../Admin/Products/ProductDetailAdm";  
+interface handleAddTab {
+  // addTab: (key: string, label: string, component: JSX.Element) => void;
+  addTab: (key: string, label: string, component: JSX.Element) => void;
+}
 
-const ProductList: React.FC = () => {
+const ProductList: React.FC<handleAddTab> = ({ addTab  }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
   const { user } = useAuth(); 
   const token = user?.token;
+
+  
+  const handleNavigation1 = (label: string, key: string,component :JSX.Element) => {
+    // navigate(path);
+    addTab(key, label, component);
+  };
 
   useEffect(() => {
 
@@ -54,13 +66,14 @@ const ProductList: React.FC = () => {
   };
   
   
-  
   const handleDetail = (id: string) => {
-    navigate(`/admin/product/${id}`);
+    // navigate(`/admin/product/${id}`);
+    handleNavigation1('Chi tiết sản phẩm ' + id, 'Chi tiết sản phẩm '+id,<ProductDetailAdm id1={id}/>);
   };
 
   const handleUpdate = (id: string) => {
-    navigate(`/admin/product/update/${id}`);
+    // navigate(`/admin/product/update/${id}`);
+    handleNavigation1('Cập nhập sản phẩm ' + id, 'Cập nhập sản phẩm '+id,<ProductUpdate id1={id}/>);
   };
 
 
@@ -81,7 +94,7 @@ const ProductList: React.FC = () => {
         <tbody>
           {products.length > 0 ? (
             products.map((product) => (
-              <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer">
+              <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-100 ">
                 <td className="w-2/12 py-2 px-2 border ">{product.id}</td>
                 <td className="w-2/12 py-2 px-2 border ">{product.productName}</td>
                 <td className="w-2/12 py-2 px-2 border text-center">{product.price}đ</td>
@@ -96,7 +109,7 @@ const ProductList: React.FC = () => {
                       e.stopPropagation();
                       handleDetail(product.id); 
                     }}
-                    className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 mr-2"
+                    className="bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600 mr-2  cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faEye} />
                   </button>
@@ -105,7 +118,7 @@ const ProductList: React.FC = () => {
                       e.stopPropagation();
                       handleUpdate(product.id);
                     }}
-                    className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-yellow-600 mr-2"
+                    className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-yellow-600 mr-2  cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
@@ -114,7 +127,7 @@ const ProductList: React.FC = () => {
                       e.stopPropagation();
                       handleDelete(product.id);
                     }}
-                    className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600"
+                    className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600  cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>

@@ -91,22 +91,22 @@ const AllOrders: React.FC = () => {
   return loading ? (
     <div className="text-center text-xl">Đang tải...</div>
   ) : error ? (
-    <div className="text-red-500 text-center ">{error}</div>
+    <div className="text-red-500 text-center text-lg">{error}</div>
   ) : (
     <>
-      <div className="max-w-screen-xl mx-auto  bg-white shadow-md rounded-sm overflow-hidden mb-5 mt-5">
+      <div className="max-w-screen-xl mx-auto bg-white shadow-md rounded-sm overflow-hidden mb-5 mt-5">
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border  border-gray-300">
+          <table className="min-w-full border-collapse border border-gray-300">
             <thead className="bg-gray-200">
               <tr className="text-gray-700">
                 {headers.map((header, index) => (
-                  <th key={index} className="border border-gray-300 p-2 text-left text-xs ">
+                  <th key={index} className="border border-gray-300 p-2 text-left text-base ">
                     {header}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className = "bg-white divide-y divide-gray-200 text-xs">
+            <tbody className="bg-white divide-y divide-gray-200">
               {orders.length === 0 ? (
                 <tr>
                   <td colSpan={headers.length} className="text-center py-4 text-gray-600">
@@ -124,7 +124,7 @@ const AllOrders: React.FC = () => {
                     <td className="border border-gray-300 p-2">{order.methodOfPayment}</td>
                     <td className="border border-gray-300 p-2">{order.stateOrder}</td>
                     
-                    <td className="border border-gray-300 p-2 flex">
+                    <td className="border border-gray-300 p-2">
                      
                       {/* Cập nhật trạng thái đơn hàng */}
                       {order.stateOrder === "Hủy đơn hàng" ? (

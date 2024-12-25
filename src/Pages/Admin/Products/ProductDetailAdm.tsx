@@ -5,8 +5,12 @@ import { useAuth } from "../../../Context/useAuth";
 import { Product } from "../../../Models/Product";
 import Navbar from "../../../Components/Navbar/Navbar";
 
-const AdminProductAdm: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+interface ProductDetailsProps {
+  id1: string;
+}
+
+const AdminProductAdm: React.FC<ProductDetailsProps> = ({id1}) => {
+  const  id  = id1;
   const [product, setProduct] = useState<Product | null>(null);
   const { user } = useAuth();
 
@@ -14,13 +18,14 @@ const AdminProductAdm: React.FC = () => {
     const fetchProductDetail = async () => {
       try {
         const response = await axios.get(`/v2/api/Product/${id}`);
+        console.log(response.data.data);
         setProduct(response.data.data);
       } catch (error) {
         console.error("Lỗi khi lấy thông tin sản phẩm:", error);
       }
     };
     fetchProductDetail();
-  }, [id]);
+  }, []);
 
   if (!product) {
     return <div className="text-center">Đang tải...</div>;
@@ -28,7 +33,6 @@ const AdminProductAdm: React.FC = () => {
 
   return (
     <div className="w-full bg-gray-100 min-h-screen">
-      <Navbar />
       <div className="max-w-screen-xl mx-auto p-8 bg-white mt-6">
         <h1 className="text-3xl font-sans text-gray-800 mb-4">{product.productName}</h1>
         <p className="text-gray-600 mb-4">{product.description}</p>
@@ -37,7 +41,7 @@ const AdminProductAdm: React.FC = () => {
         <div className="mt-6">
           <h2 className="text-2xl font-sans text-gray-700">Danh sách hình ảnh</h2>
           <div className="flex space-x-4 mt-4 overflow-x-auto">
-            {product.listStringImage.map((img, index) => (
+            {product.listStringImage?.map((img, index) => (
               <img
                 key={index}
                 src={img}
@@ -51,7 +55,7 @@ const AdminProductAdm: React.FC = () => {
         <div className="mt-6">
           <h2 className="text-2xl font-sans text-gray-700">Kích thước và số lượng</h2>
           <div className="grid grid-cols-7 gap-4 mt-4">
-            {product.sizeDetails.map((sizeDetail, index) => (
+            {product.sizeDetails?.map((sizeDetail, index) => (
               <div key={index} className="border rounded-md p-4 bg-gray-50 shadow-sm flex flex-col items-center">
                 <p className="font-sans">{sizeDetail.sizeName}</p>
                 <p className="text-gray-600">{sizeDetail.quantity} còn lại</p>

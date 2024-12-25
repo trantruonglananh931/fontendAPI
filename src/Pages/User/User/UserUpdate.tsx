@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../../Components/Navbar/Navbar";
-import { LoadScript, Autocomplete, Libraries } from "@react-google-maps/api";
+// import { LoadScript, Autocomplete, Libraries } from "@react-google-maps/api";
 
 interface UserInformation {
   phone: string;
@@ -11,7 +11,7 @@ interface UserInformation {
   birthDay: string;
 }
 
-const libraries: Libraries = ["places"]; 
+// const libraries: Libraries = ["places"]; 
 
 const UserUpdate: React.FC = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const UserUpdate: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  // const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -112,17 +112,17 @@ const UserUpdate: React.FC = () => {
     setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePlaceSelect = () => {
-    if (autocompleteRef.current) {
-      const place = autocompleteRef.current.getPlace();
-      if (place && place.formatted_address) {
-        setUserInfo((prev) => ({
-          ...prev,
-          address: place.formatted_address || "", 
-        }));
-      }
-    }
-  };
+  // const handlePlaceSelect = () => {
+  //   if (autocompleteRef.current) {
+  //     const place = autocompleteRef.current.getPlace();
+  //     if (place && place.formatted_address) {
+  //       setUserInfo((prev) => ({
+  //         ...prev,
+  //         address: place.formatted_address || "", 
+  //       }));
+  //     }
+  //   }
+  // };
 
   const handleUpdate = async () => {
     setLoading(true);

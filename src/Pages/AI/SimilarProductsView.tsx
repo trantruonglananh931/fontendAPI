@@ -4,14 +4,18 @@ import axios from "axios";
 import Navbar from "../../Components/Navbar/Navbar";
 import Footer from "../../Components/Footer/Footer";
 import { Product } from "../../Models/Product";
-
+import { useNavigate } from "react-router-dom";
 const SimilarProductsView: React.FC = () => {
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null); 
-
+  const navigate = useNavigate();
   const location = useLocation();
   const { image } = location.state || {}; 
+
+  const handleDetail = (id: string) => {
+    navigate(`/product/${id}`);
+  };
   useEffect(() => {
     if (!image) {
       setError("Không tìm thấy thông tin ảnh sản phẩm. Vui lòng quay lại và thử lại.");
@@ -29,22 +33,29 @@ const SimilarProductsView: React.FC = () => {
         const formData = new FormData();
         formData.append("file", file);
 
-        const uploadResponse = await axios.post("http://127.0.0.1:5000/upload", formData, {
+        const uploadResponse = await axios.post("http://127.0.0.1:5001/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-
-        if (uploadResponse.data && Array.isArray(uploadResponse.data.productIds)) {
-          const productIds = uploadResponse.data.productIds;
-
+        // console.log(uploadResponse.data);
+        if (uploadResponse.data && Array.isArray(uploadResponse.data.Id)) {
+          const productIds = uploadResponse.data.Id;
+          // console.log(productIds);
           const similarProductsResponse = await axios.post(
             "/v2/api/Product/GetListSameProduct",
-            { productIds }
+            productIds ,{
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
           );
 
-          if (similarProductsResponse.data && similarProductsResponse.data.products) {
-            setSimilarProducts(similarProductsResponse.data.products);
+          
+          console.log(similarProductsResponse.data);
+          if (similarProductsResponse.data ) {
+            setSimilarProducts(similarProductsResponse.data.data);
+            console.log(similarProducts);
           } else {
             setError("Không tìm thấy sản phẩm tương tự.");
           }
@@ -87,7 +98,8 @@ const SimilarProductsView: React.FC = () => {
             {similarProducts.map((product) => (
               <li
                 key={product.id}
-                className="border-2 border-transparent hover:border-green-500 transform transition-transform duration-300 shadow-sm hover:shadow-lg"
+                className=" cursor-pointer border-2 border-transparent hover:border-green-500 transform transition-transform duration-300 shadow-sm hover:shadow-lg"
+                     onClick={() => handleDetail(product.id)}
               >
                 <img
                   src={product.image}
