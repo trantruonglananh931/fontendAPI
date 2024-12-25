@@ -37,7 +37,7 @@ const HistoryOrders: React.FC = () => {
           OrderStatusId: newStatusId,
         },
       });
-      alert("Trạng thái đơn hàng đã được cập nhật thành công!");
+     
       fetchOrders(); 
       // Cập nhật lại danh sách đơn hàng
       const updatedOrders = orders.map(order => 

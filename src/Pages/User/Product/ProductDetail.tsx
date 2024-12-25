@@ -279,7 +279,7 @@ const ProductDetail: React.FC = () => {
                     style={{ width: "80px" }}
                   >
                     <p className="font-bold text-sm">{size.sizeName}</p>
-                    <p className="text-gray-600 text-xs">{size.quantity} còn lại</p>
+                    <p className="text-gray-600 text-xs">Còn {size.quantity} </p>
                   </div>
                 ))}
               </div>
@@ -360,10 +360,13 @@ const ProductDetail: React.FC = () => {
                 onChange={(e) => setImageFiles(e.target.files)}
                 className="w-180 p-2 border border-gray-300 rounded-lg"
               />
+               <button type="submit" className="ml-4 w-20 bg-blue-500 text-white py-3 rounded-lg">
+              Gửi
+            </button>
 
               {/* Hiển thị hình ảnh xem trước chỉ khi có tệp được chọn */}
               {imageFiles && imageFiles.length > 0 && (
-                <div className="flex flex-col gap-4 mt-4">
+                <div className="flex flex-col gap-4 mt-4 w-20 h-24">
                   {Array.from(imageFiles).map((file, index) => (
                     <img
                       key={index}
@@ -374,9 +377,7 @@ const ProductDetail: React.FC = () => {
                   ))}
                 </div>
               )}
-              <button type="submit" className="ml-4 w-20 bg-blue-500 text-white py-3 rounded-lg">
-              Gửi
-            </button>
+             
             </div>
 
             

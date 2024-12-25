@@ -16,6 +16,7 @@ type RegisterFormsInputs = {
   userName: string;
   email: string;
   password: string;
+  confirmPassword: string;
   nameOfUser: string;
   registerWithGoogle?: boolean;
 };
@@ -25,10 +26,20 @@ const validation = Yup.object().shape({
   email: Yup.string()
     .email("Địa chỉ email không hợp lệ")
     .required("Email là bắt buộc"),
-  password: Yup.string().required("Mật khẩu là bắt buộc"),
+  password: Yup.string()
+    .required("Mật khẩu là bắt buộc")
+    .min(12, "Mật khẩu phải có ít nhất 12 ký tự")
+    .matches(/[A-Z]/, "Mật khẩu phải có ít nhất một chữ in hoa")
+    .matches(/[a-z]/, "Mật khẩu phải có ít nhất một chữ thường")
+    .matches(/[0-9]/, "Mật khẩu phải có ít nhất một chữ số")
+    .matches(/[@$!%*?&#]/, "Mật khẩu phải có ít nhất một ký tự đặc biệt"),
+  confirmPassword: Yup.string()
+    .required("Vui lòng nhập lại mật khẩu")
+    .oneOf([Yup.ref("password")], "Mật khẩu nhập lại không khớp"),
   nameOfUser: Yup.string().required("Tên đầy đủ là bắt buộc"),
   registerWithGoogle: Yup.boolean(),
 });
+
 
 const RegisterPage = (props: Props) => {
   const [loading, setLoading] = useState(false);
@@ -36,7 +47,9 @@ const RegisterPage = (props: Props) => {
   const { loginWithGoogle } = useAuth();
   const emailFromGoogle = location.state?.email || "";
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false); // State cho hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   const {
     register,
@@ -80,10 +93,10 @@ const RegisterPage = (props: Props) => {
   return (
     <div className="w-full">
       <Navbar />
-      <section className="bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <section className="bg-gray-50 dark:bg-gray-900 ">
+        <div className="mt-8 flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-white rounded-lg shadow dark:border md:mb-20 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div className="p-6 space-y-2 md:space-y-6 sm:p-8">
+            <div className="p-4 space-y-2 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                 Đăng ký
               </h1>
@@ -177,6 +190,39 @@ const RegisterPage = (props: Props) => {
                   )}
                 </div>
 
+                {/* Nhập lại mật khẩu */}
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Nhập lại mật khẩu
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      id="confirmPassword"
+                      placeholder="••••••••"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      {...register("confirmPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                    >
+                      <FontAwesomeIcon
+                        icon={showConfirmPassword ? faEye : faEyeSlash}
+                      />
+                    </button>
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="text-red-500">{errors.confirmPassword.message}</p>
+                  )}
+                </div>
+
                 {errorMessage && (
                   <p className="text-red-500">{errorMessage}</p>
                 )}
@@ -203,7 +249,7 @@ const RegisterPage = (props: Props) => {
 
                 
               </form>
-              <div className="flex space-x-4 text-sm">
+              <div className="flex space-x-2 text-sm">
                   <button
                     onClick={loginWithGoogle}
                     className="w-full h-10 border-2 border-gray-800 rounded-full font-semibold text-gray-800 hover:bg-gray-800 hover:text-white transition duration-200"

@@ -8,16 +8,16 @@ interface AdminNavbarProps {
 }
 
 const AdminNavbar: React.FC<AdminNavbarProps> = ({ toggleSidebar }) => {
-  const { logout } = useAuth(); // Access the logout function from the context
+  const { logout } = useAuth(); 
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout(); // Call the logout function from useAuth
-    navigate('/login'); // Redirect to login page after logout
+    logout(); 
+    navigate('/login'); 
   };
 
   return (
-    <div className="bg-green-600 text-white p-4 flex justify-between items-center">
+    <div className="bg-green-700 text-white p-4 flex justify-between items-center">
       {/* Sidebar Toggle Icon */}
       <FaBars 
         className="cursor-pointer text-2xl"

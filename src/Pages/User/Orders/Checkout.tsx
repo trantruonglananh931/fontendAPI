@@ -154,7 +154,7 @@ const Checkout: React.FC = () => {
           <label className="text-lg">Số điện thoại :</label>
           <p
             className="text-blue-500 cursor-pointer hover:underline"
-            onClick={() => navigate(`/user/update/${user?.userName}`)}
+            onClick={() => navigate(`/user/updateadpadp/${user?.userName}`)}
           >
             Cập nhật thông tin
           </p>

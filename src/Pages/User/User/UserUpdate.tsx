@@ -169,9 +169,7 @@ const UserUpdate: React.FC = () => {
 
       if (response.data.status) {
         setMessage("Cập nhật thành công");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
+        
       } else {
         setMessage(response.data.message || "Cập nhật thất bại");
       }

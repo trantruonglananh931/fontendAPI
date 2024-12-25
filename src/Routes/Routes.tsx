@@ -27,6 +27,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AIUi from "../Pages/AI/AIUi";
 import ProductDetailAdm from "../Pages/Admin/Products/ProductDetailAdm";
 import SimilarProductsView from "../Pages/AI/SimilarProductsView";
+import AddressUpdate from "../Pages/User/User/AddressUpdate";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -62,6 +63,7 @@ export const router = createBrowserRouter([
       { path: "cart" , element: <Cart/>},
       { path: "checkout", element: <Checkout/> },
       { path: "history-orders", element: <HistoryOrders/> },
+      { path: "user/updateadpadp/:name", element: <AddressUpdate/>},
       { path: "user/update/:name", element: <UserUpdate/>},
       { path:"change-password", element: <ChangePassword/>},
       { path:"forgot-password", element: <ForgotPassword/>},
